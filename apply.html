@@ -1,0 +1,1946 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apply - Valley of the Commons</title>
+    <link rel="icon" type="image/svg+xml" href="icon.svg">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --forest: #2d5016;
+            --forest-light: #4a7c23;
+            --cream: #faf8f5;
+            --sand: #f5f5f0;
+            --charcoal: #2c2c2c;
+            --error: #c53030;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--cream);
+            color: var(--charcoal);
+            line-height: 1.6;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem;
+            font-weight: 400;
+            color: var(--forest);
+        }
+
+        .header a { color: var(--forest); text-decoration: none; }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Progress */
+        .progress-container {
+            margin-bottom: 2rem;
+            display: none;
+        }
+
+        .progress-bar {
+            height: 4px;
+            background: #ddd;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--forest);
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            text-align: center;
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 0.5rem;
+        }
+
+        /* Form */
+        .form-section {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .form-section.active { display: block; animation: fadeIn 0.3s; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .question-number {
+            font-size: 0.75rem;
+            color: #999;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-section h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem;
+            color: var(--forest);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-section > p.hint {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group { margin-bottom: 1.25rem; }
+
+        label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        label .required { color: var(--error); }
+        label .optional { color: #999; font-weight: 400; font-size: 0.8rem; }
+
+        input[type="text"],
+        input[type="email"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 1rem;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--forest);
+            box-shadow: 0 0 0 3px rgba(45, 80, 22, 0.1);
+        }
+
+        textarea { min-height: 120px; resize: vertical; }
+
+        .field-hint {
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 0.25rem;
+        }
+
+        /* Week cards */
+        .week-cards { display: flex; flex-direction: column; gap: 0.75rem; }
+
+        .week-card {
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .week-card:hover { border-color: var(--forest-light); }
+        .week-card.selected { border-color: var(--forest); background: rgba(45, 80, 22, 0.05); }
+        .week-card input[type="checkbox"],
+        .week-card input[type="radio"] { display: none; }
+
+        .week-card h4 { font-size: 0.95rem; color: var(--forest); margin-bottom: 0.25rem; }
+        .week-card .dates { font-size: 0.8rem; color: #666; margin-bottom: 0.5rem; }
+        .week-card .desc { font-size: 0.85rem; color: #555; }
+
+        .week-card.sold-out {
+            opacity: 0.5;
+            pointer-events: none;
+            position: relative;
+        }
+
+        .week-card.sold-out::after {
+            content: 'Sold Out';
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(200, 50, 50, 0.12);
+            border: 1px solid rgba(200, 50, 50, 0.4);
+            color: #c83232;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.2rem 0.6rem;
+            border-radius: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Select-all card */
+        .select-all-card {
+            border-style: dashed;
+            background: var(--sand);
+        }
+        .select-all-card.selected {
+            border-style: solid;
+        }
+
+        .ticket-note {
+            font-size: 0.8rem;
+            color: #666;
+            background: var(--sand);
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+
+        /* Nav */
+        .form-nav {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            padding: 0.875rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .btn-primary { background: var(--forest); color: white; }
+        .btn-primary:hover { background: var(--forest-light); }
+        .btn-secondary { background: var(--sand); color: var(--charcoal); }
+        .btn-secondary:hover { background: #eee; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* Error */
+        .error-message {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: var(--error);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .field-error { border-color: var(--error) !important; }
+
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+            font-size: 0.875rem;
+        }
+
+        .footer a { color: var(--forest); }
+
+        /* ===== Landing screen ===== */
+        .landing {
+            text-align: center;
+            padding: 2rem;
+            background: white;
+            border-radius: 12px;
+        }
+
+        .landing h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.25rem;
+            color: var(--forest);
+            margin-bottom: 1rem;
+        }
+
+        .landing .event-badge {
+            display: inline-block;
+            background: var(--forest);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+        }
+
+        .landing .overview-text {
+            color: #666;
+            font-size: 0.95rem;
+            max-width: 550px;
+            margin: 0 auto 2rem;
+        }
+
+        .pricing-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin: 2rem 0;
+            text-align: left;
+        }
+
+        .pricing-card {
+            background: var(--sand);
+            border-radius: 10px;
+            padding: 1.25rem;
+        }
+
+        .pricing-card h3 {
+            font-size: 1rem;
+            color: var(--forest);
+            margin-bottom: 0.5rem;
+        }
+
+        .pricing-card .price-range {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--charcoal);
+            margin-bottom: 0.25rem;
+        }
+
+        .pricing-card .price-note {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .time-estimate {
+            background: var(--sand);
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 1.5rem;
+        }
+
+        .resume-notice {
+            background: #e8f5e9;
+            border: 1px solid #c8e6c9;
+            color: #2d5016;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        /* ===== Theme picker ===== */
+        .theme-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+
+        .theme-option {
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .theme-option:hover { border-color: var(--forest-light); }
+        .theme-option.selected { border-color: var(--forest); background: rgba(45, 80, 22, 0.05); }
+        .theme-option.disabled-theme { opacity: 0.4; cursor: not-allowed; }
+
+        .theme-option h4 {
+            font-size: 0.9rem;
+            color: var(--forest);
+            margin-bottom: 0.25rem;
+        }
+
+        .theme-counter {
+            text-align: center;
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 0.75rem;
+        }
+
+        /* ===== Food radio group ===== */
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0;
+            cursor: pointer;
+        }
+
+        .radio-option input[type="radio"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--forest);
+        }
+
+        /* ===== Review step ===== */
+        .review-section {
+            background: var(--sand);
+            border-radius: 10px;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .review-section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .review-section-header h3 {
+            font-size: 1rem;
+            color: var(--forest);
+        }
+
+        .review-edit-link {
+            font-size: 0.85rem;
+            color: var(--forest);
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        .review-field {
+            margin-bottom: 0.5rem;
+        }
+
+        .review-field .review-label {
+            font-size: 0.75rem;
+            color: #666;
+            text-transform: uppercase;
+        }
+
+        .review-field .review-value {
+            font-size: 0.9rem;
+            white-space: pre-wrap;
+        }
+
+        .review-price-summary {
+            background: white;
+            border: 2px solid var(--forest);
+            border-radius: 10px;
+            padding: 1.25rem;
+            margin-top: 1.5rem;
+        }
+
+        .review-price-summary h3 {
+            font-size: 1.1rem;
+            color: var(--forest);
+            margin-bottom: 0.75rem;
+        }
+
+        .price-line {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.25rem 0;
+            font-size: 0.9rem;
+        }
+
+        .price-line.total {
+            border-top: 1px solid #ddd;
+            margin-top: 0.5rem;
+            padding-top: 0.75rem;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        /* ===== Success state ===== */
+        .success-card {
+            text-align: center;
+            padding: 2.5rem 2rem;
+            background: linear-gradient(135deg, #f0f7eb 0%, #e8f5e9 50%, #f5f5f0 100%);
+            border-radius: 12px;
+        }
+
+        .success-icon {
+            width: 70px;
+            height: 70px;
+            background: var(--forest);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+        }
+
+        .success-icon svg { width: 35px; height: 35px; stroke: white; }
+
+        .success-card h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.75rem;
+            color: var(--forest);
+            margin-bottom: 1rem;
+        }
+
+        .next-steps-box {
+            background: white;
+            border-radius: 10px;
+            padding: 1.25rem;
+            margin: 1.5rem auto;
+            max-width: 420px;
+            text-align: left;
+        }
+
+        .next-steps-box h3 {
+            font-size: 0.95rem;
+            color: var(--forest);
+            margin-bottom: 0.75rem;
+        }
+
+        .next-steps-box ol {
+            padding-left: 1.25rem;
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        .next-steps-box li { margin-bottom: 0.5rem; }
+
+        .btn-secondary {
+            display: inline-block;
+            padding: 0.75rem 2rem;
+            border: 2px solid var(--forest);
+            color: var(--forest);
+            background: #fff;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        .btn-secondary:hover { background: rgba(45, 80, 22, 0.05); }
+
+        @media (max-width: 600px) {
+            .container { padding: 1rem; }
+            .form-section, .landing { padding: 1.5rem; }
+            .pricing-cards { grid-template-columns: 1fr; }
+            .theme-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <h1><a href="/">Valley of the Commons</a></h1>
+            <a href="/">← Back</a>
+        </div>
+    </header>
+
+    <div class="container">
+
+        <!-- Landing Screen -->
+        <div class="landing" id="landing-screen">
+            <span class="event-badge">August 24 – September 20, 2026</span>
+            <h1>Application Form</h1>
+            <p class="overview-text">Valley of the Commons is a four-week pop-up village exploring housing, production, decision-making and ownership in community. Each week has a different theme — attend as many weeks as you like.</p>
+
+            <div class="pricing-cards">
+                <div class="pricing-card">
+                    <h3>Registration</h3>
+                    <div class="price-range" id="landing-reg-price"></div>
+                    <div class="price-note">per week, depending on timing</div>
+                </div>
+                <div class="pricing-card">
+                    <h3>Accommodation</h3>
+                    <div class="price-range">&euro;275 – &euro;700/wk</div>
+                    <div class="price-note">optional, multiple room types</div>
+                </div>
+            </div>
+
+            <div class="time-estimate">This application takes approximately 15–20 minutes to complete.</div>
+
+            <div id="resume-notice" class="resume-notice" style="display: none;">
+                You have saved progress from a previous session.
+                <a href="#" onclick="startFormAndResume(); return false;" style="color: var(--forest); font-weight: 600;">Resume where you left off</a>
+            </div>
+
+            <button id="start-btn" class="btn btn-primary" onclick="startForm()" style="font-size: 1.1rem; padding: 1rem 3rem;">Start Application</button>
+        </div>
+
+        <div class="progress-container" id="progress-container">
+            <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+            <div class="progress-text">Step <span id="progress-step">1</span> of 10 — <span id="progress-percent">10</span>%</div>
+        </div>
+
+        <form id="application-form" style="display: none;">
+            <!-- Step 1: Which weeks + price calculator -->
+            <!-- Step 1: Contact info + how heard + referral -->
+            <div class="form-section" data-step="1">
+                <div class="question-number">Step 1 of 10</div>
+                <h2>About You</h2>
+
+                <div class="form-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div>
+                        <label for="first_name">First Name <span class="required">*</span></label>
+                        <input type="text" id="first_name" name="first_name" required placeholder="First name">
+                    </div>
+                    <div>
+                        <label for="last_name">Last Name <span class="required">*</span></label>
+                        <input type="text" id="last_name" name="last_name" required placeholder="Last name">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email <span class="required">*</span></label>
+                    <input type="email" id="email" name="email" required placeholder="your@email.com">
+                </div>
+
+                <div class="form-group">
+                    <label for="social_media">Social Media Handles <span class="optional">(optional)</span></label>
+                    <input type="text" id="social_media" name="social_media" placeholder="@handle (please specify which platforms)">
+                </div>
+
+                <div class="form-group">
+                    <label for="how_heard">How did you hear about Valley of the Commons? <span class="optional">(optional)</span></label>
+                    <textarea id="how_heard" name="how_heard" placeholder="Social media, friend referral, newsletter, event..." rows="3"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="referral_names">Referral name(s) <span class="optional">(optional)</span></label>
+                    <textarea id="referral_names" name="referral_names" placeholder="Names of people who know you or referred you" rows="2"></textarea>
+                </div>
+
+                <div class="form-nav">
+                    <div></div>
+                    <button type="button" class="btn btn-primary" onclick="nextStep()">Continue</button>
+                </div>
+            </div>
+
+            <!-- Step 2: Week selection -->
+            <div class="form-section" data-step="2">
+                <div class="question-number">Step 2 of 10</div>
+                <h2>Which week(s) would you like to attend? <span class="required">*</span></h2>
+                <p class="hint">Select the weeks you'd like to join. Prices update as you choose.</p>
+
+                <div class="week-cards">
+                    <label class="week-card select-all-card" onclick="toggleAllWeeks(this)">
+                        <input type="checkbox" id="select-all-weeks">
+                        <h4>Select all 4 weeks</h4>
+                        <div class="desc">Full residency: August 24 – September 20, 2026</div>
+                    </label>
+
+                    <label class="week-card" onclick="toggleWeek(this)">
+                        <input type="checkbox" name="weeks" value="week1">
+                        <h4>Week 1: Return to the Commons</h4>
+                        <div class="dates">August 24 – 30, 2026</div>
+                        <div class="desc">A five-day course with Michel Bauwens and Adam Arvidsson exploring the history and future of the commons.</div>
+                    </label>
+
+                    <label class="week-card" onclick="toggleWeek(this)">
+                        <input type="checkbox" name="weeks" value="week2">
+                        <h4>Week 2: Post-Capitalist Production</h4>
+                        <div class="dates">August 31 – September 6, 2026</div>
+                        <div class="desc">How global knowledge commons and local production can sustain livelihoods and community resilience.</div>
+                    </label>
+
+                    <label class="week-card" onclick="toggleWeek(this)">
+                        <input type="checkbox" name="weeks" value="week3">
+                        <h4>Week 3: Future Living</h4>
+                        <div class="dates">September 7 – 13, 2026</div>
+                        <div class="desc">From vision to scouting: cooperative housing, mapping local resources, ecological design.</div>
+                    </label>
+
+                    <label class="week-card" onclick="toggleWeek(this)">
+                        <input type="checkbox" name="weeks" value="week4">
+                        <h4>Week 4: Governance & Funding Models</h4>
+                        <div class="dates">September 14 – 20, 2026</div>
+                        <div class="desc">Participatory governance, cooperative legal structures, and mechanisms for shared assets.</div>
+                    </label>
+                </div>
+
+                <!-- Price summary -->
+                <div id="price-summary" class="ticket-note" style="margin-top: 1.5rem;">
+                    <div id="price-calc">Select at least one week to see pricing</div>
+                </div>
+
+                <div class="form-nav">
+                    <button type="button" class="btn btn-secondary" onclick="prevStep()">Back</button>
+                    <button type="button" class="btn btn-primary" onclick="nextStep()">Continue</button>
+                </div>
+            </div>
+
+            <!-- Step 3: Affiliations -->
+            <div class="form-section" data-step="3">
+                <div class="question-number">Step 3 of 10</div>
+                <h2>What are your affiliations? <span class="required">*</span></h2>
+                <p class="hint">What projects or groups are you affiliated with?</p>
+
+                <div class="form-group">
+                    <textarea id="affiliations" name="affiliations" required placeholder="Organizations, DAOs, cooperatives, communities, projects..."></textarea>
+                </div>
+
+                <div class="form-nav">
+                    <button type="button" class="btn btn-secondary" onclick="prevStep()">Back</button>
+                    <button type="button" class="btn btn-primary" onclick="nextStep()">Continue</button>
+                </div>
+            </div>
+
+            <!-- Step 4: Why join + good fit -->
+            <div class="form-section" data-step="4">
+                <div class="question-number">Step 4 of 10</div>
+                <h2>Why would you like to join Valley of the Commons, and why are you a good fit? <span class="required">*</span></h2>
+
+                <div class="form-group">
+                    <textarea id="why_join" name="why_join" required placeholder="What draws you to this gathering? Why are you a good fit for this community?"></textarea>
+                </div>
+
+                <div class="form-nav">
+                    <button type="button" class="btn btn-secondary" onclick="prevStep()">Back</button>
+                    <button type="button" class="btn btn-primary" onclick="nextStep()">Continue</button>
+                </div>
+            </div>
+
+            <!-- Step 5: Current work -->
+            <div class="form-section" data-step="5">
+                <div class="question-number">Step 5 of 10</div>
+                <h2>What are you currently building, researching, or working on? <span class="required">*</span></h2>
+
+                <div class="form-group">
+                    <textarea id="current_work" name="current_work" required placeholder="Tell us about your current projects, research, or focus areas..."></textarea>
+                </div>
+
+                <div class="form-nav">
+                    <button type="button" class="btn btn-secondary" onclick="prevStep()">Back</button>
+                    <button type="button" class="btn btn-primary" onclick="nextStep()">Continue</button>
+                </div>
+            </div>
+
+            <!-- Step 6: How you'll contribute -->
+            <div class="form-section" data-step="6">
+                <div class="question-number">Step 6 of 10</div>
+                <h2>How will you contribute to Valley of the Commons? <span class="required">*</span></h2>
+                <p class="hint">Villagers co-create their experience. You can start an interest club, lead a discussion or workshop, teach a cooking class, or more.</p>
+
+                <div class="form-group">
+                    <textarea id="contribution" name="contribution" required placeholder="What skills, energy, workshops, or perspectives will you bring?"></textarea>
+                </div>
+
+                <div class="form-nav">
+                    <button type="button" class="btn btn-secondary" onclick="prevStep()">Back</button>
+                    <button type="button" class="btn btn-primary" onclick="nextStep()">Continue</button>
+                </div>
+            </div>
+
+            <!-- Step 7: Top 3 themes + familiarity -->
+            <div class="form-section" data-step="7">
+                <div class="question-number">Step 7 of 10</div>
+                <h2>Which themes interest you most?</h2>
+                <p class="hint">Pick up to 3 themes you're most drawn to.</p>
+
+                <div class="theme-grid">
+                    <div class="theme-option" onclick="toggleTheme(this)" data-theme="commons">
+                        <h4>The Commons</h4>
+                        <div class="desc" style="font-size: 0.8rem; color: #666;">History, theory, and practice of shared resources</div>
+                    </div>
+                    <div class="theme-option" onclick="toggleTheme(this)" data-theme="production">
+                        <h4>Post-Capitalist Production</h4>
+                        <div class="desc" style="font-size: 0.8rem; color: #666;">Alternative economies and cooperative production</div>
+                    </div>
+                    <div class="theme-option" onclick="toggleTheme(this)" data-theme="living">
+                        <h4>Future Living</h4>
+                        <div class="desc" style="font-size: 0.8rem; color: #666;">Housing, ecological design, and community building</div>
+                    </div>
+                    <div class="theme-option" onclick="toggleTheme(this)" data-theme="governance">
+                        <h4>Governance & Funding</h4>
+                        <div class="desc" style="font-size: 0.8rem; color: #666;">Decision-making, legal structures, and shared assets</div>
+                    </div>
+                </div>
+                <div class="theme-counter" id="theme-counter">0 of 3 selected</div>
+
+                <div class="form-group" style="margin-top: 1.5rem;">
+                    <label for="themes_familiarity">How familiar are you with these topics? <span class="optional">(optional)</span></label>
+                    <textarea id="themes_familiarity" name="themes_familiarity" placeholder="Tell us a bit about your background with these themes — it's okay if you're new to them!" rows="3"></textarea>
+                </div>
+
+                <div class="form-nav">
+                    <button type="button" class="btn btn-secondary" onclick="prevStep()">Back</button>
+                    <button type="button" class="btn btn-primary" onclick="nextStep()">Continue</button>
+                </div>
+            </div>
+
+            <!-- Step 8: Belief update -->
+            <div class="form-section" data-step="8">
+                <div class="question-number">Step 8 of 10</div>
+                <h2>What's a belief you've recently updated or changed your mind about? <span class="required">*</span></h2>
+                <p class="hint">We value intellectual curiosity and the ability to update one's thinking. This can be about anything — work, life, politics, a personal habit.</p>
+
+                <div class="form-group">
+                    <textarea id="belief_update" name="belief_update" required placeholder="Share something you've changed your mind about and what prompted the change..."></textarea>
+                </div>
+
+                <div class="form-nav">
+                    <button type="button" class="btn btn-secondary" onclick="prevStep()">Back</button>
+                    <button type="button" class="btn btn-primary" onclick="nextStep()">Continue</button>
+                </div>
+            </div>
+
+            <!-- Step 9: Accommodation + food + accessibility + volunteer + coupon + anything else + privacy -->
+            <div class="form-section" data-step="9">
+                <div class="question-number">Step 9 of 10</div>
+                <h2>Practical Details</h2>
+
+                <!-- Accommodation -->
+                <h3 style="font-family: 'Cormorant Garamond', serif; font-size: 1.25rem; color: var(--forest); margin-bottom: 1rem;">Accommodation</h3>
+
+                <label class="week-card" onclick="toggleAddon(this, 'accommodation')" style="margin-bottom: 0.75rem;">
+                    <input type="checkbox" id="need_accommodation">
+                    <h4>Include accommodation with registration</h4>
+                    <div class="desc">On-site housing paid upfront with your registration fee.</div>
+                </label>
+
+                <div id="accommodation-options" style="display: none;">
+                    <!-- Venue selection -->
+                    <div style="padding: 0.75rem 0; margin-bottom: 0.5rem;">
+                        <label style="font-weight: 600; margin-bottom: 0.75rem; display: block;">Choose your venue</label>
+
+                        <label class="week-card" style="margin-bottom: 0.5rem; cursor: pointer;" onclick="selectVenue('ch')">
+                            <input type="radio" name="venue" value="ch">
+                            <h4>Commons Hub</h4>
+                            <div class="desc">Shared community living in the main hub building.</div>
+                        </label>
+
+                        <label class="week-card" style="cursor: pointer;" onclick="selectVenue('hh')">
+                            <input type="radio" name="venue" value="hh">
+                            <h4>Herrnhof Villa</h4>
+                            <div class="desc">Private villa rooms with more comfort and privacy.</div>
+                        </label>
+                    </div>
+
+                    <!-- Commons Hub room types -->
+                    <div id="ch-rooms" style="display: none; padding: 0.75rem 0;">
+                        <label style="font-weight: 600; margin-bottom: 0.75rem; display: block;">Room type — Commons Hub</label>
+
+                        <label class="week-card" style="cursor: pointer;" onclick="selectRoom('ch-multi')">
+                            <input type="radio" name="room_type" value="ch-multi">
+                            <h4>Bed in Multi-Room <span style="float:right; color: var(--forest); font-weight: 600;">€275/wk</span></h4>
+                            <div class="desc">Bed in a shared multi-bed room. The most affordable option.</div>
+                        </label>
+                    </div>
+
+                    <!-- Herrnhof room types -->
+                    <div id="hh-rooms" style="display: none; padding: 0.75rem 0;">
+                        <label style="font-weight: 600; margin-bottom: 0.75rem; display: block;">Room type — Herrnhof Villa</label>
+
+                        <label class="week-card" style="margin-bottom: 0.5rem; cursor: pointer;" onclick="selectRoom('hh-living')">
+                            <input type="radio" name="room_type" value="hh-living">
+                            <h4>Bed in Living Room <span style="float:right; color: var(--forest); font-weight: 600;">€315/wk</span></h4>
+                            <div class="desc">Shared living space with flexible sleeping arrangement.</div>
+                        </label>
+
+                        <label class="week-card" style="margin-bottom: 0.5rem; cursor: pointer;" onclick="selectRoom('hh-twin')">
+                            <input type="radio" name="room_type" value="hh-twin">
+                            <h4>Single Bed in Double Room <span style="float:right; color: var(--forest); font-weight: 600;">€420/wk</span></h4>
+                            <div class="desc">Your own bed in a room shared with one other person.</div>
+                        </label>
+
+                        <label class="week-card" style="margin-bottom: 0.5rem; cursor: pointer;" onclick="selectRoom('hh-single')">
+                            <input type="radio" name="room_type" value="hh-single">
+                            <h4>Single Room <span style="float:right; color: var(--forest); font-weight: 600;">€665/wk</span></h4>
+                            <div class="desc">Private room for one person.</div>
+                        </label>
+
+                        <label class="week-card" style="cursor: pointer;" onclick="selectRoom('hh-couple')">
+                            <input type="radio" name="room_type" value="hh-couple">
+                            <h4>Couple Room <span style="float:right; color: var(--forest); font-weight: 600;">€700/wk</span></h4>
+                            <div class="desc">Private room with double bed for couples.<br><em style="color: #666; font-size: 0.85em;">(Your partner should book without accommodation)</em></div>
+                        </label>
+                    </div>
+                </div>
+
+                <input type="hidden" id="accommodation_type" name="accommodation_type" value="">
+
+                <!-- Food preference -->
+                <h3 style="font-family: 'Cormorant Garamond', serif; font-size: 1.25rem; color: var(--forest); margin-bottom: 1rem; margin-top: 2rem;">Food Preference</h3>
+                <div class="radio-group">
+                    <label class="radio-option">
+                        <input type="radio" name="food_preference" value="no-preference">
+                        <span>No preference</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="food_preference" value="vegetarian">
+                        <span>Vegetarian</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="food_preference" value="vegan">
+                        <span>Vegan</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="food_preference" value="non-vegetarian">
+                        <span>Non-vegetarian</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="food_preference" value="allergies">
+                        <span>Allergies / other</span>
+                    </label>
+                </div>
+                <div id="food-allergies-detail" style="display: none; margin-top: 0.5rem;">
+                    <input type="text" id="food_allergies_text" name="food_allergies_text" placeholder="Please describe your allergies or dietary needs">
+                </div>
+
+                <!-- Accessibility -->
+                <div class="form-group" style="margin-top: 2rem;">
+                    <label for="accessibility_needs">Accessibility needs <span class="optional">(optional)</span></label>
+                    <textarea id="accessibility_needs" name="accessibility_needs" rows="2" placeholder="Let us know if you have any accessibility requirements so we can prepare."></textarea>
+                </div>
+
+                <!-- Volunteer -->
+                <div class="form-group">
+                    <label style="display: flex; align-items: flex-start; gap: 0.5rem; cursor: pointer;">
+                        <input type="checkbox" id="volunteer_interest" name="volunteer_interest" style="width: 18px; height: 18px; margin-top: 0.2rem; accent-color: var(--forest);">
+                        <span>I'm interested in volunteering (e.g. helping with setup, cooking, facilitation)</span>
+                    </label>
+                </div>
+
+                <!-- Coupon code -->
+                <div class="form-group">
+                    <label for="coupon_code">Coupon code <span class="optional">(optional)</span></label>
+                    <input type="text" id="coupon_code" name="coupon_code" placeholder="Enter a coupon code if you have one">
+                </div>
+
+                <!-- Anything else -->
+                <div class="form-group">
+                    <label for="anything_else">Anything else you'd like to share? <span class="optional">(optional)</span></label>
+                    <textarea id="anything_else" name="anything_else" rows="3" placeholder="Questions, special requests, or anything else..."></textarea>
+                </div>
+
+                <!-- Privacy -->
+                <div class="form-group" style="margin-top: 1.5rem;">
+                    <label style="display: flex; align-items: flex-start; gap: 0.5rem; cursor: pointer;">
+                        <input type="checkbox" id="privacy_accepted" name="privacy_accepted" required style="width: 18px; height: 18px; margin-top: 0.2rem; accent-color: var(--forest);">
+                        <span>I agree to the <a href="privacy.html" target="_blank">privacy policy</a> and consent to my data being processed for this application <span class="required">*</span></span>
+                    </label>
+                </div>
+
+                <div class="form-nav">
+                    <button type="button" class="btn btn-secondary" onclick="prevStep()">Back</button>
+                    <button type="button" class="btn btn-primary" onclick="nextStep()">Continue to Review</button>
+                </div>
+            </div>
+
+            <!-- Step 10: Review & Pay -->
+            <div class="form-section" data-step="10">
+                <div class="question-number">Step 10 of 10</div>
+                <h2>Review Your Application</h2>
+                <p class="hint">Please review your answers below. Click "Edit" to make changes.</p>
+
+                <div id="review-content">
+                    <!-- Populated by renderReview() -->
+                </div>
+
+                <div id="form-error" class="error-message" style="display: none;"></div>
+
+                <div class="form-nav">
+                    <button type="button" class="btn btn-secondary" onclick="prevStep()">Back</button>
+                    <button type="submit" class="btn btn-primary" id="submit-btn" style="font-size: 1.05rem;">Submit &amp; Pay</button>
+                </div>
+            </div>
+
+            <!-- Redirecting to payment (shown when checkoutUrl is returned) -->
+            <div class="form-section" data-step="redirecting" style="display: none;">
+                <div class="success-card">
+                    <h2>Taking you to payment…</h2>
+                    <p>Application received, <strong id="redirect-name"></strong>. To finish your registration, complete payment on the next page.</p>
+                    <p style="margin-top: 1.5rem;">
+                        <a id="checkout-fallback-link" href="#" class="btn btn-primary" style="font-size: 1.1rem;">Continue to Payment →</a>
+                    </p>
+                    <p style="font-size: 0.85rem; color: #666; margin-top: 1rem;">If you're not redirected automatically, click the button above. Your application is saved; you can also resume payment later from the confirmation email.</p>
+                </div>
+            </div>
+
+            <!-- Success (shown only when no payment is required, e.g. scholarship) -->
+            <div class="form-section" data-step="success" style="display: none;">
+                <div class="success-card">
+                    <div class="success-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 6L9 17l-5-5"/>
+                        </svg>
+                    </div>
+                    <h2 id="success-heading">You're in the process!</h2>
+                    <p>Thank you for applying to Valley of the Commons, <strong id="confirm-name"></strong>.</p>
+                    <p>We've sent a confirmation to <strong id="confirm-email"></strong>.</p>
+
+                    <div class="next-steps-box">
+                        <h3>What happens next</h3>
+                        <ol>
+                            <li>Our team reviews your application within <strong>1 week</strong></li>
+                            <li>You'll receive an email with the outcome</li>
+                        </ol>
+                    </div>
+
+                    <p style="margin-top: 1.5rem;">
+                        <a href="/" class="btn btn-primary">Return to Homepage</a>
+                    </p>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2026 Commons Hub &middot; <a href="mailto:team@valleyofthecommons.com">team@valleyofthecommons.com</a> &middot; <a href="/privacy.html">Privacy Policy</a> &middot; <a href="/sponsorships.html">Sponsorships</a></p>
+    </footer>
+
+    <script>
+        let currentStep = 0; // 0 = landing screen
+        const totalSteps = 10;
+        const STORAGE_KEY = 'votc_application_v2';
+        const PROCESSING_FEE_PERCENT = 0.02;
+
+        // Tiered registration pricing (must match api/mollie.js)
+        const REGISTRATION_PRICING = {
+            early:    { perWeek: 120, perMonth: 300 },
+            standard: { perWeek: 200, perMonth: 500 },
+            lastMin:  { perWeek: 240, perMonth: 600 },
+        };
+
+        // Promo link (e.g. /solarpunk) — detected from path or ?promo=.
+        // Locks a tier server-side; this is display-only. Keep in sync with
+        // PROMO_CODES in api/mollie.js.
+        const PROMO = (new URLSearchParams(location.search).get('promo')
+            || (/solarpunk/i.test(location.pathname) ? 'solarpunk' : '')).toLowerCase();
+        const PROMO_LOCKS = {
+            solarpunk: { lockTier: 'standard', validUntil: '2026-07-19T23:59:00+02:00' },
+        };
+        const TIER_ORDER = { early: 0, standard: 1, lastMin: 2 };
+
+        function getBaseTier() {
+            const now = new Date();
+            if (now < new Date('2026-05-15')) return 'early';
+            if (now < new Date('2026-07-15T23:59:00+02:00')) return 'standard'; // 23:59 CEST
+            return 'lastMin';
+        }
+
+        function getPricingTier() {
+            const base = getBaseTier();
+            const lock = PROMO_LOCKS[PROMO];
+            if (!lock) return base;
+            if (new Date() >= new Date(lock.validUntil)) return base; // promo window closed
+            return TIER_ORDER[lock.lockTier] < TIER_ORDER[base] ? lock.lockTier : base;
+        }
+
+        const currentTier = getPricingTier();
+        const tierPricing = REGISTRATION_PRICING[currentTier];
+        const TIER_LABELS = { early: 'Early Bird', standard: 'Standard', lastMin: 'Last Minute' };
+
+        // Accommodation prices — flat rates (must match api/mollie.js)
+        const ACCOMMODATION_PRICES = {
+            'ch-multi':  { perWeek: 275,  perMonth: 1100 },
+            'ch-double': { perWeek: 350,  perMonth: 1400 },
+            'hh-living': { perWeek: 315,  perMonth: 1260 },
+            'hh-triple': { perWeek: 350,  perMonth: 1400 },
+            'hh-twin':   { perWeek: 420,  perMonth: 1680 },
+            'hh-single': { perWeek: 665,  perMonth: 2660 },
+            'hh-couple': { perWeek: 700,  perMonth: 2800 },
+        };
+
+        const ACCOMMODATION_LABELS = {
+            'ch-multi':  'Commons Hub — Bed in Multi-Room',
+            'ch-double': 'Commons Hub — Bed in Double Room',
+            'hh-living': 'Herrnhof Villa — Bed in Living Room',
+            'hh-triple': 'Herrnhof Villa — Bed in Triple Room',
+            'hh-twin':   'Herrnhof Villa — Single Bed in Double Room',
+            'hh-single': 'Herrnhof Villa — Single Room',
+            'hh-couple': 'Herrnhof Villa — Couple Room',
+        };
+
+        const WEEK_LABELS = {
+            week1: 'Week 1: Return to the Commons (Aug 24-30)',
+            week2: 'Week 2: Post-Capitalist Production (Aug 31-Sep 6)',
+            week3: 'Week 3: Future Living (Sep 7-13)',
+            week4: 'Week 4: Governance & Funding Models (Sep 14-20)',
+        };
+
+        const THEME_LABELS = {
+            commons: 'The Commons',
+            production: 'Post-Capitalist Production',
+            living: 'Future Living',
+            governance: 'Governance & Funding',
+        };
+
+        // Set landing registration price
+        document.getElementById('landing-reg-price').innerHTML =
+            `&euro;${tierPricing.perWeek} – &euro;${REGISTRATION_PRICING.lastMin.perWeek}/wk`;
+
+        // Show a badge when a valid promo lock is active (e.g. /solarpunk)
+        (function showPromoBadge() {
+            const lock = PROMO_LOCKS[PROMO];
+            if (!lock || new Date() >= new Date(lock.validUntil)) return;
+            if (currentTier !== lock.lockTier) return; // lock isn't actually improving the price
+            const priceEl = document.getElementById('landing-reg-price');
+            if (!priceEl) return;
+            const badge = document.createElement('div');
+            badge.className = 'price-note';
+            badge.style.cssText = 'color:#2d5016;font-weight:600;margin-top:4px;';
+            badge.textContent = '✓ Solarpunk standard-price rate applied';
+            priceEl.insertAdjacentElement('afterend', badge);
+        })();
+
+        // Show resume notice if there's saved progress
+        (function checkSavedProgress() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                document.getElementById('resume-notice').style.display = 'block';
+                const btn = document.getElementById('start-btn');
+                btn.textContent = 'Restart Application';
+                btn.classList.remove('btn-primary');
+                btn.classList.add('btn-secondary');
+            }
+        })();
+
+        // An /apply.html?id=<uuid> link from the confirmation mail must open the
+        // form itself. The landing screen's button calls startForm(), which does
+        // no lookup — so arriving on a device with no saved progress (the whole
+        // reason to click a resume link) would have shown "Start Application"
+        // and quietly ignored the id.
+        //
+        // Deferred to DOMContentLoaded on purpose: startFormAndResume() touches
+        // `currentStep` and `window._hasExistingApplication`, both of which are
+        // initialised further down this same script. Running it inline here
+        // would hit a temporal dead zone on the first and race the second.
+        (function autoResumeFromLink() {
+            const id = new URLSearchParams(location.search).get('id');
+            if (!id) return;
+            if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)) return;
+            const go = () => startFormAndResume();
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', go);
+            } else {
+                go();
+            }
+        })();
+
+        function startForm() {
+            document.getElementById('landing-screen').style.display = 'none';
+            document.getElementById('application-form').style.display = 'block';
+            document.getElementById('progress-container').style.display = 'block';
+            currentStep = 1;
+            showStep(1);
+        }
+
+        async function startFormAndResume() {
+            document.getElementById('landing-screen').style.display = 'none';
+            document.getElementById('application-form').style.display = 'block';
+            document.getElementById('progress-container').style.display = 'block';
+
+            // Restore locally saved progress
+            const saved = localStorage.getItem(STORAGE_KEY);
+            let email = null;
+            if (saved) {
+                try {
+                    const data = JSON.parse(saved);
+                    restoreFormData(data);
+                    email = data.email;
+                } catch (e) {
+                    console.error('Failed to restore saved data:', e);
+                }
+            }
+
+            currentStep = 1;
+            showStep(1);
+
+            // A resume link from the confirmation mail carries the application id.
+            // That id is the capability that authorises reading the record back,
+            // so this is the only path that restores server-side data.
+            const linkedId = new URLSearchParams(location.search).get('id');
+            if (linkedId) {
+                try {
+                    const resp = await fetch('/api/application/lookup?id=' + encodeURIComponent(linkedId));
+                    if (resp.ok) {
+                        const result = await resp.json();
+                        if (result.found) {
+                            if (result.application.payment_status === 'paid') {
+                                alert('This application is already paid. Contact us at contact@valleyofthecommons.com if you need to make changes.');
+                                return;
+                            }
+                            restoreFormData(result.application);
+                            saveFormData();
+                            window._hasExistingApplication = true;
+                            return;
+                        }
+                    }
+                } catch (e) {
+                    console.error('Resume link lookup failed:', e);
+                }
+            }
+
+            // Otherwise just ask whether this address already applied. The reply
+            // is {found, paid} and nothing else — see api/application.js lookup
+            // for why it no longer returns the record itself.
+            if (email) {
+                try {
+                    const resp = await fetch('/api/application/lookup?email=' + encodeURIComponent(email));
+                    if (resp.ok) {
+                        const result = await resp.json();
+                        if (result.found) {
+                            if (result.paid) {
+                                alert('This email already has a completed (paid) application. Contact us at contact@valleyofthecommons.com if you need to make changes.');
+                                return;
+                            }
+                            // Flag for PUT on submit — localStorage already has the latest edits
+                            window._hasExistingApplication = true;
+                        }
+                    }
+                } catch (e) {
+                    console.error('Email lookup failed:', e);
+                }
+            }
+        }
+
+        // ===== Autosave =====
+        function saveFormData() {
+            try {
+                const data = collectFormData();
+                data._savedStep = currentStep;
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+            } catch (e) {
+                console.error('Autosave failed:', e);
+            }
+        }
+
+        function restoreFormData(data) {
+            // Text inputs
+            if (data.first_name) document.getElementById('first_name').value = data.first_name;
+            if (data.last_name) document.getElementById('last_name').value = data.last_name;
+            if (data.email) document.getElementById('email').value = data.email;
+            if (data.social_links) document.getElementById('social_media').value = data.social_links;
+            if (data.how_heard) document.getElementById('how_heard').value = data.how_heard;
+            if (data.referral_name) document.getElementById('referral_names').value = data.referral_name;
+            if (data.affiliations) document.getElementById('affiliations').value = data.affiliations;
+            if (data.motivation) document.getElementById('why_join').value = data.motivation;
+            if (data.current_work) document.getElementById('current_work').value = data.current_work;
+            if (data.contribution) document.getElementById('contribution').value = data.contribution;
+            if (data.themes_familiarity) document.getElementById('themes_familiarity').value = data.themes_familiarity;
+            if (data.belief_update) document.getElementById('belief_update').value = data.belief_update;
+            if (data.accessibility_needs) document.getElementById('accessibility_needs').value = data.accessibility_needs;
+            if (data.coupon_code) document.getElementById('coupon_code').value = data.coupon_code;
+            if (data.anything_else) document.getElementById('anything_else').value = data.anything_else;
+
+            // Weeks
+            if (data.weeks && data.weeks.length > 0) {
+                data.weeks.forEach(w => {
+                    const cb = document.querySelector(`input[name="weeks"][value="${w}"]`);
+                    if (cb) {
+                        cb.checked = true;
+                        cb.closest('.week-card').classList.add('selected');
+                    }
+                });
+                syncSelectAll();
+                updatePriceSummary();
+            }
+
+            // Themes
+            if (data.top_themes && data.top_themes.length > 0) {
+                data.top_themes.forEach(t => {
+                    const el = document.querySelector(`.theme-option[data-theme="${t}"]`);
+                    if (el) el.classList.add('selected');
+                });
+                updateThemeCounter();
+            }
+
+            // Food preference — handle "allergies: <text>" from DB
+            if (data.food_preference) {
+                let foodVal = data.food_preference;
+                let allergyText = '';
+                if (foodVal.startsWith('allergies: ')) {
+                    allergyText = foodVal.substring('allergies: '.length);
+                    foodVal = 'allergies';
+                }
+                const radio = document.querySelector(`input[name="food_preference"][value="${foodVal}"]`);
+                if (radio) {
+                    radio.checked = true;
+                    if (foodVal === 'allergies') {
+                        document.getElementById('food-allergies-detail').style.display = 'block';
+                        if (allergyText) document.getElementById('food_allergies_text').value = allergyText;
+                    }
+                }
+            }
+            if (data.food_allergies_text && !document.getElementById('food_allergies_text').value) {
+                document.getElementById('food_allergies_text').value = data.food_allergies_text;
+            }
+
+            // Checkboxes
+            if (data.volunteer_interest) document.getElementById('volunteer_interest').checked = true;
+            if (data.privacy_policy_accepted) document.getElementById('privacy_accepted').checked = true;
+
+            // Accommodation
+            if (data.need_accommodation) {
+                const accomCb = document.getElementById('need_accommodation');
+                accomCb.checked = true;
+                accomCb.closest('.week-card').classList.add('selected');
+                document.getElementById('accommodation-options').style.display = 'block';
+
+                if (data.accommodation_type) {
+                    const venue = data.accommodation_type.startsWith('hh') ? 'hh' : 'ch';
+                    // Select venue
+                    document.querySelectorAll('input[name="venue"]').forEach(r => {
+                        r.checked = (r.value === venue);
+                        r.closest('.week-card').classList.toggle('selected', r.checked);
+                    });
+                    document.getElementById('ch-rooms').style.display = venue === 'ch' ? 'block' : 'none';
+                    document.getElementById('hh-rooms').style.display = venue === 'hh' ? 'block' : 'none';
+
+                    // Select room
+                    document.querySelectorAll('input[name="room_type"]').forEach(r => {
+                        r.checked = (r.value === data.accommodation_type);
+                        r.closest('.week-card').classList.toggle('selected', r.checked);
+                    });
+                    document.getElementById('accommodation_type').value = data.accommodation_type;
+                    updatePriceSummary();
+                }
+            }
+        }
+
+        // Autosave on input changes
+        document.addEventListener('input', function(e) {
+            if (e.target.closest('#application-form')) {
+                saveFormData();
+            }
+        });
+        document.addEventListener('change', function(e) {
+            if (e.target.closest('#application-form')) {
+                saveFormData();
+            }
+        });
+
+        // ===== Navigation =====
+        function updateProgress() {
+            if (currentStep < 1) return;
+            const percent = Math.round((currentStep / totalSteps) * 100);
+            document.getElementById('progress-fill').style.width = percent + '%';
+            document.getElementById('progress-percent').textContent = percent;
+            document.getElementById('progress-step').textContent = currentStep;
+        }
+
+        function showStep(step) {
+            document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
+            const target = document.querySelector(`.form-section[data-step="${step}"]`);
+            if (target) {
+                target.classList.add('active');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+            if (step === 10) renderReview();
+            updateProgress();
+        }
+
+        function validateStep(step) {
+            const section = document.querySelector(`.form-section[data-step="${step}"]`);
+            const required = section.querySelectorAll('[required]');
+            let valid = true;
+
+            required.forEach(field => {
+                field.style.borderColor = '';
+                if (field.type === 'checkbox') {
+                    if (!field.checked) valid = false;
+                } else if (!field.value.trim()) {
+                    valid = false;
+                    field.style.borderColor = 'var(--error)';
+                }
+            });
+
+            // Email validation
+            const emailField = section.querySelector('input[type="email"]');
+            if (emailField && emailField.value && !emailField.value.includes('@')) {
+                valid = false;
+                emailField.style.borderColor = 'var(--error)';
+            }
+
+            // Week selection (step 2)
+            if (step === 2) {
+                const checked = document.querySelectorAll('input[name="weeks"]:checked');
+                if (checked.length === 0) {
+                    valid = false;
+                    alert('Please select at least one week.');
+                }
+            }
+
+            return valid;
+        }
+
+        // State for existing application resume flow
+        window._hasExistingApplication = false;
+
+        async function nextStep() {
+            if (!validateStep(currentStep)) return;
+
+            // Existence check when leaving step 1.
+            //
+            // This used to call restoreFormData(result.application) on whatever
+            // address was typed into the box, which meant typing a stranger's
+            // email loaded that stranger's application — name, motivation,
+            // affiliations, accessibility needs — into the form. The endpoint no
+            // longer returns the record for an email, and this no longer asks for
+            // it. Someone continuing on a new device uses the link in their
+            // confirmation mail, which carries the id.
+            if (currentStep === 1 && !window._hasExistingApplication) {
+                const email = document.getElementById('email').value.trim().toLowerCase();
+                if (email) {
+                    try {
+                        const resp = await fetch('/api/application/lookup?email=' + encodeURIComponent(email));
+                        if (resp.ok) {
+                            const result = await resp.json();
+                            if (result.found) {
+                                if (result.paid) {
+                                    alert('This email already has a completed (paid) application. Contact us at contact@valleyofthecommons.com if you need to make changes.');
+                                    return;
+                                }
+                                // Submit will PUT rather than POST; the server
+                                // matches the row by email on its own.
+                                window._hasExistingApplication = true;
+                            }
+                        }
+                    } catch (e) {
+                        console.error('Email lookup failed:', e);
+                    }
+                }
+            }
+
+            if (currentStep < totalSteps) {
+                currentStep++;
+                showStep(currentStep);
+                saveFormData();
+            }
+        }
+
+        function prevStep() {
+            if (currentStep > 1) {
+                currentStep--;
+                showStep(currentStep);
+            }
+        }
+
+        function jumpToStep(n) {
+            currentStep = n;
+            showStep(n);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // ===== Week selection =====
+        // Fetch and apply accommodation availability based on selected weeks
+        async function fetchAndApplyAvailability() {
+            const weeks = getSelectedWeeks();
+            if (weeks.length === 0) return;
+            try {
+                const res = await fetch(`/api/accommodation-availability?weeks=${encodeURIComponent(weeks.join(','))}`);
+                if (!res.ok) return;
+                const availability = await res.json();
+                document.querySelectorAll('input[name="room_type"]').forEach(radio => {
+                    const type = radio.value;
+                    const card = radio.closest('.week-card');
+                    if (type in availability && !availability[type]) {
+                        card.classList.add('sold-out');
+                        card.classList.remove('selected');
+                        radio.checked = false;
+                        if (document.getElementById('accommodation_type').value === type) {
+                            document.getElementById('accommodation_type').value = '';
+                            updatePriceSummary();
+                        }
+                    } else {
+                        card.classList.remove('sold-out');
+                    }
+                });
+            } catch (e) {
+                // Network error — leave all options enabled
+            }
+        }
+
+        function toggleWeek(card) {
+            const cb = card.querySelector('input');
+            cb.checked = !cb.checked;
+            card.classList.toggle('selected', cb.checked);
+            syncSelectAll();
+            updatePriceSummary();
+            saveFormData();
+            // Re-check availability when weeks change
+            if (document.getElementById('need_accommodation').checked) fetchAndApplyAvailability();
+        }
+
+        function toggleAllWeeks(card) {
+            const selectAllCb = card.querySelector('input');
+            selectAllCb.checked = !selectAllCb.checked;
+            card.classList.toggle('selected', selectAllCb.checked);
+
+            const weekCbs = document.querySelectorAll('input[name="weeks"]');
+            weekCbs.forEach(cb => {
+                cb.checked = selectAllCb.checked;
+                cb.closest('.week-card').classList.toggle('selected', selectAllCb.checked);
+            });
+            updatePriceSummary();
+            saveFormData();
+            if (document.getElementById('need_accommodation').checked) fetchAndApplyAvailability();
+        }
+
+        function syncSelectAll() {
+            const weekCbs = document.querySelectorAll('input[name="weeks"]');
+            const allChecked = Array.from(weekCbs).every(cb => cb.checked);
+            const selectAllCb = document.getElementById('select-all-weeks');
+            const selectAllCard = selectAllCb.closest('.week-card');
+            selectAllCb.checked = allChecked;
+            selectAllCard.classList.toggle('selected', allChecked);
+        }
+
+        // ===== Accommodation =====
+        function toggleAddon(card, type) {
+            const cb = card.querySelector('input');
+            cb.checked = !cb.checked;
+            card.classList.toggle('selected', cb.checked);
+
+            if (type === 'accommodation') {
+                const opts = document.getElementById('accommodation-options');
+                opts.style.display = cb.checked ? 'block' : 'none';
+                if (!cb.checked) {
+                    document.getElementById('accommodation_type').value = '';
+                    document.querySelectorAll('input[name="venue"]').forEach(r => { r.checked = false; r.closest('.week-card').classList.remove('selected'); });
+                    document.querySelectorAll('input[name="room_type"]').forEach(r => { r.checked = false; r.closest('.week-card').classList.remove('selected'); });
+                    document.getElementById('ch-rooms').style.display = 'none';
+                    document.getElementById('hh-rooms').style.display = 'none';
+                } else {
+                    fetchAndApplyAvailability();
+                }
+            }
+
+            updatePriceSummary();
+            saveFormData();
+        }
+
+        function selectVenue(venue) {
+            document.querySelectorAll('input[name="venue"]').forEach(r => {
+                r.checked = (r.value === venue);
+                r.closest('.week-card').classList.toggle('selected', r.checked);
+            });
+
+            document.getElementById('ch-rooms').style.display = venue === 'ch' ? 'block' : 'none';
+            document.getElementById('hh-rooms').style.display = venue === 'hh' ? 'block' : 'none';
+
+            document.querySelectorAll('input[name="room_type"]').forEach(r => {
+                r.checked = false;
+                r.closest('.week-card').classList.remove('selected');
+            });
+            document.getElementById('accommodation_type').value = '';
+            updatePriceSummary();
+            saveFormData();
+        }
+
+        function selectRoom(roomType) {
+            // Prevent selecting sold-out rooms
+            const radio = document.querySelector(`input[name="room_type"][value="${roomType}"]`);
+            if (radio && radio.closest('.week-card').classList.contains('sold-out')) return;
+
+            document.querySelectorAll('input[name="room_type"]').forEach(r => {
+                r.checked = (r.value === roomType);
+                r.closest('.week-card').classList.toggle('selected', r.checked);
+            });
+            document.getElementById('accommodation_type').value = roomType;
+            updatePriceSummary();
+            saveFormData();
+        }
+
+        // ===== Theme picker =====
+        function getSelectedThemes() {
+            return Array.from(document.querySelectorAll('.theme-option.selected')).map(el => el.dataset.theme);
+        }
+
+        function updateThemeCounter() {
+            const count = getSelectedThemes().length;
+            document.getElementById('theme-counter').textContent = `${count} of 3 selected`;
+
+            // Disable unchecked when at max
+            document.querySelectorAll('.theme-option').forEach(el => {
+                if (!el.classList.contains('selected')) {
+                    el.classList.toggle('disabled-theme', count >= 3);
+                }
+            });
+        }
+
+        function toggleTheme(el) {
+            if (el.classList.contains('disabled-theme')) return;
+
+            el.classList.toggle('selected');
+            updateThemeCounter();
+            saveFormData();
+        }
+
+        // ===== Food radio =====
+        document.querySelectorAll('input[name="food_preference"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                document.getElementById('food-allergies-detail').style.display =
+                    this.value === 'allergies' ? 'block' : 'none';
+            });
+        });
+
+        // ===== Price calculation =====
+        function getAccommodationPrice(accomType, weeksCount) {
+            if (!accomType || !ACCOMMODATION_PRICES[accomType]) return 0;
+            const prices = ACCOMMODATION_PRICES[accomType];
+            if (weeksCount === 4) return prices.perMonth;
+            return prices.perWeek * weeksCount;
+        }
+
+        function getSelectedWeeks() {
+            return Array.from(document.querySelectorAll('input[name="weeks"]:checked')).map(cb => cb.value);
+        }
+
+        function calculatePrice() {
+            const weeksCount = getSelectedWeeks().length;
+            if (weeksCount === 0) return null;
+
+            const registration = weeksCount === 4 ? tierPricing.perMonth : tierPricing.perWeek * weeksCount;
+            const accomType = document.getElementById('accommodation_type').value;
+            const accommodation = getAccommodationPrice(accomType, weeksCount);
+            const subtotal = registration + accommodation;
+            const fee = subtotal * PROCESSING_FEE_PERCENT;
+            const total = subtotal + fee;
+
+            return { registration, accommodation, accomType, fee, total, weeksCount };
+        }
+
+        function updatePriceSummary() {
+            const el = document.getElementById('price-calc');
+            const pricing = calculatePrice();
+
+            if (!pricing) {
+                el.textContent = 'Select at least one week to see pricing';
+                return;
+            }
+
+            const { registration, accommodation, accomType, fee, total, weeksCount } = pricing;
+            const tierLabel = TIER_LABELS[currentTier];
+
+            let html = weeksCount === 4
+                ? `<strong>Registration:</strong> €${tierPricing.perMonth} (full month, ${tierLabel})`
+                : `<strong>Registration:</strong> €${tierPricing.perWeek} × ${weeksCount} wk = €${registration.toFixed(2)} (${tierLabel})`;
+
+            if (accommodation > 0) {
+                const label = ACCOMMODATION_LABELS[accomType] || accomType;
+                const prices = ACCOMMODATION_PRICES[accomType];
+                if (weeksCount === 4) {
+                    html += `<br><strong>Accommodation:</strong> ${label}<br>&nbsp;&nbsp;€${prices.perMonth} (full month)`;
+                } else {
+                    html += `<br><strong>Accommodation:</strong> ${label}<br>&nbsp;&nbsp;€${prices.perWeek} × ${weeksCount} wk = €${accommodation.toFixed(2)}`;
+                }
+            }
+
+            html += `<br><strong>Processing fee (2%):</strong> €${fee.toFixed(2)}`;
+            html += `<br><strong style="font-size: 1.1em;">Total: €${total.toFixed(2)}</strong>`;
+
+            el.innerHTML = html;
+        }
+
+        // ===== Collect form data =====
+        function collectFormData() {
+            const form = document.getElementById('application-form');
+            const weeks = getSelectedWeeks();
+            const foodPref = document.querySelector('input[name="food_preference"]:checked');
+            let foodValue = foodPref ? foodPref.value : null;
+            if (foodValue === 'allergies') {
+                const allergyText = document.getElementById('food_allergies_text').value.trim();
+                if (allergyText) foodValue = 'allergies: ' + allergyText;
+            }
+
+            return {
+                first_name: form.first_name.value.trim(),
+                last_name: form.last_name.value.trim(),
+                email: form.email.value,
+                social_links: form.social_media.value,
+                how_heard: form.how_heard.value,
+                referral_name: form.referral_names.value,
+                affiliations: form.affiliations.value,
+                motivation: form.why_join.value,
+                current_work: form.current_work.value,
+                contribution: form.contribution.value,
+                weeks: weeks,
+                attendance_type: weeks.length === 4 ? 'full' : 'partial',
+                top_themes: getSelectedThemes(),
+                themes_familiarity: form.themes_familiarity.value,
+                belief_update: form.belief_update.value,
+                need_accommodation: document.getElementById('need_accommodation').checked,
+                accommodation_type: document.getElementById('accommodation_type').value || null,
+                accommodation_preference: document.getElementById('accommodation_type').value || null,
+                food_preference: foodValue,
+                food_allergies_text: document.getElementById('food_allergies_text').value,
+                accessibility_needs: form.accessibility_needs.value,
+                volunteer_interest: document.getElementById('volunteer_interest').checked,
+                coupon_code: form.coupon_code.value,
+                promo: PROMO || null,
+                anything_else: form.anything_else.value,
+                privacy_policy_accepted: form.privacy_accepted.checked,
+                code_of_conduct_accepted: true,
+                // Map to existing DB columns
+                commons_experience: form.affiliations.value,
+                workshops_offer: form.themes_familiarity.value,
+                projects: form.current_work.value,
+                want_food: foodValue && foodValue !== 'no-preference' ? true : false,
+            };
+        }
+
+        // ===== Review step =====
+        function renderReview() {
+            const data = collectFormData();
+            const pricing = calculatePrice();
+            const container = document.getElementById('review-content');
+
+            function esc(str) {
+                if (!str) return '<em style="color:#999;">—</em>';
+                const div = document.createElement('div');
+                div.textContent = str;
+                return div.innerHTML;
+            }
+
+            let html = '';
+
+            // Contact (step 1)
+            html += `<div class="review-section">
+                <div class="review-section-header">
+                    <h3>Contact Information</h3>
+                    <span class="review-edit-link" onclick="jumpToStep(1)">Edit</span>
+                </div>
+                <div class="review-field">
+                    <div class="review-label">Name</div>
+                    <div class="review-value">${esc(data.first_name)} ${esc(data.last_name)}</div>
+                </div>
+                <div class="review-field">
+                    <div class="review-label">Email</div>
+                    <div class="review-value">${esc(data.email)}</div>
+                </div>
+                ${data.social_links ? `<div class="review-field"><div class="review-label">Social</div><div class="review-value">${esc(data.social_links)}</div></div>` : ''}
+                ${data.how_heard ? `<div class="review-field"><div class="review-label">How heard</div><div class="review-value">${esc(data.how_heard)}</div></div>` : ''}
+                ${data.referral_name ? `<div class="review-field"><div class="review-label">Referral</div><div class="review-value">${esc(data.referral_name)}</div></div>` : ''}
+            </div>`;
+
+            // Weeks (step 2)
+            html += `<div class="review-section">
+                <div class="review-section-header">
+                    <h3>Weeks Selected</h3>
+                    <span class="review-edit-link" onclick="jumpToStep(2)">Edit</span>
+                </div>
+                <div class="review-field">
+                    <div class="review-value">${data.weeks.map(w => WEEK_LABELS[w] || w).join('<br>')}</div>
+                </div>
+            </div>`;
+
+            // Affiliations
+            html += `<div class="review-section">
+                <div class="review-section-header">
+                    <h3>Affiliations</h3>
+                    <span class="review-edit-link" onclick="jumpToStep(3)">Edit</span>
+                </div>
+                <div class="review-field"><div class="review-value">${esc(data.affiliations)}</div></div>
+            </div>`;
+
+            // Why join
+            html += `<div class="review-section">
+                <div class="review-section-header">
+                    <h3>Why Join & Good Fit</h3>
+                    <span class="review-edit-link" onclick="jumpToStep(4)">Edit</span>
+                </div>
+                <div class="review-field"><div class="review-value">${esc(data.motivation)}</div></div>
+            </div>`;
+
+            // Current work
+            html += `<div class="review-section">
+                <div class="review-section-header">
+                    <h3>Current Work</h3>
+                    <span class="review-edit-link" onclick="jumpToStep(5)">Edit</span>
+                </div>
+                <div class="review-field"><div class="review-value">${esc(data.current_work)}</div></div>
+            </div>`;
+
+            // Contribution
+            html += `<div class="review-section">
+                <div class="review-section-header">
+                    <h3>Contribution</h3>
+                    <span class="review-edit-link" onclick="jumpToStep(6)">Edit</span>
+                </div>
+                <div class="review-field"><div class="review-value">${esc(data.contribution)}</div></div>
+            </div>`;
+
+            // Themes
+            const themeNames = data.top_themes.map(t => THEME_LABELS[t] || t);
+            html += `<div class="review-section">
+                <div class="review-section-header">
+                    <h3>Themes</h3>
+                    <span class="review-edit-link" onclick="jumpToStep(7)">Edit</span>
+                </div>
+                <div class="review-field">
+                    <div class="review-label">Top themes</div>
+                    <div class="review-value">${themeNames.length > 0 ? themeNames.join(', ') : '<em style="color:#999;">None selected</em>'}</div>
+                </div>
+                ${data.themes_familiarity ? `<div class="review-field"><div class="review-label">Familiarity</div><div class="review-value">${esc(data.themes_familiarity)}</div></div>` : ''}
+            </div>`;
+
+            // Belief update
+            html += `<div class="review-section">
+                <div class="review-section-header">
+                    <h3>Belief Update</h3>
+                    <span class="review-edit-link" onclick="jumpToStep(8)">Edit</span>
+                </div>
+                <div class="review-field"><div class="review-value">${esc(data.belief_update)}</div></div>
+            </div>`;
+
+            // Practical details
+            const foodLabel = data.food_preference ? data.food_preference.replace('allergies: ', 'Allergies: ') : 'Not specified';
+            html += `<div class="review-section">
+                <div class="review-section-header">
+                    <h3>Practical Details</h3>
+                    <span class="review-edit-link" onclick="jumpToStep(9)">Edit</span>
+                </div>
+                ${data.accommodation_type ? `<div class="review-field"><div class="review-label">Accommodation</div><div class="review-value">${ACCOMMODATION_LABELS[data.accommodation_type] || data.accommodation_type}</div></div>` : '<div class="review-field"><div class="review-label">Accommodation</div><div class="review-value">None selected</div></div>'}
+                <div class="review-field"><div class="review-label">Food preference</div><div class="review-value">${esc(foodLabel)}</div></div>
+                ${data.accessibility_needs ? `<div class="review-field"><div class="review-label">Accessibility</div><div class="review-value">${esc(data.accessibility_needs)}</div></div>` : ''}
+                ${data.volunteer_interest ? '<div class="review-field"><div class="review-label">Volunteer</div><div class="review-value">Interested in volunteering</div></div>' : ''}
+                ${data.coupon_code ? `<div class="review-field"><div class="review-label">Coupon code</div><div class="review-value">${esc(data.coupon_code)}</div></div>` : ''}
+                ${data.anything_else ? `<div class="review-field"><div class="review-label">Other notes</div><div class="review-value">${esc(data.anything_else)}</div></div>` : ''}
+            </div>`;
+
+            // Price summary
+            if (pricing) {
+                const { registration, accommodation, accomType, fee, total, weeksCount } = pricing;
+                const tierLabel = TIER_LABELS[currentTier];
+
+                html += `<div class="review-price-summary">
+                    <h3>Payment Summary</h3>
+                    <div class="price-line">
+                        <span>Registration (${weeksCount} wk, ${tierLabel})</span>
+                        <span>&euro;${registration.toFixed(2)}</span>
+                    </div>`;
+
+                if (accommodation > 0) {
+                    html += `<div class="price-line">
+                        <span>Accommodation</span>
+                        <span>&euro;${accommodation.toFixed(2)}</span>
+                    </div>`;
+                }
+
+                html += `<div class="price-line">
+                        <span>Processing fee (2%)</span>
+                        <span>&euro;${fee.toFixed(2)}</span>
+                    </div>
+                    <div class="price-line total">
+                        <span>Total</span>
+                        <span>&euro;${total.toFixed(2)}</span>
+                    </div>
+                </div>`;
+            }
+
+            container.innerHTML = html;
+        }
+
+        // ===== Submit handler =====
+        // Guard re-entry on the handler itself, not just on the button. Disabling
+        // the submit button does NOT stop further submit events — implicit
+        // submission (Enter in a field), form.requestSubmit() and any programmatic
+        // dispatch all still fire it, and each run creates another Mollie payment.
+        let isSubmitting = false;
+
+        document.getElementById('application-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (isSubmitting) return;
+            isSubmitting = true;
+
+            const errorDiv = document.getElementById('form-error');
+            const submitBtn = document.getElementById('submit-btn');
+
+            errorDiv.style.display = 'none';
+            submitBtn.disabled = true;
+            const isUpdate = !!window._hasExistingApplication;
+            submitBtn.textContent = isUpdate ? 'Updating...' : 'Submitting...';
+
+            try {
+                const data = collectFormData();
+
+                const response = await fetch('/api/application', {
+                    method: isUpdate ? 'PUT' : 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (response.ok && result.success) {
+                    // Save submitted data so "Resume" works on next visit
+                    saveFormData();
+
+                    document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
+                    document.getElementById('progress-container').style.display = 'none';
+
+                    if (result.checkoutUrl) {
+                        // Show redirecting interstitial — payment is the next step, not a completed flow
+                        document.getElementById('redirect-name').textContent = data.first_name;
+                        const fallback = document.getElementById('checkout-fallback-link');
+                        fallback.href = result.checkoutUrl;
+                        const redirectSection = document.querySelector('.form-section[data-step="redirecting"]');
+                        redirectSection.style.display = 'block';
+                        redirectSection.classList.add('active');
+                        // Redirect almost immediately — short pause is just so the user sees the framing
+                        setTimeout(() => { window.location.href = result.checkoutUrl; }, 400);
+                    } else {
+                        // No payment required (e.g. scholarship) — show full success state
+                        document.getElementById('confirm-name').textContent = data.first_name;
+                        document.getElementById('confirm-email').textContent = data.email;
+                        document.getElementById('success-heading').textContent = isUpdate
+                            ? `Application updated, ${data.first_name}!`
+                            : `You're in the process, ${data.first_name}!`;
+                        const successSection = document.querySelector('.form-section[data-step="success"]');
+                        successSection.style.display = 'block';
+                        successSection.classList.add('active');
+                    }
+                } else {
+                    errorDiv.textContent = result.error || 'Something went wrong. Please try again.';
+                    errorDiv.style.display = 'block';
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Submit & Pay';
+                    isSubmitting = false;
+                }
+                // Success deliberately does NOT clear isSubmitting: we are either
+                // navigating to Mollie or showing the done state, and a second run
+                // would mint a second payment.
+            } catch (error) {
+                console.error('Submission error:', error);
+                errorDiv.textContent = 'Network error. Please check your connection.';
+                errorDiv.style.display = 'block';
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit & Pay';
+                isSubmitting = false;
+            }
+        });
+
+        // Coming BACK from Mollie (browser back button) restores this page from the
+        // back/forward cache in Safari and Firefox — same JS heap, so isSubmitting
+        // would still be true and the button still disabled, leaving a dead form the
+        // applicant cannot retry from. Chrome usually re-runs the script instead, so
+        // this only bites some browsers; reset explicitly on a bfcache restore.
+        window.addEventListener('pageshow', (event) => {
+            if (!event.persisted) return;
+            isSubmitting = false;
+            const submitBtn = document.getElementById('submit-btn');
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit & Pay';
+            }
+        });
+    </script>
+</body>
+</html>

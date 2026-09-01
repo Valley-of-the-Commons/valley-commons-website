@@ -1,0 +1,1 @@
+Stefan is a collaborative economy practitioner and former chairman of Chiemgauer Regiogeld, Germany's oldest regional currency project. After 20 years in the project, he is now building a fab lab to explore local production in practice.

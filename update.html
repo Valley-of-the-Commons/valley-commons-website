@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="/icon.svg">
+    <title>__OG_TITLE__</title>
+    <meta name="description" content="__OG_DESC__">
+    <meta property="og:title" content="__OG_TITLE__">
+    <meta property="og:description" content="__OG_DESC__">
+    <meta property="og:image" content="__OG_IMAGE__">
+    <meta property="og:url" content="__OG_URL__">
+    <meta property="og:type" content="article">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="__OG_TITLE__">
+    <meta name="twitter:description" content="__OG_DESC__">
+    <meta name="twitter:image" content="__OG_IMAGE__">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3/dist/purify.min.js"></script>
+    <style>
+        :root { --votc-forest: #2d5016; --votc-forest-light: #4a7c23; }
+
+        .post-wrap { max-width: 760px; margin: 0 auto; padding: clamp(1.5rem, 4vw, 3rem) clamp(1rem, 4vw, 2rem) 6rem; }
+        .post-back { display: inline-block; margin-bottom: 2rem; color: var(--color-text-light); text-decoration: none; font-size: 0.9rem; }
+        .post-back:hover { color: var(--color-link); text-decoration: underline; }
+
+        .post-meta { font-size: 0.8rem; color: var(--color-text-light); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.75rem; }
+        .post-title { font-size: clamp(1.85rem, 4.5vw, 2.75rem); line-height: 1.15; margin-bottom: 1rem; letter-spacing: -0.01em; font-weight: 700; }
+        .post-summary { font-size: clamp(1.05rem, 1.6vw, 1.2rem); color: var(--color-text-light); margin-bottom: 2.5rem; line-height: 1.5; }
+        .post-cover { width: 100%; border-radius: 6px; margin-bottom: 2.5rem; display: block; }
+
+        .post-body { font-size: 1.05rem; line-height: 1.7; color: var(--color-text); }
+        .post-body > * + * { margin-top: 1.25rem; }
+        .post-body h2 { margin: 3rem 0 1rem; font-size: clamp(1.4rem, 2.5vw, 1.7rem); font-weight: 600; line-height: 1.3; letter-spacing: -0.005em; }
+        .post-body h3 { margin: 2rem 0 0.75rem; font-size: 1.2rem; font-weight: 600; }
+        .post-body p { margin: 0 0 1.25rem; }
+        .post-body strong { font-weight: 600; }
+        .post-body ul, .post-body ol { margin: 0 0 1.25rem 1.5rem; padding: 0; }
+        .post-body li { margin-bottom: 0.5rem; }
+
+        /* Links — visible, accent color, underline on hover */
+        .post-body a {
+            color: var(--votc-forest);
+            text-decoration: underline;
+            text-decoration-thickness: 1px;
+            text-underline-offset: 0.2em;
+            text-decoration-color: rgba(45, 80, 22, 0.4);
+            transition: text-decoration-color 0.15s ease;
+        }
+        .post-body a:hover { text-decoration-color: var(--votc-forest); }
+
+        /* Single image: full width */
+        .post-body img { max-width: 100%; height: auto; border-radius: 4px; display: block; margin: 1.5rem auto; }
+
+        /* Logos: small + centered */
+        .post-body img[src*="logo"] {
+            max-width: clamp(180px, 35%, 260px);
+            margin: 1.5rem auto;
+        }
+
+        /* Image carousel (multiple images → swipe / arrow nav) */
+        .post-body .post-gallery {
+            position: relative;
+            margin: 1.75rem 0;
+            border-radius: 6px;
+            overflow: hidden;
+            background: #000;
+        }
+        .post-body .post-gallery .gallery-track {
+            display: flex;
+            scroll-snap-type: x mandatory;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            scrollbar-width: none;
+            -webkit-overflow-scrolling: touch;
+            aspect-ratio: 16/10;
+        }
+        .post-body .post-gallery .gallery-track::-webkit-scrollbar { display: none; }
+        .post-body .post-gallery .gallery-track > img {
+            flex: 0 0 100%;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            scroll-snap-align: center;
+            margin: 0;
+            border-radius: 0;
+            background: #000;
+        }
+        .post-body .gallery-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.45);
+            color: white;
+            border: 0;
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            font-size: 1.4rem;
+            line-height: 1;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: background 0.15s ease, opacity 0.15s ease;
+            opacity: 0.85;
+            z-index: 2;
+        }
+        .post-body .gallery-arrow:hover { background: rgba(0, 0, 0, 0.7); opacity: 1; }
+        .post-body .gallery-arrow:disabled { opacity: 0.25; cursor: default; }
+        .post-body .gallery-arrow.prev { left: 0.6rem; }
+        .post-body .gallery-arrow.next { right: 0.6rem; }
+        .post-body .gallery-dots {
+            position: absolute;
+            bottom: 0.65rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 0.4rem;
+            background: rgba(0, 0, 0, 0.35);
+            padding: 0.35rem 0.55rem;
+            border-radius: 999px;
+            z-index: 2;
+        }
+        .post-body .gallery-dots button {
+            width: 7px; height: 7px;
+            border-radius: 50%;
+            border: 0;
+            padding: 0;
+            background: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: background 0.15s ease, transform 0.15s ease;
+        }
+        .post-body .gallery-dots button.active {
+            background: white;
+            transform: scale(1.3);
+        }
+        .post-body .gallery-counter {
+            position: absolute;
+            top: 0.65rem;
+            right: 0.75rem;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            font-size: 0.75rem;
+            padding: 0.2rem 0.55rem;
+            border-radius: 999px;
+            font-variant-numeric: tabular-nums;
+            z-index: 2;
+        }
+
+        /* Image caption (an em-only paragraph that immediately follows an image / gallery) */
+        .post-body .img-caption {
+            font-size: 0.9rem;
+            color: var(--color-text-light);
+            font-style: italic;
+            text-align: center;
+            margin: -0.75rem 0 1.5rem;
+        }
+
+        .post-body blockquote {
+            border-left: 3px solid var(--votc-forest);
+            padding: 0.5rem 0 0.5rem 1.25rem;
+            color: var(--color-text);
+            font-style: normal;
+            margin: 2rem 0;
+            background: #faf8f5;
+            border-radius: 0 4px 4px 0;
+        }
+        .post-body blockquote p:last-child { margin-bottom: 0; }
+
+        .post-body code { background: #f5f5f0; padding: 0.1em 0.35em; border-radius: 3px; font-size: 0.9em; }
+        .post-body pre { background: #f5f5f0; padding: 1rem; overflow-x: auto; border-radius: 4px; margin: 1.5rem 0; }
+        .post-body pre code { background: none; padding: 0; }
+
+        .post-body iframe { width: 100%; aspect-ratio: 16/9; border: 0; border-radius: 4px; margin: 1.5rem 0; display: block; }
+
+        .post-share { margin-top: 3rem; padding-top: 2rem; border-top: 1px solid #e5e5e5; }
+        .post-share-label { font-size: 0.85rem; color: var(--color-text-light); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 0.75rem; }
+        .post-share-links { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+        .post-share-links a {
+            color: var(--color-link);
+            text-decoration: none;
+            border: 1px solid #e5e5e5;
+            padding: 0.45rem 0.9rem;
+            border-radius: 999px;
+            font-size: 0.85rem;
+        }
+        .post-share-links a:hover { background: #f5f5f0; }
+        .post-loading, .post-error { text-align: center; color: var(--color-text-light); padding: 4rem 0; }
+
+        /* Lightbox */
+        .post-body img:not([src*="logo"]) { cursor: zoom-in; }
+        .lightbox {
+            position: fixed; inset: 0;
+            background: rgba(0, 0, 0, 0.92);
+            display: none;
+            align-items: center; justify-content: center;
+            z-index: 9999;
+            padding: 2rem;
+            cursor: zoom-out;
+            opacity: 0;
+            transition: opacity 0.18s ease;
+        }
+        .lightbox.visible { display: flex; opacity: 1; }
+        .lightbox img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 4px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+        .lightbox-close {
+            position: absolute;
+            top: 1rem; right: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            font-size: 1.25rem;
+            line-height: 1;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .lightbox-close:hover { background: rgba(255, 255, 255, 0.2); }
+        .lightbox-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            width: 44px; height: 44px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: none;
+            align-items: center; justify-content: center;
+        }
+        .lightbox-nav:hover { background: rgba(255, 255, 255, 0.2); }
+        .lightbox-nav.visible { display: flex; }
+        .lightbox-prev { left: 1rem; }
+        .lightbox-next { right: 1rem; }
+        body.lightbox-open { overflow: hidden; }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-container">
+            <div class="logo">
+                <a href="/"><img src="/commonshublogo.svg" alt="Commons Hub"></a>
+            </div>
+            <nav class="nav">
+                <a href="/">Home</a>
+                <a href="/updates.html">Updates</a>
+                <a href="/apply.html" class="nav-cta-button">REGISTER NOW</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="post-wrap">
+        <a class="post-back" href="/updates.html">← All updates</a>
+        <article id="post"><p class="post-loading">Loading…</p></article>
+    </main>
+
+    <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Image viewer">
+        <button class="lightbox-nav lightbox-prev" id="lightbox-prev" aria-label="Previous image">‹</button>
+        <img id="lightbox-img" alt="">
+        <button class="lightbox-nav lightbox-next" id="lightbox-next" aria-label="Next image">›</button>
+        <button class="lightbox-close" id="lightbox-close" aria-label="Close">×</button>
+    </div>
+
+    <script>
+        const fmt = new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+        function escapeHtml(s) {
+            return String(s || '').replace(/[&<>"']/g, c => ({
+                '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+            })[c]);
+        }
+
+        // Build a swipe-and-arrow carousel from a list of <img> elements.
+        function buildCarousel(imgs) {
+            const total = imgs.length;
+            const gallery = document.createElement('div');
+            gallery.className = 'post-gallery';
+
+            const track = document.createElement('div');
+            track.className = 'gallery-track';
+            imgs.forEach(img => {
+                img.removeAttribute('width');
+                img.removeAttribute('height');
+                track.appendChild(img);
+            });
+            gallery.appendChild(track);
+
+            const prev = document.createElement('button');
+            prev.className = 'gallery-arrow prev';
+            prev.type = 'button';
+            prev.setAttribute('aria-label', 'Previous photo');
+            prev.textContent = '‹';
+
+            const next = document.createElement('button');
+            next.className = 'gallery-arrow next';
+            next.type = 'button';
+            next.setAttribute('aria-label', 'Next photo');
+            next.textContent = '›';
+
+            const dots = document.createElement('div');
+            dots.className = 'gallery-dots';
+            const dotEls = imgs.map((_, i) => {
+                const b = document.createElement('button');
+                b.type = 'button';
+                b.setAttribute('aria-label', `Photo ${i + 1} of ${total}`);
+                if (i === 0) b.classList.add('active');
+                b.addEventListener('click', () => goTo(i));
+                dots.appendChild(b);
+                return b;
+            });
+
+            const counter = document.createElement('div');
+            counter.className = 'gallery-counter';
+            counter.textContent = `1 / ${total}`;
+
+            gallery.append(prev, next, dots, counter);
+
+            const goTo = (i) => {
+                const clamped = Math.max(0, Math.min(total - 1, i));
+                track.scrollTo({ left: clamped * track.clientWidth, behavior: 'smooth' });
+            };
+            const currentIndex = () => Math.round(track.scrollLeft / track.clientWidth);
+
+            prev.addEventListener('click', () => goTo(currentIndex() - 1));
+            next.addEventListener('click', () => goTo(currentIndex() + 1));
+
+            const updateState = () => {
+                const i = currentIndex();
+                dotEls.forEach((d, j) => d.classList.toggle('active', i === j));
+                counter.textContent = `${i + 1} / ${total}`;
+                prev.disabled = i === 0;
+                next.disabled = i === total - 1;
+            };
+            track.addEventListener('scroll', () => {
+                clearTimeout(track._t);
+                track._t = setTimeout(updateState, 60);
+            });
+            // Re-snap on resize so we don't end up between slides
+            window.addEventListener('resize', () => goTo(currentIndex()));
+            // Initial state once layout settles
+            requestAnimationFrame(updateState);
+
+            return gallery;
+        }
+
+        // Group adjacent <img> in same paragraph into a gallery,
+        // open external links in new tab, and turn em-only paragraphs after
+        // images/galleries into figure-style captions.
+        function enhanceBody(root) {
+            if (!root) return;
+
+            // 1) Image gallery: any <p> whose only meaningful children are <img> (+<br>/whitespace)
+            root.querySelectorAll('p').forEach(p => {
+                const imgs = Array.from(p.querySelectorAll('img'));
+                if (imgs.length < 2) {
+                    // Lone image inside <p> with no other content: unwrap so margin works
+                    if (imgs.length === 1) {
+                        const meaningful = Array.from(p.childNodes).filter(n => {
+                            if (n.nodeType === 3) return n.textContent.trim() !== '';
+                            return !(n.tagName === 'BR' || n.tagName === 'IMG');
+                        });
+                        if (meaningful.length === 0) {
+                            p.replaceWith(imgs[0]);
+                        }
+                    }
+                    return;
+                }
+                const meaningful = Array.from(p.childNodes).filter(n => {
+                    if (n.nodeType === 3) return n.textContent.trim() !== '';
+                    return !(n.tagName === 'BR' || n.tagName === 'IMG');
+                });
+                if (meaningful.length > 0) return; // mixed content — leave alone
+
+                const gallery = buildCarousel(imgs);
+                p.replaceWith(gallery);
+            });
+
+            // 2) Caption: an <em>-only paragraph immediately after an image/gallery
+            root.querySelectorAll('p').forEach(p => {
+                const prev = p.previousElementSibling;
+                if (!prev) return;
+                const isAfterImg = prev.tagName === 'IMG' || prev.classList?.contains('post-gallery');
+                if (!isAfterImg) return;
+                const onlyEm = p.childNodes.length === 1
+                    && p.firstChild.nodeType === 1
+                    && p.firstChild.tagName === 'EM';
+                if (onlyEm) {
+                    p.classList.add('img-caption');
+                    p.innerHTML = p.firstChild.innerHTML;
+                }
+            });
+
+            // 3) External links open in new tab
+            root.querySelectorAll('a[href^="http"]').forEach(a => {
+                if (a.host !== window.location.host) {
+                    a.target = '_blank';
+                    a.rel = 'noopener noreferrer';
+                }
+            });
+
+            // 4) Lightbox: clickable images (skip logos)
+            const zoomable = Array.from(root.querySelectorAll('img'))
+                .filter(img => !/logo/i.test(img.src));
+            zoomable.forEach((img, i) => {
+                img.addEventListener('click', () => openLightbox(zoomable, i));
+            });
+        }
+
+        // Lightbox
+        const lb = {
+            el: null, img: null, prev: null, next: null, close: null,
+            list: [], index: 0
+        };
+        function initLightbox() {
+            lb.el = document.getElementById('lightbox');
+            lb.img = document.getElementById('lightbox-img');
+            lb.prev = document.getElementById('lightbox-prev');
+            lb.next = document.getElementById('lightbox-next');
+            lb.close = document.getElementById('lightbox-close');
+
+            lb.el.addEventListener('click', (e) => {
+                if (e.target === lb.el || e.target === lb.img) closeLightbox();
+            });
+            lb.img.addEventListener('click', closeLightbox);
+            lb.close.addEventListener('click', closeLightbox);
+            lb.prev.addEventListener('click', (e) => { e.stopPropagation(); step(-1); });
+            lb.next.addEventListener('click', (e) => { e.stopPropagation(); step(1); });
+
+            document.addEventListener('keydown', (e) => {
+                if (!lb.el.classList.contains('visible')) return;
+                if (e.key === 'Escape') closeLightbox();
+                else if (e.key === 'ArrowLeft') step(-1);
+                else if (e.key === 'ArrowRight') step(1);
+            });
+        }
+        function openLightbox(list, index) {
+            lb.list = list;
+            lb.index = index;
+            showCurrent();
+            lb.el.classList.add('visible');
+            document.body.classList.add('lightbox-open');
+            const showNav = list.length > 1;
+            lb.prev.classList.toggle('visible', showNav);
+            lb.next.classList.toggle('visible', showNav);
+        }
+        function closeLightbox() {
+            lb.el.classList.remove('visible');
+            document.body.classList.remove('lightbox-open');
+        }
+        function step(delta) {
+            lb.index = (lb.index + delta + lb.list.length) % lb.list.length;
+            showCurrent();
+        }
+        function showCurrent() {
+            const src = lb.list[lb.index].src;
+            const alt = lb.list[lb.index].alt || '';
+            lb.img.src = src;
+            lb.img.alt = alt;
+        }
+        initLightbox();
+
+        async function loadPost() {
+            const slug = window.location.pathname.split('/').filter(Boolean).pop();
+            const wrap = document.getElementById('post');
+            try {
+                const r = await fetch(`/api/updates/${encodeURIComponent(slug)}`);
+                if (!r.ok) {
+                    wrap.innerHTML = '<p class="post-error">This update could not be found.</p>';
+                    return;
+                }
+                const { update: p } = await r.json();
+                const date = p.published_at ? fmt.format(new Date(p.published_at)) : '';
+                const bodyHtml = DOMPurify.sanitize(marked.parse(p.body_md || ''), {
+                    ADD_TAGS: ['iframe'],
+                    ADD_ATTR: ['allow', 'allowfullscreen', 'frameborder', 'scrolling', 'loading', 'referrerpolicy']
+                });
+                const cover = p.cover_image_url
+                    ? `<img class="post-cover" src="${escapeHtml(p.cover_image_url)}" alt="">`
+                    : '';
+                const summary = p.summary
+                    ? `<p class="post-summary">${escapeHtml(p.summary)}</p>`
+                    : '';
+
+                const url = window.location.href;
+                const title = p.title;
+                const shareX = `https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(url)}`;
+                const shareLi = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
+                const shareFb = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
+                const shareMail = `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(url)}`;
+
+                wrap.innerHTML = `
+                    <div class="post-meta">${escapeHtml(date)}${p.author ? ' · ' + escapeHtml(p.author) : ''}</div>
+                    <h1 class="post-title">${escapeHtml(p.title)}</h1>
+                    ${summary}
+                    ${cover}
+                    <div class="post-body">${bodyHtml}</div>
+                    <div class="post-share">
+                        <div class="post-share-label">Share</div>
+                        <div class="post-share-links">
+                            <a href="${shareX}" target="_blank" rel="noopener">X / Twitter</a>
+                            <a href="${shareLi}" target="_blank" rel="noopener">LinkedIn</a>
+                            <a href="${shareFb}" target="_blank" rel="noopener">Facebook</a>
+                            <a href="${shareMail}">Email</a>
+                            <a href="#" id="copy-link">Copy link</a>
+                        </div>
+                    </div>`;
+
+                enhanceBody(wrap.querySelector('.post-body'));
+
+                document.title = `${p.title} | Valley of the Commons`;
+
+                document.getElementById('copy-link').addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    try {
+                        await navigator.clipboard.writeText(url);
+                        e.target.textContent = 'Copied!';
+                        setTimeout(() => { e.target.textContent = 'Copy link'; }, 1500);
+                    } catch {}
+                });
+            } catch (err) {
+                wrap.innerHTML = '<p class="post-error">Could not load this update.</p>';
+            }
+        }
+        loadPost();
+    </script>
+</body>
+</html>

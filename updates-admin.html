@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Updates Admin — Valley of the Commons</title>
+    <link rel="icon" type="image/svg+xml" href="icon.svg">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3/dist/purify.min.js"></script>
+    <style>
+        :root {
+            --forest: #2d5016;
+            --forest-light: #4a7c23;
+            --cream: #faf8f5;
+            --sand: #f5f5f0;
+            --charcoal: #2c2c2c;
+            --muted: #888;
+            --danger: #ef4444;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', -apple-system, sans-serif; background: var(--sand); color: var(--charcoal); line-height: 1.5; }
+
+        .auth-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem; }
+        .auth-box { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
+        .auth-box h1 { color: var(--forest); margin-bottom: 1.5rem; font-size: 1.5rem; }
+        .auth-box input { width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 6px; font-size: 1rem; margin-bottom: 1rem; }
+        .auth-box button { width: 100%; padding: 0.75rem; background: var(--forest); color: white; border: none; border-radius: 6px; font-size: 1rem; cursor: pointer; }
+        .auth-error { color: var(--danger); margin-bottom: 1rem; font-size: 0.875rem; }
+
+        .dashboard { display: none; }
+        .dashboard.visible { display: block; }
+        .header { background: white; padding: 1rem 2rem; border-bottom: 1px solid #ddd; display: flex; justify-content: space-between; align-items: center; }
+        .header h1 { font-size: 1.25rem; color: var(--forest); }
+        .header-actions { display: flex; gap: 0.75rem; }
+        .header-actions button, .header-actions a {
+            background: white; color: var(--charcoal); border: 1px solid #ddd; padding: 0.5rem 1rem;
+            border-radius: 6px; cursor: pointer; font-size: 0.875rem; text-decoration: none;
+        }
+        .header-actions .btn-primary { background: var(--forest); color: white; border-color: var(--forest); }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 2rem; display: grid; grid-template-columns: 320px 1fr; gap: 2rem; }
+        @media (max-width: 900px) { .container { grid-template-columns: 1fr; } }
+
+        .sidebar { background: white; border-radius: 8px; padding: 1rem; max-height: 80vh; overflow-y: auto; }
+        .sidebar h2 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin-bottom: 0.75rem; padding: 0 0.5rem; }
+        .sidebar-item {
+            padding: 0.75rem; border-radius: 6px; cursor: pointer; margin-bottom: 0.25rem;
+            border: 1px solid transparent;
+        }
+        .sidebar-item:hover { background: var(--sand); }
+        .sidebar-item.active { background: var(--sand); border-color: var(--forest); }
+        .sidebar-item-title { font-weight: 500; font-size: 0.95rem; margin-bottom: 0.25rem; }
+        .sidebar-item-meta { font-size: 0.75rem; color: var(--muted); display: flex; gap: 0.5rem; align-items: center; }
+        .badge {
+            display: inline-block; padding: 0.1rem 0.5rem; border-radius: 999px;
+            font-size: 0.7rem; font-weight: 500;
+        }
+        .badge.published { background: #d1fae5; color: #065f46; }
+        .badge.draft { background: #fef3c7; color: #92400e; }
+
+        .editor { background: white; border-radius: 8px; padding: 1.5rem; }
+        .editor-tabs { display: flex; gap: 0.5rem; margin-bottom: 1rem; border-bottom: 1px solid #eee; }
+        .editor-tab {
+            background: none; border: none; padding: 0.5rem 1rem;
+            cursor: pointer; font-size: 0.9rem; color: var(--muted);
+            border-bottom: 2px solid transparent; margin-bottom: -1px;
+        }
+        .editor-tab.active { color: var(--forest); border-bottom-color: var(--forest); }
+
+        .field { margin-bottom: 1rem; }
+        .field label { display: block; font-size: 0.85rem; color: var(--muted); margin-bottom: 0.35rem; text-transform: uppercase; letter-spacing: 0.04em; }
+        .field input, .field textarea {
+            width: 100%; padding: 0.6rem 0.75rem; border: 1px solid #ddd; border-radius: 6px;
+            font-size: 1rem; font-family: inherit; background: white;
+        }
+        .field textarea { resize: vertical; }
+        .field textarea.body { min-height: 380px; font-family: 'SFMono-Regular', Menlo, monospace; font-size: 0.9rem; line-height: 1.5; }
+
+        .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        @media (max-width: 600px) { .field-row { grid-template-columns: 1fr; } }
+
+        .checkbox-row { display: flex; align-items: center; gap: 0.5rem; }
+        .checkbox-row input { width: auto; }
+
+        .actions { display: flex; gap: 0.75rem; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #eee; flex-wrap: wrap; }
+        .btn {
+            padding: 0.6rem 1.2rem; border: none; border-radius: 6px;
+            font-size: 0.9rem; cursor: pointer; font-weight: 500;
+        }
+        .btn-primary { background: var(--forest); color: white; }
+        .btn-secondary { background: var(--sand); color: var(--charcoal); border: 1px solid #ddd; }
+        .btn-danger { background: white; color: var(--danger); border: 1px solid var(--danger); margin-left: auto; }
+
+        .preview {
+            display: none; padding: 1rem; border: 1px solid #eee; border-radius: 6px;
+            min-height: 380px; line-height: 1.7;
+        }
+        .preview.visible { display: block; }
+        .preview h2 { margin: 1.5rem 0 0.75rem; }
+        .preview h3 { margin: 1.25rem 0 0.5rem; }
+        .preview p { margin-bottom: 0.85rem; }
+        .preview img { max-width: 100%; border-radius: 4px; }
+        .preview blockquote { border-left: 3px solid var(--forest); padding-left: 1rem; color: var(--muted); margin: 1rem 0; }
+        .preview ul, .preview ol { margin: 0 0 1rem 1.5rem; }
+        .preview code { background: var(--sand); padding: 0.1em 0.35em; border-radius: 3px; }
+        .preview pre { background: var(--sand); padding: 1rem; border-radius: 4px; overflow-x: auto; }
+
+        .toast {
+            position: fixed; bottom: 1.5rem; right: 1.5rem;
+            background: var(--charcoal); color: white; padding: 0.75rem 1.25rem;
+            border-radius: 6px; font-size: 0.9rem; opacity: 0; transform: translateY(10px);
+            transition: opacity 0.2s, transform 0.2s; pointer-events: none;
+        }
+        .toast.visible { opacity: 1; transform: translateY(0); }
+        .toast.error { background: var(--danger); }
+
+        .empty-editor { text-align: center; padding: 4rem 1rem; color: var(--muted); }
+    </style>
+</head>
+<body>
+    <div class="auth-screen" id="auth-screen">
+        <div class="auth-box">
+            <h1>Updates Admin</h1>
+            <p id="auth-error" class="auth-error" style="display: none;"></p>
+            <input type="password" id="api-key" placeholder="Admin API key">
+            <button onclick="login()">Login</button>
+        </div>
+    </div>
+
+    <div class="dashboard" id="dashboard">
+        <header class="header">
+            <h1>Valley of the Commons — Updates</h1>
+            <div class="header-actions">
+                <a href="/updates.html" target="_blank">View public page</a>
+                <a href="/admin.html">Applications admin</a>
+                <button class="btn-primary" onclick="newDraft()">+ New update</button>
+                <button onclick="logout()">Logout</button>
+            </div>
+        </header>
+
+        <div class="container">
+            <aside class="sidebar">
+                <h2>All updates</h2>
+                <div id="sidebar-list"><p style="padding:1rem; color:var(--muted); font-size:0.85rem;">Loading…</p></div>
+            </aside>
+
+            <section class="editor" id="editor">
+                <div class="empty-editor" id="empty-editor">
+                    Select an update on the left, or create a new one.
+                </div>
+
+                <div id="editor-form" style="display:none;">
+                    <div class="editor-tabs">
+                        <button class="editor-tab active" data-tab="edit" onclick="switchTab('edit')">Edit</button>
+                        <button class="editor-tab" data-tab="preview" onclick="switchTab('preview')">Preview</button>
+                    </div>
+
+                    <div id="tab-edit">
+                        <div class="field">
+                            <label>Title</label>
+                            <input type="text" id="f-title" placeholder="A clear, share-worthy headline">
+                        </div>
+                        <div class="field-row">
+                            <div class="field">
+                                <label>Slug (URL)</label>
+                                <input type="text" id="f-slug" placeholder="auto-from-title">
+                            </div>
+                            <div class="field">
+                                <label>Author</label>
+                                <input type="text" id="f-author" placeholder="Optional">
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label>Summary (used for previews & social cards)</label>
+                            <textarea id="f-summary" rows="2" placeholder="One or two sentences."></textarea>
+                        </div>
+                        <div class="field">
+                            <label>Cover image URL</label>
+                            <input type="text" id="f-cover" placeholder="/photos/something.jpg or full URL">
+                        </div>
+                        <div class="field">
+                            <label>Body (Markdown)</label>
+                            <textarea id="f-body" class="body" placeholder="# A heading
+
+Write your update here. Markdown is supported."></textarea>
+                        </div>
+                        <div class="field checkbox-row">
+                            <input type="checkbox" id="f-published">
+                            <label for="f-published" style="margin: 0; text-transform: none; letter-spacing: 0;">Published (visible on public page)</label>
+                        </div>
+                    </div>
+
+                    <div class="preview" id="tab-preview"></div>
+
+                    <div class="actions">
+                        <button class="btn btn-primary" onclick="saveUpdate()">Save</button>
+                        <button class="btn btn-secondary" onclick="saveAndView()">Save & view</button>
+                        <button class="btn btn-danger" onclick="deleteUpdate()" id="btn-delete" style="display:none;">Delete</button>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        let apiKey = localStorage.getItem('votc_admin_key');
+        let updates = [];
+        let editing = null; // current update or { __new: true }
+
+        if (apiKey) { showDashboard(); loadUpdates(); }
+
+        function login() {
+            const k = document.getElementById('api-key').value.trim();
+            if (!k) return showAuthError('Enter an API key');
+            apiKey = k;
+            localStorage.setItem('votc_admin_key', k);
+            showDashboard();
+            loadUpdates();
+        }
+        function logout() {
+            apiKey = null;
+            localStorage.removeItem('votc_admin_key');
+            location.reload();
+        }
+        function showAuthError(m) {
+            const e = document.getElementById('auth-error');
+            e.textContent = m; e.style.display = 'block';
+        }
+        function showDashboard() {
+            document.getElementById('auth-screen').style.display = 'none';
+            document.getElementById('dashboard').classList.add('visible');
+        }
+        function toast(msg, isError) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.toggle('error', !!isError);
+            t.classList.add('visible');
+            setTimeout(() => t.classList.remove('visible'), 2000);
+        }
+        function escapeHtml(s) {
+            return String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+        }
+
+        async function loadUpdates() {
+            try {
+                const r = await fetch('/api/updates?drafts=1&limit=200', {
+                    headers: { Authorization: `Bearer ${apiKey}` }
+                });
+                if (r.status === 401) { logout(); return; }
+                const data = await r.json();
+                updates = data.updates || [];
+                renderSidebar();
+            } catch (err) {
+                document.getElementById('sidebar-list').innerHTML =
+                    '<p style="padding:1rem; color:var(--danger); font-size:0.85rem;">Failed to load.</p>';
+            }
+        }
+
+        function renderSidebar() {
+            const wrap = document.getElementById('sidebar-list');
+            if (updates.length === 0) {
+                wrap.innerHTML = '<p style="padding:1rem; color:var(--muted); font-size:0.85rem;">No updates yet.</p>';
+                return;
+            }
+            const fmt = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+            wrap.innerHTML = updates.map(u => {
+                const d = u.published_at || u.updated_at || u.created_at;
+                return `
+                    <div class="sidebar-item ${editing && editing.id === u.id ? 'active' : ''}" onclick="loadOne('${u.id}')">
+                        <div class="sidebar-item-title">${escapeHtml(u.title)}</div>
+                        <div class="sidebar-item-meta">
+                            <span>${escapeHtml(d ? fmt.format(new Date(d)) : '')}</span>
+                            <span class="badge ${u.published ? 'published' : 'draft'}">${u.published ? 'Published' : 'Draft'}</span>
+                        </div>
+                    </div>`;
+            }).join('');
+        }
+
+        async function loadOne(id) {
+            try {
+                const r = await fetch(`/api/updates/${id}`, {
+                    headers: { Authorization: `Bearer ${apiKey}` }
+                });
+                if (!r.ok) return toast('Could not load update', true);
+                const { update } = await r.json();
+                editing = update;
+                fillForm(update);
+                renderSidebar();
+            } catch (err) {
+                toast('Failed to load', true);
+            }
+        }
+
+        function newDraft() {
+            editing = { __new: true, published: false };
+            fillForm({ title: '', slug: '', author: '', summary: '', cover_image_url: '', body_md: '', published: false });
+            renderSidebar();
+        }
+
+        function fillForm(u) {
+            document.getElementById('empty-editor').style.display = 'none';
+            document.getElementById('editor-form').style.display = 'block';
+            document.getElementById('f-title').value = u.title || '';
+            document.getElementById('f-slug').value = u.slug || '';
+            document.getElementById('f-author').value = u.author || '';
+            document.getElementById('f-summary').value = u.summary || '';
+            document.getElementById('f-cover').value = u.cover_image_url || '';
+            document.getElementById('f-body').value = u.body_md || '';
+            document.getElementById('f-published').checked = !!u.published;
+            document.getElementById('btn-delete').style.display = (editing && !editing.__new) ? 'inline-block' : 'none';
+            switchTab('edit');
+        }
+
+        function readForm() {
+            return {
+                title: document.getElementById('f-title').value.trim(),
+                slug: document.getElementById('f-slug').value.trim() || undefined,
+                author: document.getElementById('f-author').value.trim() || null,
+                summary: document.getElementById('f-summary').value.trim() || null,
+                cover_image_url: document.getElementById('f-cover').value.trim() || null,
+                body_md: document.getElementById('f-body').value,
+                published: document.getElementById('f-published').checked
+            };
+        }
+
+        function switchTab(tab) {
+            document.querySelectorAll('.editor-tab').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+            document.getElementById('tab-edit').style.display = tab === 'edit' ? 'block' : 'none';
+            const preview = document.getElementById('tab-preview');
+            preview.classList.toggle('visible', tab === 'preview');
+            if (tab === 'preview') {
+                const data = readForm();
+                preview.innerHTML = DOMPurify.sanitize(marked.parse(data.body_md || '_(empty)_'));
+            }
+        }
+
+        async function saveUpdate(returnUpdate) {
+            const data = readForm();
+            if (!data.title || !data.body_md) {
+                toast('Title and body are required', true);
+                return null;
+            }
+            try {
+                let r;
+                if (editing && !editing.__new) {
+                    r = await fetch(`/api/updates/${editing.id}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
+                        body: JSON.stringify(data)
+                    });
+                } else {
+                    r = await fetch('/api/updates', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
+                        body: JSON.stringify(data)
+                    });
+                }
+                if (!r.ok) {
+                    const e = await r.json().catch(() => ({}));
+                    toast(e.error || 'Save failed', true);
+                    return null;
+                }
+                const { update } = await r.json();
+                editing = update;
+                fillForm(update);
+                await loadUpdates();
+                toast('Saved');
+                return update;
+            } catch (err) {
+                toast('Save failed', true);
+                return null;
+            }
+        }
+
+        async function saveAndView() {
+            const u = await saveUpdate();
+            if (u && u.published) window.open(`/updates/${u.slug}`, '_blank');
+            else if (u) toast('Saved as draft (publish to view publicly)');
+        }
+
+        async function deleteUpdate() {
+            if (!editing || editing.__new) return;
+            if (!confirm(`Delete "${editing.title}"? This cannot be undone.`)) return;
+            try {
+                const r = await fetch(`/api/updates/${editing.id}`, {
+                    method: 'DELETE',
+                    headers: { Authorization: `Bearer ${apiKey}` }
+                });
+                if (!r.ok) return toast('Delete failed', true);
+                editing = null;
+                document.getElementById('editor-form').style.display = 'none';
+                document.getElementById('empty-editor').style.display = 'block';
+                await loadUpdates();
+                toast('Deleted');
+            } catch {
+                toast('Delete failed', true);
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+node_modules
+.git
+.gitignore
+.env
+.env.example
+*.md
+!internal_thought.md
+
+# Credentials must never be baked into the image.
+#
+# `COPY . .` will happily ship a service-account key into the image, and if
+# express.static is rooted at the app directory it becomes downloadable over
+# the public internet. Two locks: excluded here, and server.js refuses to
+# serve these paths.
+google-service-account.json
+*service-account*.json
+service-account*.json
+google-credentials*.json
+credentials.json
+secrets/
+.secrets/
+*.pem
+*.key
+
+# Operator notes and CI config: not runtime files.
+backlog/
+.gitea/
+refs/

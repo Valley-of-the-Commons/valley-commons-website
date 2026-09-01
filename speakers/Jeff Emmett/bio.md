@@ -1,0 +1,1 @@
+Jeff is an engineer of the commons, spreading hyphae of new tooling underground in order to compost extractive systems into cooperative infrastructure. Currently tending the digital mycelium beneath the Valley.

@@ -1,0 +1,1 @@
+Nena brings experience working at the Regen Foundation and ongoing stewardship of the Ecological Institutions research body with River Computer. Her work focuses on systems thinking, operational protocols, and building coherence across distributed, multi-stakeholder environments.

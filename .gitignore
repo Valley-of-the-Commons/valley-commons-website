@@ -1,0 +1,52 @@
+node_modules/
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+npm-debug.log*
+
+# Temporary files
+*.tmp
+*.temp
+
+# Internal notes, not part of the site
+refs/
+
+# Service-account credentials — NEVER commit these
+*-service-account*.json
+service-account*.json
+google-credentials*.json
+credentials.json
+secrets/
+*.pem
+*.key
+
+# Environment files. Only *.example is ever committed.
+# Deliberately broad: backup copies left by deploy and rotation tooling are
+# named inconsistently (.env.bak-<ts>, .env.va-bak, config.env.old), and a
+# narrow .env* rule silently misses them.
+.env*
+!.env*.example
+*.env
+*.env.*
+!*.env*.example
+env
+env.*
+!env*.example
+
+.vercel

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="icon.svg">
+    <title>Updates | Valley of the Commons</title>
+    <meta name="description" content="News, field notes, and announcements from Valley of the Commons.">
+    <meta property="og:title" content="Updates | Valley of the Commons">
+    <meta property="og:description" content="News, field notes, and announcements from Valley of the Commons.">
+    <meta property="og:image" content="/valley.webp">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="alternate" type="application/rss+xml" title="Valley of the Commons — Updates" href="/updates.rss">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        :root { --votc-forest: #2d5016; }
+        .updates-wrap { max-width: 880px; margin: 0 auto; padding: clamp(1.5rem, 4vw, 3rem) clamp(1rem, 4vw, 2rem) 6rem; }
+        .updates-wrap h1 {
+            font-size: clamp(2rem, 5vw, 3rem);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: -0.01em;
+            font-weight: 700;
+        }
+        .updates-intro {
+            color: var(--color-text-light);
+            margin-bottom: 3rem;
+            font-size: 1.05rem;
+            line-height: 1.55;
+        }
+        .updates-intro a {
+            color: var(--votc-forest);
+            text-decoration: underline;
+            text-underline-offset: 0.2em;
+            text-decoration-color: rgba(45, 80, 22, 0.4);
+        }
+        .updates-intro a:hover { text-decoration-color: var(--votc-forest); }
+
+        .update-card {
+            display: block;
+            text-decoration: none;
+            color: inherit;
+            padding: 1.75rem 0;
+            border-bottom: 1px solid #e5e5e5;
+            transition: opacity .2s ease;
+        }
+        .update-card:hover { opacity: 0.75; }
+        .update-card:first-of-type { border-top: 1px solid #e5e5e5; }
+        .update-card-inner { display: grid; grid-template-columns: 1fr; gap: 1.25rem; align-items: start; }
+        .update-card.has-cover .update-card-inner { grid-template-columns: 220px 1fr; }
+        .update-cover {
+            width: 100%;
+            aspect-ratio: 4/3;
+            object-fit: cover;
+            background: #f5f5f0;
+            border-radius: 4px;
+            display: block;
+        }
+        .update-meta { font-size: 0.78rem; color: var(--color-text-light); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.5rem; }
+        .update-title { font-size: clamp(1.3rem, 2.5vw, 1.6rem); line-height: 1.25; margin-bottom: 0.5rem; font-weight: 600; }
+        .update-summary { color: var(--color-text-light); line-height: 1.55; }
+        .updates-empty { text-align: center; color: var(--color-text-light); padding: 4rem 0; }
+        @media (max-width: 600px) {
+            .update-card.has-cover .update-card-inner { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-container">
+            <div class="logo">
+                <a href="/"><img src="commonshublogo.svg" alt="Commons Hub"></a>
+            </div>
+            <nav class="nav">
+                <a href="/">Home</a>
+                <a href="/updates.html">Updates</a>
+                <a href="/apply.html" class="nav-cta-button">REGISTER NOW</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="updates-wrap">
+        <h1>Updates</h1>
+        <p class="updates-intro">News, field notes, and announcements from Valley of the Commons. <a href="/updates.rss">RSS</a></p>
+
+        <div id="updates-list">
+            <p class="updates-empty">Loading…</p>
+        </div>
+    </main>
+
+    <script>
+        const fmt = new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+        function escapeHtml(s) {
+            return String(s || '').replace(/[&<>"']/g, c => ({
+                '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+            })[c]);
+        }
+
+        async function loadUpdates() {
+            const list = document.getElementById('updates-list');
+            try {
+                const r = await fetch('/api/updates?limit=100');
+                const data = await r.json();
+                const updates = data.updates || [];
+                if (updates.length === 0) {
+                    list.innerHTML = '<p class="updates-empty">No updates yet — check back soon.</p>';
+                    return;
+                }
+                list.innerHTML = updates.map(u => {
+                    const date = u.published_at ? fmt.format(new Date(u.published_at)) : '';
+                    const cover = u.cover_image_url
+                        ? `<img class="update-cover" src="${escapeHtml(u.cover_image_url)}" alt="">`
+                        : '';
+                    const cls = u.cover_image_url ? 'update-card has-cover' : 'update-card';
+                    return `
+                        <a class="${cls}" href="/updates/${encodeURIComponent(u.slug)}">
+                            <div class="update-card-inner">
+                                ${cover}
+                                <div>
+                                    <div class="update-meta">${escapeHtml(date)}${u.author ? ' · ' + escapeHtml(u.author) : ''}</div>
+                                    <h2 class="update-title">${escapeHtml(u.title)}</h2>
+                                    ${u.summary ? `<p class="update-summary">${escapeHtml(u.summary)}</p>` : ''}
+                                </div>
+                            </div>
+                        </a>`;
+                }).join('');
+            } catch (err) {
+                list.innerHTML = '<p class="updates-empty">Could not load updates.</p>';
+            }
+        }
+        loadUpdates();
+    </script>
+</body>
+</html>
