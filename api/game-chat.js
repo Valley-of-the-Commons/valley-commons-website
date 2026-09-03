@@ -8,6 +8,14 @@
 
 const fs = require('fs');
 const path = require('path');
+const { clientIp, createRateLimiter } = require('./rate-limit');
+
+// Per-IP throttle. Each POST bills an upstream LLM completion, and the 12-turn
+// cap is computed from the client-supplied `messages` array (trivially reset by
+// sending a fresh 1-message array), so it does not bound spend. A real per-IP
+// window does. 40 requests / 5 min comfortably covers a genuine 12-turn session
+// plus a retry or two.
+const chatLimiter = createRateLimiter({ windowMs: 5 * 60 * 1000, max: 40 });
 
 // LiteLLM speaks the OpenAI chat-completions protocol, so any OpenAI-compatible
 // gateway works here. The key is read from a root-owned file mounted read-only
@@ -92,6 +100,11 @@ module.exports = async function handler(req, res) {
 
   // No CORS headers needed (same-origin only)
   // If cross-origin needed later, restrict to specific domains
+
+  // Throttle before doing any paid upstream work.
+  if (chatLimiter(clientIp(req))) {
+    return res.status(429).json({ error: 'Too many requests. Please slow down and try again shortly.' });
+  }
 
   try {
     const { messages } = req.body;

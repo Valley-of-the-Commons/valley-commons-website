@@ -5,6 +5,16 @@
 //   - build_game/conversations/ for full chat history
 
 const { Octokit } = require('@octokit/rest');
+const { clientIp, createRateLimiter, isSameOrigin } = require('./rate-limit');
+
+// This endpoint drives the repo-write GITHUB_TOKEN to commit caller-supplied
+// content. It is a public game feature (any player can "share an idea"), so it
+// is not behind admin auth, but it must not be an open, unauthenticated write
+// pipe to the repository. Two cheap controls: it may only be called from the
+// site's own pages (Origin/Referer), and each IP is throttled. The real blast
+// radius is still bounded by the token's scope, which must be least-privilege on
+// the platform side (a fine-grained PAT / GitHub App limited to one repo + path).
+const shareLimiter = createRateLimiter({ windowMs: 10 * 60 * 1000, max: 5 });
 
 // Generate idea file template
 function generateIdeaTemplate(excerpt, context) {
@@ -58,6 +68,15 @@ module.exports = async function handler(req, res) {
   // Only allow POST requests
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  // Only the site's own pages may drive the repo-write token, and only a few
+  // times per IP per window.
+  if (!isSameOrigin(req)) {
+    return res.status(403).json({ error: 'Forbidden' });
+  }
+  if (shareLimiter(clientIp(req))) {
+    return res.status(429).json({ error: 'Too many shares. Please try again later.' });
   }
 
   console.log('[share-to-github] Request received:', {
