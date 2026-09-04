@@ -3,7 +3,7 @@
 // based on the path. Content comes from content.mjs (client-safe, no answers).
 // The live quiz is layered on separately and only activates when a host opens a
 // session; the companion below is the durable artifact and always renders.
-import { ROOMS, WEEKS, MORE } from './content.mjs';
+import { ROOMS, WEEKS, MORE, COMING } from './content.mjs';
 
 const app = document.getElementById('app');
 
@@ -88,6 +88,19 @@ function cardHtml(slug, idx) {
     </a>`;
 }
 
+// An announced-but-unpublished talk: looks like a normal card (speaker, talk,
+// arrow) but has no page. It is a button that shows "Coming soon" on click.
+function soonCardHtml(t, idx) {
+  const spine = SPINES[idx % SPINES.length];
+  return `<button type="button" class="card card--soon" style="--spine:${spine}">
+      <div>
+        <div class="card__speaker">${esc(t.speaker)}</div>
+        ${t.talk ? `<div class="card__talk">${esc(t.talk)}</div>` : ''}
+      </div>
+      <span class="card__arrow" data-soon-arrow aria-hidden="true">&rarr;</span>
+    </button>`;
+}
+
 function renderIndex() {
   document.title = 'Keynote companions \xb7 Valley of the Commons';
   let idx = 0;
@@ -96,6 +109,16 @@ function renderIndex() {
       const cards = w.slugs
         .map((slug) => cardHtml(slug, idx++))
         .join('');
+      return `<section class="week">
+        <div class="week__label">${esc(w.label)}</div>
+        <h2 class="week__theme">${esc(w.theme)}</h2>
+        <div class="grid">${cards}</div>
+      </section>`;
+    })
+    .join('');
+  const coming = (COMING || [])
+    .map((w) => {
+      const cards = w.talks.map((t) => soonCardHtml(t, idx++)).join('');
       return `<section class="week">
         <div class="week__label">${esc(w.label)}</div>
         <h2 class="week__theme">${esc(w.theme)}</h2>
@@ -118,7 +141,26 @@ function renderIndex() {
       <p class="index__sub">Each talk's argument in beats, with the sources it draws on. Pick a talk.</p>
     </header>
     ${weeks}
+    ${coming}
     ${more}`;
+
+  // Coming-soon cards: no page, so a click briefly swaps the arrow for a small
+  // "Coming soon" message instead of navigating.
+  app.querySelectorAll('.card--soon').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      if (btn.dataset.busy) return;
+      const arrow = btn.querySelector('[data-soon-arrow]');
+      if (!arrow) return;
+      btn.dataset.busy = '1';
+      arrow.textContent = 'Coming soon';
+      arrow.classList.add('card__soonmsg');
+      setTimeout(() => {
+        arrow.innerHTML = '&rarr;';
+        arrow.classList.remove('card__soonmsg');
+        delete btn.dataset.busy;
+      }, 1800);
+    });
+  });
 }
 
 function renderNotFound() {

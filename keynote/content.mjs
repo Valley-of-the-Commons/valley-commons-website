@@ -1602,3 +1602,30 @@ export const WEEKS = [
 ];
 
 export const MORE = ["michel", "deca"];
+
+// Announced but not yet published (no companion pages). Rendered on the index as
+// normal-looking cards that show "Coming soon" on click instead of navigating.
+export const COMING = [
+  {
+    label: "Week 3 · 7 - 11 Sep",
+    theme: "Future Living in Community",
+    talks: [
+      { speaker: "Una Wang", talk: "Infrastructure for the Commons" },
+      { speaker: "Mathias Fensterer", talk: "Stable intentional communities" },
+      { speaker: "Samuel and Luna", talk: "Building Traditional Dream Factory" },
+      { speaker: "Clara Gromaches", talk: "Housing as a Commons" },
+      { speaker: "Charlie Fischer", talk: "Knowing at the boundaries: land mapping ownership as a design approach" },
+    ],
+  },
+  {
+    label: "Week 4 · 14 - 18 Sep",
+    theme: "Governance & Funding Models",
+    talks: [
+      { speaker: "Jessy Kate Schingler", talk: "Operating commons infrastructure for intentional communities" },
+      { speaker: "Daniela Gandorfer", talk: "Legal systems in transformation" },
+      { speaker: "Rashmi · Metagov", talk: "DAO governance models, research with the DAOstar group" },
+      { speaker: "Open slot", talk: "" },
+      { speaker: "Open slot", talk: "" },
+    ],
+  },
+];
