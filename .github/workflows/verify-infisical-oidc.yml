@@ -1,0 +1,105 @@
+name: Verify Infisical OIDC
+
+# Manual only. Proves that a workflow in this repo can mint a GitHub OIDC token
+# whose claims match what the Infisical machine identity `votc-ci` is bound to,
+# and reports exactly where the exchange lands.
+#
+# This workflow reads NO secrets and has none available to it. `votc-ci` is
+# granted `no-access` on the Infisical project, so even a successful exchange
+# returns a token that can read nothing. There is no credential stored in this
+# repo, in GitHub Actions secrets, or in this file.
+#
+# Declaring `environment: production` is what puts `environment:production` into
+# the OIDC token's `sub` claim — and what makes this run wait for a reviewer.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write        # required to mint an OIDC token; NOT granted to fork PRs
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Mint OIDC token and inspect its claims
+        env:
+          IDENTITY_ID: 6af08a3c-4cb8-4234-83e8-59b944971af1   # public, like a client_id
+          AUDIENCE: https://github.com/Valley-of-the-Commons
+          INFISICAL: https://secrets.jeffemmett.com
+        run: |
+          set -euo pipefail
+
+          echo "── 1. mint the OIDC token ─────────────────────────────────"
+          TOKEN=$(curl -sf \
+            -H "Authorization: bearer ${ACTIONS_ID_TOKEN_REQUEST_TOKEN}" \
+            "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=${AUDIENCE}" | jq -r '.value')
+          if [ -z "${TOKEN}" ] || [ "${TOKEN}" = "null" ]; then
+            echo "FAIL: GitHub issued no OIDC token (is id-token: write set?)"; exit 1
+          fi
+          echo "::add-mask::${TOKEN}"
+          echo "PASS  GitHub issued an OIDC token"
+
+          echo
+          echo "── 2. decode its claims (sub/aud are identifiers, not secrets) ──"
+          # base64url -> base64, re-pad, decode. The signature half is never touched.
+          PAYLOAD=$(printf '%s' "${TOKEN}" | cut -d. -f2 | tr '_-' '/+')
+          case $(( ${#PAYLOAD} % 4 )) in 2) PAYLOAD="${PAYLOAD}==" ;; 3) PAYLOAD="${PAYLOAD}=" ;; esac
+          CLAIMS=$(printf '%s' "${PAYLOAD}" | base64 -d 2>/dev/null)
+
+          SUB=$(printf '%s' "${CLAIMS}" | jq -r '.sub')
+          echo "  sub        = ${SUB}"
+          echo "  aud        = $(printf '%s' "${CLAIMS}" | jq -r '.aud')"
+          echo "  repository = $(printf '%s' "${CLAIMS}" | jq -r '.repository')"
+
+          EXPECTED="repo:Valley-of-the-Commons/valley-commons-website:environment:production"
+          if [ "${SUB}" = "${EXPECTED}" ]; then
+            echo "PASS  sub matches the identity's boundSubject exactly"
+          else
+            echo "FAIL  sub does NOT match boundSubject"
+            echo "      expected: ${EXPECTED}"
+            exit 1
+          fi
+
+          echo
+          echo "── 3. exchange it at Infisical ────────────────────────────"
+          CODE=$(curl -s -o /tmp/resp -w '%{http_code}' -m 25 \
+            -X POST "${INFISICAL}/api/v1/auth/oidc-auth/login" \
+            -H 'Content-Type: application/json' \
+            --data "$(jq -nc --arg i "${IDENTITY_ID}" --arg j "${TOKEN}" \
+                      '{identityId:$i, jwt:$j}')" || echo "000")
+          echo "  HTTP ${CODE}"
+
+          case "${CODE}" in
+            200)
+              echo "PASS  full chain works — Infisical accepted the OIDC token."
+              echo "      (The returned token can still read nothing: votc-ci is no-access.)"
+              ;;
+            301|302|303|307|308)
+              echo "EXPECTED BLOCKER — Cloudflare Access."
+              echo "  secrets.jeffemmett.com sits entirely behind Cloudflare Access, so a"
+              echo "  GitHub-hosted runner is redirected to a login page and never reaches"
+              echo "  Infisical. This is a NETWORK block, not an auth failure — steps 1 and 2"
+              echo "  above are the part this run was built to prove, and they passed."
+              echo "  Fix: a narrow CF Access bypass for POST /api/v1/auth/oidc-auth/login."
+              ;;
+            401|403)
+              echo "REACHED Infisical, which REJECTED the token. Compare sub/aud above"
+              echo "  against the identity's boundSubject/boundAudiences."
+              head -c 300 /tmp/resp || true
+              ;;
+            000)
+              echo "No response — DNS, egress or timeout."
+              ;;
+            *)
+              echo "Unexpected status."
+              head -c 300 /tmp/resp || true
+              ;;
+          esac
+
+          echo
+          echo "── summary ────────────────────────────────────────────────"
+          echo "  The reviewer gate fired before any of this ran."
+          echo "  No secret was read, printed, or stored at any point."
