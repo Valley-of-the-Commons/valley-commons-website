@@ -1,5 +1,6 @@
 const express = require('express');
 const path = require('path');
+const fs = require('fs');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -338,6 +339,52 @@ app.use((req, res, next) => {
     return res.status(404).end();
   }
   next();
+});
+
+// Keynote companion pages. One template (keynote/keynote.html) serves /keynote
+// (the index) and every /keynote-<slug> (a talk companion); the client renderer
+// (keynote/keynote.js) fills it from keynote/content.mjs. Here we inject the
+// per-page <title>/description from the same content module (dynamic-imported,
+// cached) so link previews and SEO are correct. Must sit before express.static
+// and the SPA fallback so the slug routes are not swallowed by index.html.
+let _keynoteRooms = null;
+async function keynoteRooms() {
+  if (!_keynoteRooms) {
+    const mod = await import('./keynote/content.mjs');
+    _keynoteRooms = mod.ROOMS;
+  }
+  return _keynoteRooms;
+}
+const escAttr = (s) =>
+  String(s == null ? '' : s).replace(/[&<>"]/g, (c) =>
+    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])
+  );
+app.get(/^\/keynote(?:-[a-z0-9-]+)?$/, async (req, res) => {
+  try {
+    const slug = req.path === '/keynote' ? null : req.path.replace(/^\/keynote-/, '');
+    let title = 'Keynote companions · Valley of the Commons';
+    let desc = "Companions to the Valley of the Commons talks: each talk's argument in beats, with the sources it draws on.";
+    let status = 200;
+    if (slug) {
+      const rooms = await keynoteRooms();
+      const room = rooms[slug];
+      if (room) {
+        title = room.meta.metaTitle || room.meta.eyebrow;
+        desc = room.meta.metaDescription || desc;
+      } else {
+        status = 404; // unknown slug: still serve the template; the client shows a friendly not-found
+      }
+    }
+    const template = fs.readFileSync(path.join(__dirname, 'keynote', 'keynote.html'), 'utf8');
+    const html = template
+      .replace(/{{TITLE}}/g, escAttr(title))
+      .replace(/{{DESCRIPTION}}/g, escAttr(desc));
+    res.status(status).setHeader('Content-Type', 'text/html; charset=utf-8');
+    return res.send(html);
+  } catch (error) {
+    console.error('[keynote] route error:', error);
+    return res.status(500).send('Keynote page temporarily unavailable.');
+  }
 });
 
 // Static files
