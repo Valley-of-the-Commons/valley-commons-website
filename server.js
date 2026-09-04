@@ -56,6 +56,12 @@ app.post('/api/mollie/webhook', vercelToExpress(handleWebhook));
 app.all('/api/mollie/status', vercelToExpress(getPaymentStatus));
 app.get('/api/mollie/resume', vercelToExpress(resumePayment));
 
+// Keynote live-quiz API (talks to the SEPARATE, isolated Supabase project).
+app.get('/api/keynote/config', vercelToExpress(require('./api/keynote/config')));
+app.post('/api/keynote/join', vercelToExpress(require('./api/keynote/join')));
+app.post('/api/keynote/submit', vercelToExpress(require('./api/keynote/submit')));
+app.post('/api/keynote/host/:action', vercelToExpress(require('./api/keynote/host')));
+
 // ---------------------------------------------------------------------------
 // Transactional mail queue.
 //

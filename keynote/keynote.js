@@ -60,7 +60,18 @@ function renderCompanion(room) {
       </header>
       <div class="beats">${room.beats.map(beatHtml).join('')}</div>
       <a class="cta" href="${esc(room.cta.url)}">${esc(room.cta.label)}</a>
-    </div>`;
+    </div>
+    <div id="session" class="session" style="display:none"></div>`;
+  // Talks with items (Week 2 + evergreen) get the live quiz layer; it stays
+  // dormant (companion shown) until a host opens a session. Week 1 is
+  // companion-only (items: []), so this never loads there.
+  if (room.items && room.items.length) {
+    const companionEl = app.querySelector('.companion');
+    const sessionEl = document.getElementById('session');
+    import('./session.mjs')
+      .then((mod) => mod.initSession(room, { companion: companionEl, session: sessionEl }))
+      .catch(() => {});
+  }
 }
 
 function cardHtml(slug, idx) {

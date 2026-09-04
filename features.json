@@ -42,25 +42,29 @@
       "id": "quiz-join",
       "behavior": "A phone can join a live room (creates a quiz_players row) and sees realtime state.",
       "verification": "with Supabase env set, POST /api/keynote/join creates a player; client receives realtime quiz_state.",
-      "state": "not_started"
+      "state": "blocked",
+      "note": "code-complete; verify E2E once the Supabase project + env exist"
     },
     {
       "id": "quiz-host",
       "behavior": "Host (easter-egg + KEYNOTE_HOST_SECRET) drives open/next/reveal/leaderboard/finish/close/reset; upserts state; archives to quiz_sessions.",
       "verification": "host flow moves phases; wrong/absent secret is rejected; reset archives then clears.",
-      "state": "not_started"
+      "state": "blocked",
+      "note": "code-complete; verify E2E once the Supabase project + env exist"
     },
     {
       "id": "quiz-score",
       "behavior": "Answers scored 500 + up to 500 time bonus; correct key server-only; late/dup rejected; reveal publishes the correct option.",
       "verification": "submit correct at t=0 -> 1000; wrong -> 0; after window -> rejected; revealed_answer set only on reveal.",
-      "state": "not_started"
+      "state": "blocked",
+      "note": "code-complete; verify E2E once the Supabase project + env exist"
     },
     {
       "id": "quiz-results",
       "behavior": "Leaderboard + live poll aggregates render; results persist in quiz_sessions and show under the companion after close.",
       "verification": "run a full session; standings + poll splits shown; quiz_sessions row written; visible after close.",
-      "state": "not_started"
+      "state": "blocked",
+      "note": "code-complete; verify E2E once the Supabase project + env exist"
     }
   ]
 }

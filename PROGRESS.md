@@ -17,13 +17,17 @@ Companion / static layer — DONE, verified via live server + screenshots
 - [passing] `server.js` route — `/keynote` + `/keynote-<slug>` serve the template with per-page meta injected via dynamic import of content.mjs.
 - [passing] `#schedule` wiring — index.html schedule section links to `/keynote`.
 
-Live quiz layer — NEXT (Week 2 + evergreen; Week 1 is companion-only)
-- [not_started] `package.json` — add `@supabase/supabase-js` for the server handlers.
-- [not_started] Supabase browser client (esm.sh) — realtime quiz_state + live aggregates; join flow, question/reveal/leaderboard/poll views wired into keynote.js.
-- [not_started] `api/keynote/join.js` — create player (anon-side is also allowed by RLS; keep a server route for parity).
-- [not_started] `api/keynote/host.js` — open/next/reveal/leaderboard/finish/close/reset; upsert quiz_state; KEYNOTE_HOST_SECRET gate; archive to quiz_sessions.
-- [not_started] `api/keynote/submit.js` — answer + scoring (500 + up to 500 time bonus); correct key server-only; reject late/dup.
-- [not_started] Host controls UI (easter-egg gesture on the companion) + `server.js` routes for `/api/keynote/*`.
+Live quiz layer — CODE-COMPLETE, blocked on Supabase env for E2E verification
+- [done] `package.json` — `@supabase/supabase-js` added.
+- [done] `api/keynote/quiz.js` — shared helpers: service client, timing, item access (dynamic-imports content.mjs), correctIndexFor, scoreQuiz, isHost (KEYNOTE_HOST_SECRET, timing-safe). Load-tested: scoreQuiz(true,0)=1000, (true,30000)=500, (false)=0; serviceClient()=null without env.
+- [done] `api/keynote/config.js` — browser config (url + anon key; configured:false offline).
+- [done] `api/keynote/join.js` — create player (self-contained per-IP limiter, no cross-branch dep).
+- [done] `api/keynote/host.js` — open/next/reveal/finish/leaderboard/close/reset; upsert quiz_state; KEYNOTE_HOST_SECRET gate; archives to quiz_sessions on open/reset/finish.
+- [done] `api/keynote/submit.js` — answer + scoring; correct key server-only; rejects pre-roll/late/duplicate.
+- [done] `keynote/session.mjs` — realtime client (supabase-js via esm.sh): join, lobby, question (timer), reveal, leaderboard, poll aggregates, ended; host easter-egg (5 taps on the title) + host bar driving the timers. Loads only for talks with items; early-returns when config is offline.
+- [done] `server.js` — routes `/api/keynote/{config,join,submit,host/:action}`.
+- Verified locally: server boots; config -> configured:false; host -> 503 not_configured; companion still renders with the session dormant (display:none), 7 beats, NO console errors.
+- BLOCKED: the realtime join/host/question/reveal/leaderboard loop can only be verified once Deca's Supabase project + env exist. Timing constants in session.mjs must stay in sync with api/keynote/quiz.js (pre-roll 5s, question 30s, reveal 3s).
 
 ## Owner (Deca) steps
 - Create a separate Supabase project in the Deca org; run `db/keynote-schema.sql`.
