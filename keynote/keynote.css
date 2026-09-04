@@ -57,6 +57,13 @@ ul { list-style: none; }
   padding-bottom: 2px;
 }
 .companion__socials a:hover { color: var(--orange-dark); border-color: currentColor; }
+.companion__watch {
+  display: inline-flex; align-items: center; gap: 8px; margin-top: 18px;
+  font: 600 14px/1 var(--sans); color: var(--cream); background: var(--orange);
+  padding: 10px 16px; border-radius: 999px; text-decoration: none;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+.companion__watch:hover { background: var(--orange-dark); transform: translateY(-1px); }
 
 .beats { display: flex; flex-direction: column; gap: 18px; }
 .beat {

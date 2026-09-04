@@ -214,6 +214,7 @@ export const ROOMS = {
         { label: "X @FelixFritsch2", url: "https://x.com/FelixFritsch2" },
         { label: "Commons Hub", url: "https://www.commons-hub.at/about" },
       ],
+      livestream: "https://www.youtube.com/watch?v=ISC6bGORTcs",
       metaTitle: "Opening Day \xb7 Felix Fritsch",
       metaDescription:
         "Felix Fritsch opens Valley of the Commons: the Commons Hub story, the commons wager, cosmo-local production, and the four-week arc. Plus the reading.",
@@ -287,6 +288,7 @@ export const ROOMS = {
         { label: "X @mbauwens", url: "https://x.com/mbauwens" },
         { label: "Substack", url: "https://4thgenerationcivilization.substack.com/" },
       ],
+      livestream: "https://www.youtube.com/watch?v=J97geZeThFo",
       metaTitle: "The Return of the Commons \xb7 Michel Bauwens",
       metaDescription:
         "Bauwens on the commons through history, Karatani's modes of exchange, the pulsation of the commons, and the cosmo-local transition. With primary reading.",
@@ -436,6 +438,7 @@ export const ROOMS = {
         { label: "caseorganic.com", url: "https://www.caseorganic.com/" },
         { label: "X @caseorganic", url: "https://x.com/caseorganic" },
       ],
+      livestream: "https://www.youtube.com/watch?v=K_TlFG_DmEU",
       metaTitle: "Introduction to Calm Technology \xb7 Amber Case",
       metaDescription:
         "Amber Case on calm technology at Valley of the Commons: designing for attention, its Xerox PARC lineage, and a calm-tech certification standard.",
@@ -514,6 +517,7 @@ export const ROOMS = {
         { label: "X @jeffemmett", url: "https://x.com/jeffemmett" },
         { label: "Medium", url: "https://medium.com/@jeffemmett" },
       ],
+      livestream: "https://www.youtube.com/watch?v=rLwA7XieXkg",
       metaTitle: "From P2P to P4P \xb7 Jeff Emmett",
       metaDescription:
         "Jeff Emmett on the shift from peer-to-peer to peer-for-peer: recording contribution, self-infrastructuring tools, and funding the commons. With reading.",
@@ -593,6 +597,7 @@ export const ROOMS = {
         { label: "X @robertovalenti", url: "https://x.com/robertovalenti" },
         { label: "Regenerativa", url: "https://regenerativa.earth/sites/liminalvillage/" },
       ],
+      livestream: "https://www.youtube.com/watch?v=cH179Qj0FsQ",
       metaTitle: "A socio-techno-legal stack for a regenerative commons \xb7 Roberto Valenti",
       metaDescription:
         "Companion to Roberto Valenti's talk at Valley of the Commons: economy as household management, translocal empowerment, the 8 forms of capital, community, Holons, and Regenerativa / Liminal Village, in beats with sources, plus the live session.",
@@ -772,6 +777,7 @@ export const ROOMS = {
         { label: "kilianj.org", url: "https://www.kilianj.org/" },
         { label: "Bluesky", url: "https://bsky.app/profile/kilianjoerg.bsky.social" },
       ],
+      livestream: "https://www.youtube.com/watch?v=5sFrGOa69NM",
       metaTitle: "Reclaiming the Commons \xb7 Kilian Jörg",
       metaDescription:
         "Companion to Kilian Jörg's talk, Reclaiming the Commons, at Valley of the Commons: the argument in beats, a reading list from his own work, and the live session.",
@@ -957,6 +963,7 @@ export const ROOMS = {
         { label: "X @lorenzopatuzzo", url: "https://x.com/lorenzopatuzzo" },
         { label: "Hubs Network", url: "https://www.hubsnetwork.org/about" },
       ],
+      livestream: "https://www.youtube.com/watch?v=I7QMfrCh1ug",
       metaTitle: "Monasteries of the 21st Century \xb7 Lorenzo Patuzzo",
       metaDescription:
         "Companion to Lorenzo Patuzzo's talk, Monasteries of the 21st Century, at Valley of the Commons: the long arc of human cooperation, collective consciousness, and hubs as the monasteries of our era, in beats with sources, plus the live session.",
@@ -1374,6 +1381,7 @@ export const ROOMS = {
         { label: "FarmLab", url: "https://www.farmlab.at/" },
         { label: "LinkedIn", url: "https://www.linkedin.com/in/silvia-brandi/" },
       ],
+      livestream: "https://www.youtube.com/watch?v=TGMZibzqVb0",
       metaTitle: "International FabLab Networks · Silvia Brandi",
       metaDescription:
         "Companion to Silvia Brandi's talk at Valley of the Commons: FarmLab, a fab lab on a working farm in rural Styria, the networks that connect it, and a year of situated, seasonal making.",
@@ -1412,6 +1420,7 @@ export const ROOMS = {
         { label: "X @mbauwens", url: "https://x.com/mbauwens" },
         { label: "Substack", url: "https://4thgenerationcivilization.substack.com/" },
       ],
+      livestream: "https://www.youtube.com/watch?v=9RID8x9F7hY",
       metaTitle: "Cosmo-Localism \xb7 Michel Bauwens",
       metaDescription:
         "Companion to Michel Bauwens's talk on Cosmo-Localism at Valley of the Commons: the argument in beats, a reading list from his own work, and the live session.",

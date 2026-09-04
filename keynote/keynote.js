@@ -28,6 +28,14 @@ function socialsHtml(socials) {
   return `<div class="companion__socials">${links}</div>`;
 }
 
+// Link to the session's YouTube livestream recording, when we have one.
+function watchHtml(url) {
+  if (!url) return '';
+  return `<a class="companion__watch" href="${esc(url)}" target="_blank" rel="noopener noreferrer">
+      <span aria-hidden="true">&#9654;</span> Watch the livestream <span aria-hidden="true">&#8599;</span>
+    </a>`;
+}
+
 function beatHtml(b) {
   const links =
     b.links && b.links.length
@@ -57,6 +65,7 @@ function renderCompanion(room) {
         <h1 class="companion__title">${esc(m.eyebrow)}</h1>
         <p class="companion__speaker">${esc(m.speaker)}</p>
         ${socialsHtml(m.socials)}
+        ${watchHtml(m.livestream)}
       </header>
       <div class="beats">${room.beats.map(beatHtml).join('')}</div>
       <a class="cta" href="${esc(room.cta.url)}">${esc(room.cta.label)}</a>
