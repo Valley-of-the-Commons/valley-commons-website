@@ -3,9 +3,9 @@
 -- sensitive data. Idempotent: safe to run more than once.
 --
 -- Rooms are independent by a `slug` column on every table (one slug per talk,
--- e.g. 'w2-d3'). Browsers read state + live aggregates in realtime with the anon
--- key (RLS-restricted); every scoring/state write goes through the Express
--- /api/keynote/* handlers using the service key, which bypasses RLS.
+-- e.g. 'w2-d3'). Browsers read state + live aggregates in realtime with the
+-- PUBLISHABLE key (RLS-restricted); every scoring/state write goes through the
+-- Express /api/keynote/* handlers using the SECRET key, which bypasses RLS.
 
 -- ---------------------------------------------------------------------------
 -- Tables
@@ -65,7 +65,7 @@ alter publication supabase_realtime add table public.quiz_answers;
 -- ---------------------------------------------------------------------------
 -- Row Level Security. Realtime delivery respects RLS, so anon needs SELECT.
 -- The ONLY anon write is joining as a player; everything else is server-only
--- (the service key bypasses RLS).
+-- (the secret key bypasses RLS).
 -- ---------------------------------------------------------------------------
 alter table public.quiz_state   enable row level security;
 alter table public.quiz_players enable row level security;
@@ -83,7 +83,7 @@ create policy "anon read players"  on public.quiz_players for select using (true
 create policy "anon read answers"  on public.quiz_answers for select using (true);
 create policy "anon read sessions" on public.quiz_sessions for select using (true);
 -- Anon may create a player row to join a room, and nothing else. Score updates,
--- answers, state changes and archives all go through the server (service key).
+-- answers, state changes and archives all go through the server (secret key).
 create policy "anon join" on public.quiz_players for insert with check (true);
 
 -- ---------------------------------------------------------------------------

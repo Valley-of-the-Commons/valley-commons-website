@@ -1,3 +1,11 @@
+// Load local env for development (.env.local then .env). No-op in production,
+// where the platform (Vercel) injects env vars: dotenv never overrides an
+// already-set variable and silently skips missing files.
+try {
+  require('dotenv').config({ path: '.env.local' });
+  require('dotenv').config();
+} catch (_) { /* dotenv is optional */ }
+
 const express = require('express');
 const path = require('path');
 const fs = require('fs');

@@ -1,7 +1,8 @@
 // Server-side helpers for the keynote live quiz. Talks to the SEPARATE, isolated
-// Supabase project (SUPABASE_URL + SUPABASE_SERVICE_KEY) with the service key,
-// which bypasses RLS: every scoring/state write goes through here, never the
-// browser. Correct answers live in ./answers.js and are never shipped to clients.
+// Supabase project (SUPABASE_URL + SUPABASE_SECRET_KEY) with the SECRET key (the
+// new sb_secret_... key, successor to service_role), which bypasses RLS: every
+// scoring/state write goes through here, never the browser. Correct answers live
+// in ./answers.js and are never shipped to clients.
 
 const crypto = require('crypto');
 const { createClient } = require('@supabase/supabase-js');
@@ -47,13 +48,14 @@ function scoreQuiz(isCorrect, elapsedMs) {
   return Math.round(500 + 500 * (1 - clamped / QUESTION_MS));
 }
 
-// One cached service client. Returns null when the Supabase env is absent, so a
-// route can answer 503 not_configured and the companion still works offline.
+// One cached server client (secret key). Returns null when the Supabase env is
+// absent, so a route can answer 503 not_configured and the companion still works
+// offline.
 let _svc;
 function serviceClient() {
   if (_svc !== undefined) return _svc;
   const url = process.env.SUPABASE_URL;
-  const key = process.env.SUPABASE_SERVICE_KEY;
+  const key = process.env.SUPABASE_SECRET_KEY;
   _svc = url && key ? createClient(url, key, { auth: { persistSession: false } }) : null;
   return _svc;
 }

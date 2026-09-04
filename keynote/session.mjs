@@ -32,7 +32,7 @@ export async function initSession(room, els) {
   } catch {
     return; // CDN blocked; companion still works
   }
-  const sb = createClient(cfg.url, cfg.anonKey, { auth: { persistSession: false } });
+  const sb = createClient(cfg.url, cfg.publishableKey, { auth: { persistSession: false } });
 
   // --- local state ---
   const meKey = `keynote_player_${slug}`;

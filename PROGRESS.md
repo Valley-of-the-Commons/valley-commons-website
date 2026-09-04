@@ -31,7 +31,7 @@ Live quiz layer — CODE-COMPLETE, blocked on Supabase env for E2E verification
 
 ## Owner (Deca) steps
 - Create a separate Supabase project in the Deca org; run `db/keynote-schema.sql`.
-- Set env: SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_SERVICE_KEY, KEYNOTE_HOST_SECRET.
+- Set env: SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, SUPABASE_SECRET_KEY, KEYNOTE_HOST_SECRET.
 
 ## Next steps
 1. Evaluator pass on the companion/static layer (independent subagent, live server).
