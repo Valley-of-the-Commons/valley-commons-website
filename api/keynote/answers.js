@@ -19,6 +19,6 @@ module.exports = {
     // Stefan Schütz - Working alternatives in regional money and production
     "w2-d4":        { 0: 2, 1: 3, 2: 1, 3: 0, 4: 2 },
     // Silvia Brandi - International FabLab Networks
-    "w2-d5":        { 0: 1, 1: 2, 2: 1, 3: 2, 4: 1 },
+    "w2-d5":        { 0: 2, 1: 1, 2: 3, 3: 0, 4: 2 },
   },
 };
