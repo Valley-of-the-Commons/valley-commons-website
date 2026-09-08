@@ -1,0 +1,70 @@
+{
+  "project": "keynote companions + live quiz port",
+  "note": "state is set to 'passing' ONLY by the verification command/flow, never by hand.",
+  "features": [
+    {
+      "id": "schema",
+      "behavior": "Isolated Supabase schema: quiz_state/players/answers/sessions keyed by slug, Realtime enabled, RLS (anon read + join only), seed rows.",
+      "verification": "psql < db/keynote-schema.sql on a fresh DB runs clean and idempotently (Deca runs it on the Supabase project).",
+      "state": "not_started"
+    },
+    {
+      "id": "content",
+      "behavior": "All 12 talks ported verbatim to content.mjs (client-safe, no answers); correct keys in api/keynote/answers.js (server-only). Slugs keynote-*.",
+      "verification": "node --input-type=module -e import('./public/keynote/content.mjs') shows 12 rooms {deca,michel,w1-d1..w2-d5}; w1-* have 0 items; node -e require('./api/keynote/answers.js') resolves.",
+      "state": "passing"
+    },
+    {
+      "id": "companion-render",
+      "behavior": "A companion page renders talk title, speaker, socials, numbered beats with reading links, re-skinned to VotC design.",
+      "verification": "load /keynote-w1-d2 in a browser: shows 'The Return of the Commons', 'Michel Bauwens', socials, 7 beats. Screenshot eyeballed.",
+      "state": "passing"
+    },
+    {
+      "id": "index",
+      "behavior": "/keynote lists all talks grouped by week with theme titles, plus More; each links to its page.",
+      "verification": "load /keynote: two week sections + More, 12 cards, links resolve. Screenshot.",
+      "state": "passing"
+    },
+    {
+      "id": "routing-meta",
+      "behavior": "Express serves /keynote and /keynote-<slug> from the template with per-page <title>/description injected.",
+      "verification": "curl /keynote-w2-d3 -> 200 and <title> contains 'Monasteries of the 21st Century'.",
+      "state": "passing"
+    },
+    {
+      "id": "schedule-wiring",
+      "behavior": "The #schedule section in index.html links each talk row to its /keynote-<slug> page.",
+      "verification": "index.html #schedule anchors point to /keynote-*; visible in the rendered schedule.",
+      "state": "passing"
+    },
+    {
+      "id": "quiz-join",
+      "behavior": "A phone can join a live room (creates a quiz_players row) and sees realtime state.",
+      "verification": "with Supabase env set, POST /api/keynote/join creates a player; client receives realtime quiz_state.",
+      "state": "blocked",
+      "note": "code-complete; verify E2E once the Supabase project + env exist"
+    },
+    {
+      "id": "quiz-host",
+      "behavior": "Host (easter-egg + KEYNOTE_HOST_SECRET) drives open/next/reveal/leaderboard/finish/close/reset; upserts state; archives to quiz_sessions.",
+      "verification": "host flow moves phases; wrong/absent secret is rejected; reset archives then clears.",
+      "state": "blocked",
+      "note": "code-complete; verify E2E once the Supabase project + env exist"
+    },
+    {
+      "id": "quiz-score",
+      "behavior": "Answers scored 500 + up to 500 time bonus; correct key server-only; late/dup rejected; reveal publishes the correct option.",
+      "verification": "submit correct at t=0 -> 1000; wrong -> 0; after window -> rejected; revealed_answer set only on reveal.",
+      "state": "blocked",
+      "note": "code-complete; verify E2E once the Supabase project + env exist"
+    },
+    {
+      "id": "quiz-results",
+      "behavior": "Leaderboard + live poll aggregates render; results persist in quiz_sessions and show under the companion after close.",
+      "verification": "run a full session; standings + poll splits shown; quiz_sessions row written; visible after close.",
+      "state": "blocked",
+      "note": "code-complete; verify E2E once the Supabase project + env exist"
+    }
+  ]
+}
