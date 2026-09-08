@@ -20,5 +20,9 @@ module.exports = {
     "w2-d4":        { 0: 2, 1: 3, 2: 1, 3: 0, 4: 2 },
     // Silvia Brandi - International FabLab Networks
     "w2-d5":        { 0: 2, 1: 1, 2: 3, 3: 0, 4: 2 },
+    // Una Wang - As Above, So Below (infrastructure as a precondition for the commons)
+    "w3-d1":        { 0: 2, 1: 1, 2: 3, 3: 0, 4: 2 },
+    // Matthias Fersterer - Klein Jasedow: A Commoning Community
+    "w3-d2":        { 0: 1, 1: 1, 2: 2, 3: 1, 4: 2 },
   },
 };

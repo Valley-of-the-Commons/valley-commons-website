@@ -1595,6 +1595,433 @@ export const ROOMS = {
     cta: { label: "Valley of the Commons", url: "/keynote" },
   },
 
+  // --- w3-d1: Una Wang - As Above, So Below (infrastructure as a precondition for the commons) ---
+  "w3-d1": {
+    slug: "w3-d1",
+    meta: {
+      eyebrow: "As Above, So Below: infrastructure as a precondition for the commons",
+      speaker: "Una Wang",
+      socials: [
+        { label: "Una Wang on LinkedIn", url: "https://www.linkedin.com/in/una-wang-36b56b22/" },
+        { label: "Google Scholar", url: "https://scholar.google.com/citations?user=f2caMZwAAAAJ" },
+      ],
+      metaTitle: "As Above, So Below \xb7 Una Wang",
+      metaDescription:
+        "Companion to Una Wang's talk at Valley of the Commons: physical infrastructure as the hidden precondition for institutions, political power, settlement and place, how centralised infrastructure enclosed the commons, and how a self-owning house (no1s1) points to re-commoning it from below. In beats with sources, plus the live session.",
+    },
+    items: [
+      {
+        type: "quiz",
+        prompt: "Infrastructure comes from the Latin infra. What does infra mean?",
+        options: [
+          "Around, surrounding",
+          "Above and over",
+          "Below, beneath, under",
+          "Beside, alongside",
+        ],
+      },
+      {
+        type: "quiz",
+        prompt: "In Timothy Mitchell's Carbon Democracy, what won mass democracy for workers between roughly 1880 and 1940?",
+        options: [
+          "A widely shared political doctrine",
+          "Coal's narrow chokepoints, where a few workers could halt the flow",
+          "Oil tankers that crossed the oceans",
+          "Universal access to electricity",
+        ],
+      },
+      {
+        type: "quiz",
+        prompt: "Wang argues the shift from coal to oil was also a shift in what?",
+        options: [
+          "The price of bread",
+          "The size of the largest cities",
+          "The number of political parties",
+          "Who could interrupt the energy flow",
+        ],
+      },
+      {
+        type: "quiz",
+        prompt: "Which two Swiss institutions does the talk trace to the same 19th-century railway push, via Alfred Escher?",
+        options: [
+          "ETH Zurich and Credit Suisse (Schweizerische Kreditanstalt)",
+          "The United Nations and the Red Cross",
+          "CERN and Nestle",
+          "The Swiss Federal Railways and UBS",
+        ],
+      },
+      {
+        type: "quiz",
+        prompt: "In Wang's ETH case study, what is no1s1?",
+        options: [
+          "A cryptocurrency token",
+          "A city-planning software suite",
+          "A small cabin that owns and governs itself through a blockchain treasury",
+          "A map of the internet's backbone",
+        ],
+      },
+      {
+        type: "poll",
+        prompt: "Which of infrastructure's hidden effects surprised you most?",
+        options: [
+          "That it builds our institutions",
+          "That it shapes political power",
+          "That it sets our settlement patterns",
+          "That it makes our sense of place",
+        ],
+      },
+      {
+        type: "poll",
+        prompt: "Who should hold core infrastructure, energy, water, connectivity?",
+        options: [
+          "A commons, locally held",
+          "The state, centrally run",
+          "Private operators, by market",
+          "A hybrid of all three",
+        ],
+      },
+      {
+        type: "poll",
+        prompt: "Could you trust a building that owns and governs itself?",
+        options: [
+          "Yes, enthusiastically",
+          "Maybe, with human oversight",
+          "No, ownership needs a person",
+          "I would need to see it first",
+        ],
+      },
+      {
+        type: "poll",
+        prompt: "Is ownership a natural fact or an engineerable construct?",
+        options: [
+          "A natural, almost sacred fact",
+          "A social construct we inherited",
+          "A programmable bundle of rights",
+          "I am not sure",
+        ],
+      },
+      {
+        type: "poll",
+        prompt: "Where should a new commons start building first?",
+        options: [
+          "The physical layer: land, energy, water",
+          "The digital layer: data, protocols",
+          "The governance layer: rules, institutions",
+          "All of it at once",
+        ],
+      },
+    ],
+    beats: [
+      {
+        n: 1,
+        title: "As above, so below",
+        body: "The city you see, its institutions, its markets, its public life, rests on a layer you do not: pipes, cables, rails, grids. Infrastructure, from the Latin infra ('below') and structura ('a fitting together'), is literally the below-structure. Wang's claim is that the visible commons above is only ever as strong as the physical infrastructure below it. The word was reserved for concrete and steel until the 1980s and 1990s, when 'IT infrastructure', fibre, server rooms, routers, stretched it toward the digital, where it now mostly lives.",
+        links: [],
+      },
+      {
+        n: 2,
+        title: "Serious about the commons? Make the hardware",
+        body: "Alan Kay's 1982 line, 'People who are really serious about software should make their own hardware', becomes a warning. You cannot build a serious commons at the software layer, the rules, the governance, the community, while renting the hardware layer, the land, energy, water and connectivity, from someone else. Attend to the physical substrate, or it will quietly decide your limits.",
+        links: [
+          {
+            label: "Alan Kay, the source of the line (Wikiquote)",
+            url: "https://en.wikiquote.org/wiki/Alan_Kay",
+          },
+        ],
+      },
+      {
+        n: 3,
+        title: "A precondition for institutions",
+        body: "Institutions do not float free; they are poured onto infrastructure. Wang's Swiss example: the railway financier and politician Alfred Escher helped found the Eidgenoessische Polytechnikum, today ETH Zurich, in 1855, and the Schweizerische Kreditanstalt, today Credit Suisse, in 1856. The school and the bank, two pillars of modern Switzerland, grew out of the same railway-building push. Build the rails and you build the institutions that ride on them.",
+        links: [
+          {
+            label: "Alfred Escher, railways, bank and polytechnic",
+            url: "https://en.wikipedia.org/wiki/Alfred_Escher",
+          },
+          {
+            label: "ETH Zurich, founded 1855",
+            url: "https://en.wikipedia.org/wiki/ETH_Zurich",
+          },
+        ],
+      },
+      {
+        n: 4,
+        title: "A precondition for political power",
+        body: "Timothy Mitchell's Carbon Democracy argues that mass democracy in the industrial West arrived on coal. Coal had to be cut by hand and hauled through a few narrow chokepoints, pits, single rail lines, ports, and a small number of workers at any one of them could stop the flow. That physical leverage, not any doctrine, won the vote and the welfare state between roughly 1880 and 1940. Oil then dissolved the chokepoints: it flows through pipes, needs far less labour, and reroutes around any blockage. The energy transition was also a transition in who could interrupt. As Wang puts it: 'Nobody voted for this. It was decided in the pipe diameter.'",
+        links: [
+          {
+            label: "Carbon Democracy: Political Power in the Age of Oil (Timothy Mitchell)",
+            url: "https://www.versobooks.com/products/2222-carbon-democracy",
+          },
+        ],
+      },
+      {
+        n: 5,
+        title: "A precondition for settlement",
+        body: "Every form of human settlement is paired with the infrastructure that made it possible. Nomadic camps had paths, hearths and shelters; Neolithic villages had wells, granaries and irrigation; classical cities of up to a million rested on aqueducts, roads and sewers; the digital megacity runs on fibre, data centres and transit. The settlement is the 'above'; the infrastructure is the 'below'. Change what is below and you change what can stand above it.",
+        links: [],
+      },
+      {
+        n: 6,
+        title: "A precondition for place-making",
+        body: "Infrastructure is also what turns space into place. 'Infrastructure is the most boring, most important thing in placemaking,' notes Lucy Gara of LUC; 'daily life is a journey through infrastructure, it shapes our social lives, our health, our productivity, and above all, our sense of place and community.' The Project for Public Spaces diagram sorts a good place into four qualities, sociability, uses and activities, access and linkages, comfort and image, each of which quietly depends on the pipes and paths beneath it.",
+        links: [
+          {
+            label: "Project for Public Spaces: what makes a great place?",
+            url: "https://www.pps.org/article/grplacefeat",
+          },
+        ],
+      },
+      {
+        n: 7,
+        title: "How the commons was enclosed",
+        body: "Here is the twist. Over the last thousand years, five core systems, land and tenure, water, energy, transportation and communication, drifted from locally held, commons-like arrangements toward central control. Three hinges stand out: enclosure, the privatising of common land; the 19th-century build-out of rail, sewers and the telegraph; and the internet. The commons was not only argued away in theory, it was enclosed in the pipe, the grid and the wire. Infrastructure is how the commons was lost.",
+        links: [
+          {
+            label: "Enclosure of the commons",
+            url: "https://en.wikipedia.org/wiki/Enclosure",
+          },
+        ],
+      },
+      {
+        n: 8,
+        title: "The house that owns itself",
+        body: "If infrastructure enclosed the commons, re-decentralising infrastructure can help rebuild it, and Wang argues the tools now exist: micro-production and micro-suppliers reshaping resilience, AI reshaping infrastructure, and blockchain letting ownership, rules and coordination be embedded directly in the physical system. Her ETH case study, no1s1 ('no one's one'), is a small cabin that owns and governs itself through a blockchain treasury and smart contracts: it holds its own funds, sells its own access, and pays for its own upkeep, owned by no one. In her framing ownership is not natural but 'informational' and 'engineerable', a bundle of rights, access, withdrawal, management, exclusion, alienation, that can be programmed. The self-owning house is a first sketch of what a re-commoned infrastructure could look like from below. Una Wang is Hongyang Wang, a researcher at ETH Zurich. Her closing question is really about the layer under every commons: can you imagine a house that owns itself?",
+        links: [
+          {
+            label: "no1s1, a small house that raises big questions (ETH Zurich)",
+            url: "https://ethz.ch/en/news-and-events/eth-news/news/2021/10/a-small-house-raises-big-questions.html",
+          },
+          {
+            label: "What if properties are owned by no one or everyone? (EC3 2022)",
+            url: "https://doi.org/10.35490/EC3.2022.213",
+          },
+          {
+            label: "Blockchain-enabled ownership-aware cyber-physical agents (2026)",
+            url: "https://www.sciencedirect.com/science/article/pii/S2096720926000151",
+          },
+        ],
+      },
+    ],
+    cta: { label: "Valley of the Commons", url: "/keynote" },
+  },
+
+  // --- w3-d2: Matthias Fersterer - Klein Jasedow: A Commoning Community. Practices & Principles ---
+  "w3-d2": {
+    slug: "w3-d2",
+    meta: {
+      eyebrow: "Klein Jasedow: A Commoning Community. Practices & Principles",
+      speaker: "Matthias Fersterer",
+      socials: [
+        { label: "Oya magazine", url: "https://oya-online.de/" },
+        { label: "Stiftung Zukunftswerk", url: "https://stiftung-zukunftswerk.de/" },
+      ],
+      metaTitle: "Klein Jasedow: A Commoning Community \xb7 Matthias Fersterer",
+      metaDescription:
+        "Companion to Matthias Fersterer's talk at Valley of the Commons: how Klein Jasedow, Germany's longest-standing intentional community, sustains itself through commoning, care & subsistence, and conviviality, with an oral tradition inside and a layered legal shell outside. In beats with sources, plus the live session.",
+    },
+    items: [
+      {
+        type: "quiz",
+        prompt: "Klein Jasedow is Germany's longest-standing intentional community. In what year did it first sprout, and where?",
+        options: [
+          "1968, in a West Berlin commune",
+          "1976/77, by four musicians in Upper Bavaria",
+          "1990, just after reunification, in Western Pomerania",
+          "1997, when it moved to Klein Jasedow",
+        ],
+      },
+      {
+        type: "quiz",
+        prompt: "When the community arrived in 1997, what was Klein Jasedow like?",
+        options: [
+          "A thriving arts town they joined",
+          "A half-deserted village in a structurally weak area, with ~80% unemployment",
+          "An empty greenfield site with no buildings",
+          "A protected heritage site they were invited to restore",
+        ],
+      },
+      {
+        type: "quiz",
+        prompt: "Fersterer says the community's inner life comes down to two questions. Which pair?",
+        options: [
+          "What do I own, and what do I owe?",
+          "Who decides, and who pays?",
+          "What can I do to make community work, and what can I refrain from doing that upsets you?",
+          "What are the rules, and who enforces them?",
+        ],
+      },
+      {
+        type: "quiz",
+        prompt: "How are the community's inner principles held and passed on?",
+        options: [
+          "A written constitution every member signs",
+          "An oral tradition passed on by storytelling, with no written set of rules",
+          "An app that tracks contributions and sanctions",
+          "A rota drawn up by an elected council",
+        ],
+      },
+      {
+        type: "quiz",
+        prompt: "The talk's 'essence: two by three' places three spheres inside a spectrum defined by two poles. What are the three spheres?",
+        options: [
+          "Land, labour and capital",
+          "Family, work and worship",
+          "Commoning, care & subsistence, and conviviality",
+          "Production, distribution and consumption",
+        ],
+      },
+      {
+        type: "poll",
+        prompt: "Klein Jasedow's founders still live together after ~50 years. What do you think holds a community together longest?",
+        options: [
+          "Shared ownership and money",
+          "Shared work and daily practice",
+          "Shared story and culture",
+          "Shared place and land",
+        ],
+      },
+      {
+        type: "poll",
+        prompt: "'No written set of rules', principles passed on by storytelling. How does that land for you?",
+        options: [
+          "Freeing, rules calcify",
+          "Risky, it needs written agreements",
+          "Depends on the size of the group",
+          "Only works with deep trust",
+        ],
+      },
+      {
+        type: "poll",
+        prompt: "The community wraps its essence in legal shells (e.V., eG, Stiftung, GmbH). 'Give to Caesar what is Caesar's.' Your instinct?",
+        options: [
+          "Wise, use the forms, keep the essence",
+          "Dangerous, the cover becomes the essence",
+          "Necessary but always a compromise",
+          "I would avoid legal forms entirely",
+        ],
+      },
+      {
+        type: "poll",
+        prompt: "Which of the three spheres pulls at you most right now?",
+        options: [
+          "Commoning, holding things in common",
+          "Care & subsistence, meeting real needs",
+          "Conviviality, freedom in interdependence",
+          "All three, they only work together",
+        ],
+      },
+      {
+        type: "poll",
+        prompt: "Conviviality here is 'individual freedom realised in personal interdependence', and it extends to the more-than-human. Could you live that?",
+        options: [
+          "Yes, that is the point of community",
+          "Yes, but the human part is hard enough",
+          "The more-than-human part is a stretch",
+          "I would need to see it lived first",
+        ],
+      },
+    ],
+    beats: [
+      {
+        n: 1,
+        title: "A commoning community",
+        body: "Matthias Fersterer speaks from Klein Jasedow, a tiny village in the Lassaner Winkel near the Peene river in Western Pomerania, north-east Germany. He calls it a 'commony': a community whose life is organised not by ownership or command but by commoning, the ongoing practice of holding and making things in common. The community was not born here. It sprouted in 1976/77 around four musicians in Upper Bavaria, lived a while in Switzerland, and in 1997 resettled in Klein Jasedow. Today it is Germany's longest-standing intentional community whose founders still live together. Fersterer, born in Innsbruck in 1980, has lived there since 2009; he co-founded and edits the magazine Oya, publishes the thinkOya book edition with Drachen Verlag, translates (his German Ursula K. Le Guin won the Kurd-Lasswitz-Preis), and bakes sourdough for the community.",
+        links: [
+          {
+            label: "Oya, the community's magazine (Fersterer, editor)",
+            url: "https://oya-online.de/",
+          },
+        ],
+      },
+      {
+        n: 2,
+        title: "What there once was",
+        body: "When the community arrived in 1997, Klein Jasedow was a half-deserted village of derelict buildings in a structurally weak corner of the former East: around 80 per cent unemployment and high votes for right-wing extremists. They bought ruins and resettled the place. The story matters because it sets the stakes: a stable commons was not planted in easy soil but grown, deliberately, in a place the wider economy had written off.",
+        links: [
+          {
+            label: "Klein Jasedow, a learning site (GEN Deutschland)",
+            url: "https://lernorte.gen-deutschland.de/lernort/klein-jasedow/",
+          },
+        ],
+      },
+      {
+        n: 3,
+        title: "What there is now",
+        body: "Two and a half decades on, the same village carries a dense weave of enterprises and projects: a concert venue with excellent acoustics (the Klanghaus am See), a free democratic school (the Kleine Dorfschule Lassaner Winkel), publishing (Drachen Verlag and Oya), agroforestry and regenerative agriculture, gardens, a gong manufactory (Sona), kids' circus camps, a traditional sailing boat, a regional network and political activism. More than 60 people now live there, aged 1 to 84, and the village's population has more than doubled. The point is not the list but its shape: a self-supporting local economy that keeps the community alive without surrendering it to any single owner.",
+        links: [
+          {
+            label: "Europ\xe4ische Akademie der Heilenden K\xfcnste (Klanghaus, courses)",
+            url: "https://eaha.org/",
+          },
+          {
+            label: "Kleine Dorfschule Lassaner Winkel (free democratic school)",
+            url: "https://kleine-dorfschule.de/",
+          },
+        ],
+      },
+      {
+        n: 4,
+        title: "Relationships within: two questions",
+        body: "How is the inside held together? Not by a rulebook. Fersterer describes a commons-based, polycentric structure carried by oral tradition, principles passed on by storytelling, with no written set of rules. It comes down to two questions each person keeps asking: 'What can I do to make community work?' and 'What can I refrain from doing that upsets you?' One question turns you toward contribution, the other toward restraint. Between them they do the work that statutes cannot: they keep the relationships, not the regulations, at the centre.",
+        links: [],
+      },
+      {
+        n: 5,
+        title: "Relationships without: give to Caesar",
+        body: "The outside is another matter. To meet the state, the market and the law, the community wraps its essence in a layered shell of legal bodies with written statutes and contracts: an association (e.V.), a cooperative (eG), a foundation (Stiftung Zukunftswerk, which holds most of the property), civil-law companies (GbR) and limited companies (GmbH). A timeline of foundings runs from the Gemeinschaft in Bavaria (1976) through the move to Klein Jasedow (1997), the Kr\xe4utergarten Pommerland cooperative (2001), the gong manufactory (2004), Oya Medien eG (2010), the village school (2017) and on. Fersterer's rule: 'Give to Caesar what is Caesar's', make the most of legal forms, but never mix up the cover with the essence.",
+        links: [
+          {
+            label: "Stiftung Zukunftswerk (the foundation that holds the land)",
+            url: "https://stiftung-zukunftswerk.de/",
+          },
+        ],
+      },
+      {
+        n: 6,
+        title: "Making kin, and the art of improvisation",
+        body: "Two borrowed ideas name the everyday practice. From Donna Haraway: 'Making kin and making kind ... stretch the imagination and can change the story', kinship chosen laterally, not only by birth. And from Joseph Beuys: 'The artist's workshop is between the people', the community itself, with its circus camps, its gong ensembles and its festivals, is the artwork. Klein Jasedow grew out of musicians, and it treats communal life the way it treats music: as improvisation, listening and responding in real time rather than executing a score.",
+        links: [
+          {
+            label: "Donna Haraway, Staying with the Trouble (making kin)",
+            url: "https://www.dukeupress.edu/staying-with-the-trouble",
+          },
+        ],
+      },
+      {
+        n: 7,
+        title: "The essence: two by three",
+        body: "Fersterer draws the essence as three overlapping circles inside a field stretched between two poles, freedom and interdependence. The three spheres are commoning (holding and making in common), care & subsistence (what is 'necessary for survival and belongs to every life', in Maria Mies and Veronika Bennholdt-Thomsen's words, including the unpaid work of reproduction), and conviviality (Ivan Illich's 'individual freedom realised in personal interdependence', extended here to the more-than-human). No sphere stands alone: 'There is no commons without commoning' (Peter Linebaugh), and no commoning without commoners bound by care and delight. And no community is alike.",
+        links: [
+          {
+            label: "Ivan Illich, Tools for Conviviality (conviviality)",
+            url: "https://en.wikipedia.org/wiki/Tools_for_Conviviality",
+          },
+          {
+            label: "Mies & Bennholdt-Thomsen, The Subsistence Perspective",
+            url: "https://en.wikipedia.org/wiki/Maria_Mies",
+          },
+        ],
+      },
+      {
+        n: 8,
+        title: "Patterns of commoning, and change as the only constant",
+        body: "For the wider grammar, Fersterer points to Silke Helfrich and David Bollier's Free, Fair and Alive, which reads the commons as recurring patterns across three domains, provisioning, social life and peer governance, in the spirit of Christopher Alexander's pattern language: 'Patterns are identified, not invented ... to make something latent visible.' It also echoes David Graeber's prefiguration, 'building the new in the shell of the old', acting as if you are already free. Klein Jasedow's closing image is a red-sailed boat on the Achterwasser: change is the only thing constant. A commons endures not by freezing its form but by keeping the practice alive. Matthias Fersterer, matthias.fersterer@oya-online.de.",
+        links: [
+          {
+            label: "Free, Fair and Alive (Helfrich & Bollier, New Society)",
+            url: "https://newsociety.com/book/free-fair-and-alive/",
+          },
+          {
+            label: "Stiftung Zukunftswerk Klein Jasedow",
+            url: "https://stiftung-zukunftswerk.de/",
+          },
+        ],
+      },
+    ],
+    cta: { label: "Valley of the Commons", url: "/keynote" },
+  },
+
 };
 
 export const WEEKS = [
@@ -1608,6 +2035,18 @@ export const WEEKS = [
     theme: "Local Production & Value Accounting",
     slugs: ["w2-d1", "w2-d2", "w2-d3", "w2-d4", "w2-d5"],
   },
+  {
+    label: "Week 3 \xb7 7 - 11 Sep",
+    theme: "Future Living in Community",
+    slugs: ["w3-d1", "w3-d2"],
+    // Announced but not yet published: rendered under the same week header as
+    // "coming soon" cards (no page yet). Move into slugs when a companion ships.
+    coming: [
+      { speaker: "Samuel and Luna", talk: "Building Traditional Dream Factory" },
+      { speaker: "Clara Gromaches", talk: "Housing as a Commons" },
+      { speaker: "Charlie Fischer", talk: "Knowing at the boundaries: land mapping ownership as a design approach" },
+    ],
+  },
 ];
 
 export const MORE = ["michel", "deca"];
@@ -1615,17 +2054,6 @@ export const MORE = ["michel", "deca"];
 // Announced but not yet published (no companion pages). Rendered on the index as
 // normal-looking cards that show "Coming soon" on click instead of navigating.
 export const COMING = [
-  {
-    label: "Week 3 · 7 - 11 Sep",
-    theme: "Future Living in Community",
-    talks: [
-      { speaker: "Una Wang", talk: "Infrastructure for the Commons" },
-      { speaker: "Mathias Fensterer", talk: "Stable intentional communities" },
-      { speaker: "Samuel and Luna", talk: "Building Traditional Dream Factory" },
-      { speaker: "Clara Gromaches", talk: "Housing as a Commons" },
-      { speaker: "Charlie Fischer", talk: "Knowing at the boundaries: land mapping ownership as a design approach" },
-    ],
-  },
   {
     label: "Week 4 · 14 - 18 Sep",
     theme: "Governance & Funding Models",

@@ -118,10 +118,15 @@ function renderIndex() {
       const cards = w.slugs
         .map((slug) => cardHtml(slug, idx++))
         .join('');
+      // A week can mix published talks (linked cards) with announced-but-unpublished
+      // ones (coming-soon cards) under the same header.
+      const soon = (w.coming || [])
+        .map((t) => soonCardHtml(t, idx++))
+        .join('');
       return `<section class="week">
         <div class="week__label">${esc(w.label)}</div>
         <h2 class="week__theme">${esc(w.theme)}</h2>
-        <div class="grid">${cards}</div>
+        <div class="grid">${cards}${soon}</div>
       </section>`;
     })
     .join('');
