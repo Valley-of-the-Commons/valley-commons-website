@@ -1,5 +1,11 @@
 // Newsletter signup endpoint — adds email to Listmonk mailing list
 const { addToListmonk } = require('./listmonk');
+const { clientIp, createRateLimiter } = require('./rate-limit');
+
+// Per-IP throttle: without it, this endpoint can be looped to make Listmonk send
+// a double-opt-in confirmation to an arbitrary third-party address from our
+// domain (harassment + sender-reputation damage).
+const newsletterLimiter = createRateLimiter({ windowMs: 10 * 60 * 1000, max: 5 });
 
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -12,6 +18,10 @@ module.exports = async function handler(req, res) {
 
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  if (newsletterLimiter(clientIp(req))) {
+    return res.status(429).json({ error: 'Too many requests. Please try again later.' });
   }
 
   try {

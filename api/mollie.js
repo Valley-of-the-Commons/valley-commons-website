@@ -378,21 +378,39 @@ async function handleWebhook(req, res) {
       return res.status(200).end();
     }
 
-    // On success also record WHICH payment paid, so the row and Mollie agree and
-    // the lookup below finds the right application.
-    await pool.query(
-      `UPDATE applications
-          SET payment_status = $1::varchar,
-              mollie_payment_id = CASE WHEN $1::varchar = 'paid' THEN $2::varchar ELSE mollie_payment_id END,
-              payment_paid_at = CASE WHEN $1::varchar = 'paid' THEN CURRENT_TIMESTAMP ELSE payment_paid_at END
-        WHERE id = $3::uuid`,
-      [paymentStatus, paymentId, row.id]
-    );
+    // Claim the paid transition ATOMICALLY, so the side effects (a real bed out of
+    // finite inventory + confirmation emails) run exactly once even if several
+    // "paid" deliveries arrive at once (Mollie's at-least-once retries, or a
+    // superseded link's late webhook carrying the same applicationId). A plain
+    // read-then-guard on `wasAlreadyPaid` races: two concurrent deliveries both
+    // read 'pending', both pass the guard, and both assign a bed. The conditional
+    // UPDATE lets only the first delivery flip 'pending' -> 'paid'; a second one
+    // updates zero rows and does not fulfil again.
+    let claimedPaid = false;
+    if (paymentStatus === 'paid') {
+      const claim = await pool.query(
+        `UPDATE applications
+            SET payment_status = 'paid',
+                mollie_payment_id = $2::varchar,
+                payment_paid_at = CURRENT_TIMESTAMP
+          WHERE id = $1::uuid AND payment_status <> 'paid'
+          RETURNING id`,
+        [row.id, paymentId]
+      );
+      claimedPaid = claim.rowCount === 1;
+    } else {
+      // Non-paid statuses only reach here when not superseded (guarded above).
+      await pool.query(
+        `UPDATE applications SET payment_status = $1::varchar WHERE id = $2::uuid`,
+        [paymentStatus, row.id]
+      );
+    }
 
-    console.log(`Payment ${paymentId} for application ${row.id}: ${paymentStatus}${wasAlreadyPaid ? ' (already paid — skipping side effects)' : ''}${!isCurrentPayment ? ' (via a superseded link — row re-pointed)' : ''}`);
+    console.log(`Payment ${paymentId} for application ${row.id}: ${paymentStatus}${paymentStatus === 'paid' && !claimedPaid ? ' (already paid — skipping side effects)' : ''}${!isCurrentPayment ? ' (via a superseded link)' : ''}`);
 
-    // On payment success: assign bed + send confirmation emails (only once).
-    if (paymentStatus === 'paid' && !wasAlreadyPaid) {
+    // On payment success: assign bed + send confirmation emails (exactly once,
+    // gated on the atomic claim above rather than a stale read).
+    if (claimedPaid) {
       try {
         // Fetch by primary key, not by mollie_payment_id: the paying payment may
         // have arrived via a superseded link, and we already resolved the row above.

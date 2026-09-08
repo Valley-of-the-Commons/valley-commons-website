@@ -5,6 +5,12 @@ const { Pool } = require('pg');
 const { syncWaitlistSignup } = require('./google-sheets');
 const { addToListmonk } = require('./listmonk');
 const { sendAndLog, makeTransport } = require('./mail');
+const { clientIp, createRateLimiter } = require('./rate-limit');
+
+// Per-IP throttle: this handler sends a welcome email (BCC team@) and writes to
+// Postgres + Sheets + Listmonk on every unauthenticated POST, so it is a mail /
+// resource amplification vector without a limit.
+const waitlistLimiter = createRateLimiter({ windowMs: 10 * 60 * 1000, max: 10 });
 
 // Initialize PostgreSQL connection pool
 const pool = new Pool({
@@ -108,6 +114,10 @@ module.exports = async function handler(req, res) {
 
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  if (waitlistLimiter(clientIp(req))) {
+    return res.status(429).json({ error: 'Too many requests. Please try again later.' });
   }
 
   try {

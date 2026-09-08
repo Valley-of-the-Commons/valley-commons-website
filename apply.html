@@ -1178,6 +1178,9 @@
                             }
                             restoreFormData(result.application);
                             saveFormData();
+                            // The id from the resume link is the capability that
+                            // authorises editing this application on the server.
+                            window._existingApplicationId = linkedId;
                             window._hasExistingApplication = true;
                             return;
                         }
@@ -1407,9 +1410,14 @@
                                     alert('This email already has a completed (paid) application. Contact us at contact@valleyofthecommons.com if you need to make changes.');
                                     return;
                                 }
-                                // Submit will PUT rather than POST; the server
-                                // matches the row by email on its own.
-                                window._hasExistingApplication = true;
+                                // An application exists but this browser does not
+                                // hold its id (the capability that authorises an
+                                // edit). Editing by email alone let anyone overwrite
+                                // anyone's application, so it is no longer allowed:
+                                // point them at the resume link in their
+                                // confirmation mail, which carries the id.
+                                alert('You have already started an application with this email. To edit it or complete payment, open the resume link in your confirmation email. If you cannot find it, contact contact@valleyofthecommons.com.');
+                                return;
                             }
                         }
                     } catch (e) {
@@ -1870,6 +1878,11 @@
 
             try {
                 const data = collectFormData();
+                // Editing requires the application id: the server matches id + email,
+                // and only the resume link (which set this) carries it.
+                if (isUpdate && window._existingApplicationId) {
+                    data.id = window._existingApplicationId;
+                }
 
                 const response = await fetch('/api/application', {
                     method: isUpdate ? 'PUT' : 'POST',

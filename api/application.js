@@ -7,6 +7,12 @@ const { createPayment, TICKET_LABELS, REGISTRATION_PRICING, ACCOMMODATION_PRICES
 const { addToListmonk } = require('./listmonk');
 const { isAdmin, hasSponsorAccess } = require('./admin-auth');
 const { sendAndLog, makeTransport } = require('./mail');
+const { clientIp, createRateLimiter } = require('./rate-limit');
+
+// Throttle the unauthenticated write paths (POST create, PUT edit). Each mints a
+// DB row + emails + a Mollie payment, so it is a resource/cost abuse vector
+// without a limit. 10 writes / 10 min per IP is far above any real applicant.
+const applyWriteLimiter = createRateLimiter({ windowMs: 10 * 60 * 1000, max: 10 });
 
 // Application ids are v4 UUIDs and are treated as capabilities: whoever holds
 // one may read that application (see module.exports.lookup). Validate the shape
@@ -208,6 +214,9 @@ module.exports = async function handler(req, res) {
 
   // POST - Submit new application
   if (req.method === 'POST') {
+    if (applyWriteLimiter(clientIp(req))) {
+      return res.status(429).json({ error: 'Too many requests. Please try again later.' });
+    }
     try {
       const data = req.body;
 
@@ -476,6 +485,9 @@ module.exports = async function handler(req, res) {
 
   // PUT - Update existing application
   if (req.method === 'PUT') {
+    if (applyWriteLimiter(clientIp(req))) {
+      return res.status(429).json({ error: 'Too many requests. Please try again later.' });
+    }
     try {
       const data = req.body;
 
@@ -487,14 +499,25 @@ module.exports = async function handler(req, res) {
         }
       }
 
-      // Find existing application by email
+      // Editing an existing application requires its id: the same 122-bit
+      // capability the applicant received in their confirmation / resume email,
+      // and which the id-mode lookup already relies on. Matching by email alone
+      // (an address the code itself documents as non-secret, see the lookup
+      // handler) let anyone overwrite anyone else's unpaid application. Require the
+      // id and match it TOGETHER with the email; never authorise a write on an
+      // email address.
+      const appId = (data.id || '').toString().trim();
+      if (!UUID_RE.test(appId)) {
+        return res.status(403).json({ error: 'Editing an application requires the link from your confirmation email.' });
+      }
+
       const existing = await pool.query(
-        'SELECT id, payment_status, submitted_at, status FROM applications WHERE email = $1 ORDER BY submitted_at DESC LIMIT 1',
-        [data.email.toLowerCase().trim()]
+        'SELECT id, payment_status FROM applications WHERE id = $1::uuid AND email = $2',
+        [appId, data.email.toLowerCase().trim()]
       );
 
       if (existing.rows.length === 0) {
-        return res.status(404).json({ error: 'No application found with this email' });
+        return res.status(404).json({ error: 'No application found for that link and email.' });
       }
 
       const app = existing.rows[0];

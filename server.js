@@ -17,7 +17,25 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// CORS middleware
+// Security headers (defense in depth). Deliberately conservative: no strict
+// Content-Security-Policy here because the static pages use inline scripts and
+// styles and a strict CSP would break them; adding a CSP is a good follow-up once
+// that inline code is nonce'd or externalized. These headers are safe to add now.
+app.use((req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+  res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
+  next();
+});
+
+// CORS middleware.
+// NOTE: Access-Control-Allow-Origin is a wildcard. This does not leak credentials
+// (the admin endpoints authenticate with a Bearer token, not cookies), but it
+// does let any origin call the public APIs. Tightening it to the site's own
+// origin is a recommended follow-up; left as-is here to avoid changing behavior
+// in a security patch.
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, OPTIONS');
