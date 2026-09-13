@@ -92,6 +92,23 @@ ul { list-style: none; }
 .index__head { max-width: 720px; margin: 0 auto 44px; text-align: center; }
 .index__title { font-family: var(--serif); font-weight: 800; font-size: clamp(2rem, 5vw, 3.2rem); line-height: 1.06; margin: 12px 0 12px; }
 .index__sub { color: var(--muted); font-size: 1.05rem; max-width: 46ch; margin: 0 auto; }
+/* The one non-talk destination, mirroring learn-ai.london/valley: the AI course.
+   A prominent link card sitting above the week list, accented in orange. */
+.ai-course {
+  display: flex; align-items: center; justify-content: space-between; gap: 20px;
+  text-decoration: none; color: var(--ink);
+  background: color-mix(in srgb, var(--orange) 8%, var(--cream));
+  border: 1px solid color-mix(in srgb, var(--orange) 35%, var(--line));
+  border-left: 3px solid var(--orange);
+  border-radius: 12px; padding: 22px 26px; margin: 0 0 40px;
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+.ai-course:hover { transform: translateY(-2px); box-shadow: 0 12px 30px -18px rgba(0,0,0,.35); }
+.ai-course__title { font-family: var(--serif); font-weight: 800; font-size: 1.5rem; margin: 6px 0 4px; }
+.ai-course__sub { color: var(--muted); font-size: .96rem; max-width: 52ch; }
+.ai-course .card__arrow { color: var(--orange); font-size: 1.5rem; transition: transform .18s ease; flex-shrink: 0; }
+.ai-course:hover .card__arrow { transform: translateX(4px); }
+
 .week { margin-bottom: 40px; }
 .week__label { font: 600 12px/1.4 var(--sans); letter-spacing: 2px; text-transform: uppercase; color: var(--orange); }
 .week__theme { font-family: var(--serif); font-weight: 700; font-size: 1.5rem; margin: 4px 0 18px; }

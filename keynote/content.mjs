@@ -2051,18 +2051,31 @@ export const WEEKS = [
 
 export const MORE = ["michel", "deca"];
 
+// The one non-talk destination, mirroring learn-ai.london/valley: learn to build
+// your own agentic system. On LAL this is the /valley-ai page; from this site we
+// link to the live page on learn-ai.london.
+export const AI_COURSE = {
+  eyebrow: "New \xb7 Learn to build it",
+  title: "Build your own agentic system",
+  sub: "The full journey, from zero: the prompts, the maps, the lessons. Password in the group.",
+  url: "https://learn-ai.london/valley-ai",
+};
+
 // Announced but not yet published (no companion pages). Rendered on the index as
 // normal-looking cards that show "Coming soon" on click instead of navigating.
+// Confirmed Week 4 running order (Deca, 2026-09). Monday is Deca's closing-of-week
+// deck, live at learn-ai.london/valley-w4-d5. Tue/Wed/Thu titles are not yet
+// confirmed by the speakers (TBC); Friday is the team's closing keynote.
 export const COMING = [
   {
     label: "Week 4 · 14 - 18 Sep",
     theme: "Governance & Funding Models",
     talks: [
-      { speaker: "Jessy Kate Schingler", talk: "Operating commons infrastructure for intentional communities" },
-      { speaker: "Daniela Gandorfer", talk: "Legal systems in transformation" },
-      { speaker: "Rashmi · Metagov", talk: "DAO governance models, research with the DAOstar group" },
-      { speaker: "Open slot", talk: "" },
-      { speaker: "Open slot", talk: "" },
+      { speaker: "Deca", talk: "Game Theory of Our Shared Purpose", url: "https://learn-ai.london/valley-w4-d5" },
+      { speaker: "Daniela Gandorfer", talk: "Talk title TBC" },
+      { speaker: "Rashmi Abbigeri · Metagov", talk: "Talk title TBC" },
+      { speaker: "Sterlin Lujan · Logos", talk: "Talk title TBC" },
+      { speaker: "VotC Team", talk: "Closing Keynote" },
     ],
   },
 ];

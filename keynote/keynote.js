@@ -3,7 +3,7 @@
 // based on the path. Content comes from content.mjs (client-safe, no answers).
 // The live quiz is layered on separately and only activates when a host opens a
 // session; the companion below is the durable artifact and always renders.
-import { ROOMS, WEEKS, MORE, COMING } from './content.mjs';
+import { ROOMS, WEEKS, MORE, COMING, AI_COURSE } from './content.mjs';
 
 const app = document.getElementById('app');
 
@@ -99,15 +99,43 @@ function cardHtml(slug, idx) {
 
 // An announced-but-unpublished talk: looks like a normal card (speaker, talk,
 // arrow) but has no page. It is a button that shows "Coming soon" on click.
+// A talk that carries a `url` (e.g. a companion already live elsewhere) instead
+// renders as a real link that navigates there.
 function soonCardHtml(t, idx) {
   const spine = SPINES[idx % SPINES.length];
-  return `<button type="button" class="card card--soon" style="--spine:${spine}">
-      <div>
+  const inner = `<div>
         <div class="card__speaker">${esc(t.speaker)}</div>
         ${t.talk ? `<div class="card__talk">${esc(t.talk)}</div>` : ''}
-      </div>
+      </div>`;
+  if (t.url) {
+    const external = /^https?:/i.test(t.url);
+    const attrs = external ? ' target="_blank" rel="noopener noreferrer"' : '';
+    return `<a class="card" style="--spine:${spine}" href="${esc(t.url)}"${attrs}>
+      ${inner}
+      <span class="card__arrow" aria-hidden="true">&rarr;</span>
+    </a>`;
+  }
+  return `<button type="button" class="card card--soon" style="--spine:${spine}">
+      ${inner}
       <span class="card__arrow" data-soon-arrow aria-hidden="true">&rarr;</span>
     </button>`;
+}
+
+// The AI-course CTA, mirroring learn-ai.london/valley: one non-talk destination
+// that links out to the "build your own agentic system" page on learn-ai.london.
+function aiCourseHtml() {
+  const c = AI_COURSE;
+  if (!c || !c.url) return '';
+  const external = /^https?:/i.test(c.url);
+  const attrs = external ? ' target="_blank" rel="noopener noreferrer"' : '';
+  return `<a class="ai-course" href="${esc(c.url)}"${attrs}>
+      <div>
+        <div class="eyebrow">${esc(c.eyebrow)}</div>
+        <div class="ai-course__title">${esc(c.title)}</div>
+        ${c.sub ? `<div class="ai-course__sub">${esc(c.sub)}</div>` : ''}
+      </div>
+      <span class="card__arrow" aria-hidden="true">&rarr;</span>
+    </a>`;
 }
 
 function renderIndex() {
@@ -154,6 +182,7 @@ function renderIndex() {
       <h1 class="index__title">Companions to the talks</h1>
       <p class="index__sub">Each talk's argument in beats, with the sources it draws on. Pick a talk.</p>
     </header>
+    ${aiCourseHtml()}
     ${weeks}
     ${coming}
     ${more}`;
