@@ -1368,6 +1368,67 @@ export const ROOMS = {
         ],
       },
     ],
+    // Additional thoughts and literature that grew out of the talk. Rendered in its
+    // own card. Structured by section kind so the renderer can lay each out well.
+    readings: [
+      {
+        eyebrow: "A read, on the theme of your talk",
+        title: "How intense physical gatherings facilitate productivity",
+        lede: "A deeper dive into the case studies and the mechanisms behind them: how being in the same room produced breakthroughs.",
+        sections: [
+          {
+            kind: "cases",
+            heading: "Deeper dive into key examples",
+            items: [
+              { title: "The Florentine Camerata", era: "c. 1573-1587", body: `A lesser-known but remarkably illustrative example beyond Renaissance Florence at large: a group of humanists, musicians, poets, and intellectuals who met at Count Giovanni de' Bardi's home. Their discussions, reviving ancient Greek drama's supposed fusion of music and speech, led directly to the invention of monody and, ultimately, opera. Jacopo Peri's Dafne (1598) and Monteverdi's Orfeo emerged from these salon debates. An entire art form literally originated in a living room conversation.` },
+              { title: "Vienna Circle", era: "1924-1936", body: `In science and philosophy, the Thursday evening meetings at the University of Vienna brought together Moritz Schlick, Rudolf Carnap, Otto Neurath, Kurt Godel (as a visitor), and others. These regular physical sessions forged logical positivism, a movement that reshaped philosophy of science, linguistics, and analytic philosophy worldwide. The circle's intense face-to-face argumentation, and Godel's devastating critiques delivered in person, changed the course of 20th-century mathematics and epistemology.` },
+              { title: "Manchester Literary and Philosophical Society", era: "1781 onward", body: `Weekly dinner meetings where scientists and industrialists mingled. John Dalton presented his atomic theory here in 1803; James Prescott Joule reported his experiments on the mechanical equivalent of heat at these gatherings. The direct proximity of instrument-makers, brewers-turned-physicists (Joule), and academics created a uniquely productive collision of practical craft and theoretical inquiry.` },
+              { title: "Royal Society, London", era: "1660 onward", body: `The weekly meetings of the Royal Society in London, where Christopher Wren, Robert Hooke, Isaac Newton, Robert Boyle, and Samuel Pepys demonstrated experiments together, established modern peer review and collaborative empirical science. The famous "Nullius in verba" motto embodied the group's insistence on shared physical demonstration: seeing was believing.` },
+              { title: "Homebrew Computer Club", era: "1975", body: `Perhaps the most cited modern example: the Homebrew Computer Club met in a Menlo Park garage auditorium. Its newsletter and meetings directly spawned Apple, and attendees founded roughly two dozen companies. Steve Wozniak described showing the Apple I prototype at a meeting as a pivotal moment: the crowd's enthusiasm convinced him and Jobs the product mattered.` },
+            ],
+          },
+          {
+            kind: "mechanisms",
+            heading: "Why physical presence works",
+            items: [
+              { title: "Collision frequency", body: `Innovation is partly probabilistic: the more unplanned encounters between diverse minds, the higher the chance of a recombinant breakthrough. Jane Jacobs argued this is why cities innovate; Richard Florida later formalized it in his work on creative clusters. A medieval monastery, a Viennese cafe, and a Stanford hallway all maximize serendipitous contact.` },
+              { title: "Low-bandwidth-but-high-trust channels", body: `Face-to-face interaction carries enormous nonverbal bandwidth, skepticism, excitement, hesitation, which accelerates trust. Trust enables risk-taking: sharing half-formed ideas before they're defensible. Informal settings lower the cost of being wrong, which raises the rate of experimentation.` },
+              { title: "Demonstration and tacit knowledge", body: `Michael Polanyi called it "tacit knowledge": skills and intuitions that can't be written down, only absorbed by proximity. A violin student learns more watching a master's bow arm than reading any text. The Bauhaus workshops institutionalized exactly this. Peter Galison showed that laboratory breakthroughs (like radar at MIT's Rad Lab) depended on engineers and physicists physically observing each other's work.` },
+              { title: "Cross-disciplinary translation", body: `Breakthroughs frequently occur when an outsider's metaphor meets an insider's problem. Parisian cafes put painters next to poets next to mathematicians; the Medicis deliberately collected diverse geniuses. Frans Johansson later branded this "the Medici effect." Physical spaces where disciplines casually mixed acted as translation engines.` },
+              { title: "Group energy and momentum", body: `There's a documented social facilitation effect: the presence of peers performing similar work intensifies effort. Edison's Menlo Park lab ("the invention factory") deliberately ran night shifts where teams could watch each other succeed, creating competitive camaraderie. Eleven hundred patents in roughly a decade followed.` },
+              { title: "Critical mass and talent migration", body: `Once a cluster gains momentum, it attracts ambitious newcomers who'd rather compete with the best than dominate mediocrity. Silicon Valley's migration of Shockley's "traitorous eight" shows the mechanism: talent follows talent, density increases further, and flywheel dynamics take over.` },
+            ],
+          },
+          {
+            kind: "prose",
+            heading: "The modern question",
+            body: `Post-pandemic research on remote work finds a nuanced picture: collaboration stayed functional but became more siloed and less likely to produce novel combinations. A 2022 study of Microsoft's internal networks found formal communication strengthened while informal cross-group ties weakened significantly. One open debate today is whether deliberate design (hackathons, residencies, offsites) can reproduce the serendipity of cafe culture in distributed organizations.`,
+          },
+          {
+            kind: "quote",
+            body: `Genius clusters don't just happen where talented individuals accidentally co-locate. They happen where structural conditions (patronage, density, informality, cross-discipline mixing) turn co-location into constant, low-friction exchange.`,
+          },
+          {
+            kind: "cases",
+            heading: "Three more cases",
+            intro: "Der Blaue Reiter in Munich, the Cubists in Paris, and the musicians around Miles Davis. All three are textbook cases of how proximity and intense collaboration produced historic breakthroughs.",
+            items: [
+              { title: "Der Blaue Reiter, Munich", era: "1911-1914", body: `The group ran from 1911 until WWI in 1914 scattered its members (Kandinsky had to leave Germany as a Russian national). In roughly three years it changed the trajectory of modern art. It grew out of the Neue Kunstlervereinigung Munchen (1909), which admitted women artists like Marianne Werefkin and Gabriele Munter and drew in musicians. When that proved too conservative, Kandinsky and Franz Marc split off. The crucible was domestic and social: Munter's house in Murnau and the Munich circles where Kandinsky, Marc, Macke, Munter, Jawlensky, and Werefkin debated art. Their 1912 Almanach mixed theoretical essays (one by Arnold Schonberg) with 140 reproductions from Bavarian folk glass to children's drawings, decades ahead of its time. The conviction that colour and form could carry spiritual content fed Kandinsky's leap to pure abstraction, arguably the birth of abstract painting in Europe.` },
+              { title: "The Cubists in Paris, the Bateau-Lavoir", era: "c. 1904-WWI", body: `Cubism was born not in an academy but in a squalid former piano factory at 13 Rue Ravignan, Montmartre, nicknamed the "Bateau-Lavoir" for the way it creaked in bad weather, with one shared water point and toilet for all tenants. Around 1904 Picasso moved in; soon it housed a colony of painters and poets including Juan Gris and the critics Apollinaire and Salmon. In November 1907 Apollinaire introduced Georges Braque to Picasso, whose Les Demoiselles d'Avignon was barely dry. From that moment the two worked side by side, studios two blocks apart, developing Analytical Cubism in such tandem that Braque compared them to "two mountaineers roped together." A critic's mockery of Braque's 1908 "cubes" gave the movement its name.` },
+              { title: "The Miles Davis Circle", era: "1955-1970", body: `Davis ran his bands as continuous working groups, turning them into apprenticeship systems. The First Great Quintet (1955-61: Coltrane, Garland, Chambers, Philly Joe Jones, Cannonball Adderley) moved away from standard chord changes, producing Kind of Blue (1959), the best-selling jazz album ever. The Second Great Quintet (1964-68: Wayne Shorter, Herbie Hancock, Ron Carter, and 17-year-old Tony Williams) invented "time, no changes" with extraordinary telepathy. Then came the fusion of In a Silent Way and Bitches Brew. The alumni effect is the thesis in its purest form: each sideman left to found a major school of jazz, from Weather Report to the Headhunters to Return to Forever.` },
+            ],
+          },
+          {
+            kind: "quote",
+            body: `Short duration, enormous yield. The Blaue Reiter lasted ~3 years; the Picasso-Braque tandem ~6; the Second Great Quintet ~5. The intensity of daily proximity, Murnau kitchens, a leaky Montmartre garret, a tour bus, matters more than longevity.`,
+          },
+          {
+            kind: "prose",
+            body: `Each group featured a mixed-discipline gravitational core (painters plus composers; painters plus poets; or in Miles's case, a leader importing outside influences) that translated across domains. And each functioned as a multiplier rather than a destination: the alumni dispersed and seeded entire subsequent movements.`,
+          },
+        ],
+      },
+    ],
     cta: { label: "Valley of the Commons", url: "/keynote" },
   },
 
@@ -2051,18 +2112,31 @@ export const WEEKS = [
 
 export const MORE = ["michel", "deca"];
 
+// The one non-talk destination, mirroring learn-ai.london/valley: learn to build
+// your own agentic system. On LAL this is the /valley-ai page; from this site we
+// link to the live page on learn-ai.london.
+export const AI_COURSE = {
+  eyebrow: "New \xb7 Learn to build it",
+  title: "Build your own agentic system",
+  sub: "The full journey, from zero: the prompts, the maps, the lessons. Password in the group.",
+  url: "https://learn-ai.london/valley-ai",
+};
+
 // Announced but not yet published (no companion pages). Rendered on the index as
 // normal-looking cards that show "Coming soon" on click instead of navigating.
+// Confirmed Week 4 running order (Deca, 2026-09). Monday is Deca's closing-of-week
+// deck, live at learn-ai.london/valley-w4-d5. Tue/Wed/Thu titles are not yet
+// confirmed by the speakers (TBC); Friday is the team's closing keynote.
 export const COMING = [
   {
     label: "Week 4 · 14 - 18 Sep",
     theme: "Governance & Funding Models",
     talks: [
-      { speaker: "Jessy Kate Schingler", talk: "Operating commons infrastructure for intentional communities" },
-      { speaker: "Daniela Gandorfer", talk: "Legal systems in transformation" },
-      { speaker: "Rashmi · Metagov", talk: "DAO governance models, research with the DAOstar group" },
-      { speaker: "Open slot", talk: "" },
-      { speaker: "Open slot", talk: "" },
+      { speaker: "Deca", talk: "Game Theory of Our Shared Purpose", url: "https://learn-ai.london/valley-w4-d5" },
+      { speaker: "Daniela Gandorfer", talk: "Talk title TBC" },
+      { speaker: "Rashmi Abbigeri · Metagov", talk: "Talk title TBC" },
+      { speaker: "Sterlin Lujan · Logos", talk: "Talk title TBC" },
+      { speaker: "VotC Team", talk: "Closing Keynote" },
     ],
   },
 ];
