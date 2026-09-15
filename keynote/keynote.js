@@ -504,12 +504,33 @@ function renderNotFound() {
     <p class="companion__speaker">That companion does not exist yet. <a href="/keynote" style="color:var(--orange)">See all the talks</a>.</p></div>`;
 }
 
+// A standalone reading (additional thoughts / literature) tied to a talk, at
+// /keynote-<slug>-gatherings. Same dark-glass surface as the companion hub, but a
+// single long-form article the reader can be pointed straight to.
+function renderReading(room, base) {
+  const r = room.readings[0];
+  document.title = `${r.title} \xb7 Valley of the Commons`;
+  document.body.classList.add('kn-glass');
+  app.innerHTML = `
+    <div class="kn-backdrop" aria-hidden="true"></div>
+    <a class="back" href="/keynote-${esc(base)}">&larr; Back to the talk</a>
+    <div class="companion kn-reading">${readingsPanel(room.readings)}</div>
+    <a class="cta" href="/keynote">Valley of the Commons</a>`;
+}
+
 const path = location.pathname.replace(/\/+$/, '') || '/keynote';
 if (path === '/keynote') {
   renderIndex();
 } else {
   const slug = path.replace(/^\/keynote-/, '');
-  const room = ROOMS[slug];
-  if (room) renderCompanion(room);
-  else renderNotFound();
+  const reading = /^(.*)-gatherings$/.exec(slug);
+  if (reading) {
+    const room = ROOMS[reading[1]];
+    if (room && room.readings && room.readings.length) renderReading(room, reading[1]);
+    else renderNotFound();
+  } else {
+    const room = ROOMS[slug];
+    if (room) renderCompanion(room);
+    else renderNotFound();
+  }
 }

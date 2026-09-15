@@ -400,12 +400,25 @@ app.get(/^\/keynote(?:-[a-z0-9-]+)?$/, async (req, res) => {
     let status = 200;
     if (slug) {
       const rooms = await keynoteRooms();
-      const room = rooms[slug];
-      if (room) {
-        title = room.meta.metaTitle || room.meta.eyebrow;
-        desc = room.meta.metaDescription || desc;
+      // A "<talk>-gatherings" slug is the standalone reading tied to that talk.
+      const reading = /^(.*)-gatherings$/.exec(slug);
+      if (reading) {
+        const room = rooms[reading[1]];
+        const r = room && room.readings && room.readings[0];
+        if (r) {
+          title = `${r.title} · Valley of the Commons`;
+          desc = r.lede || desc;
+        } else {
+          status = 404;
+        }
       } else {
-        status = 404; // unknown slug: still serve the template; the client shows a friendly not-found
+        const room = rooms[slug];
+        if (room) {
+          title = room.meta.metaTitle || room.meta.eyebrow;
+          desc = room.meta.metaDescription || desc;
+        } else {
+          status = 404; // unknown slug: still serve the template; the client shows a friendly not-found
+        }
       }
     }
     const template = fs.readFileSync(path.join(__dirname, 'keynote', 'keynote.html'), 'utf8');
