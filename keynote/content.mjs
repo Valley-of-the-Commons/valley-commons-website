@@ -2899,7 +2899,7 @@ export const CATEGORIES = [
   { id: "w1-d2", speaker: "Michel Bauwens", talk: "The Return of the Commons", href: "/keynote-w1-d2", spine: "#b14fff", tags: ["solar", "global", "vision"] },
   { id: "w1-d3", speaker: "Adam Arvidsson", talk: "Industrious Modernity", href: "/keynote-w1-d3", spine: "#c9b3ff", tags: ["solar", "global", "vision"] },
   { id: "w1-d4", speaker: "Amber Case", talk: "Calm Technology", href: "/keynote-w1-d4", spine: "#34d399", tags: ["lunar", "global", "vision"] },
-  { id: "w1-d5", speaker: "Jeff Emmett", talk: "From P2P to P4P", href: "/keynote-w1-d5", spine: "#d97757", tags: ["solar", "global", "impl"] },
+  { id: "w1-d5", speaker: "Jeff Emmett", talk: "From P2P to P4P", href: "/keynote-w1-d5", spine: "#d97757", tags: ["lunar", "global", "impl"] },
   { id: "w2-d1", speaker: "Roberto Valenti", talk: "Liminal Village", href: "/keynote-w2-d1", spine: "#ff6b35", tags: ["solar", "local", "impl"] },
   { id: "w2-d2", speaker: "Kilian Jörg", talk: "Reclaiming the Commons", href: "/keynote-w2-d2", spine: "#b14fff", tags: ["solar", "global", "vision"] },
   { id: "w2-d3", speaker: "Lorenzo Patuzzo", talk: "Monasteries of the 21st Century", href: "/keynote-w2-d3", spine: "#c9b3ff", tags: ["solar", "local", "impl"] },
