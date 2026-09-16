@@ -69,6 +69,28 @@ function haloTexture(THREE) {
   return tex;
 }
 
+// Local nodes are a little house: an extruded pentagon (square body + gable
+// roof), built once and shared. Global nodes stay spheres.
+function houseGeometry(THREE) {
+  const s = new THREE.Shape();
+  s.moveTo(-0.46, -0.5);
+  s.lineTo(0.46, -0.5);
+  s.lineTo(0.46, 0.12);
+  s.lineTo(0, 0.6);
+  s.lineTo(-0.46, 0.12);
+  s.closePath();
+  const geo = new THREE.ExtrudeGeometry(s, {
+    depth: 0.72,
+    bevelEnabled: true,
+    bevelThickness: 0.05,
+    bevelSize: 0.05,
+    bevelSegments: 2,
+  });
+  geo.center();
+  geo.scale(0.74, 0.74, 0.74);
+  return geo;
+}
+
 function poleEl(emoji, label, color) {
   const el = document.createElement("div");
   el.className = "vg-pole";
@@ -149,41 +171,58 @@ export async function mountConstellation(container, talks, AXES) {
   addPole([0, 0, R + 2], AXES.z.pos.emoji, AXES.z.pos.label, "#7fb0ff");
   addPole([0, 0, -R - 2], AXES.z.neg.emoji, AXES.z.neg.label, "#7fb0ff");
 
-  // Nodes
+  // Nodes. Shape encodes global/local, surface encodes vision/impl.
   const pos = layout(talks);
   const halo = haloTexture(THREE);
-  const sphereGeo = new THREE.SphereGeometry(0.32, 32, 32);
+  const sphereGeo = new THREE.SphereGeometry(0.4, 32, 32);
+  const houseGeo = houseGeometry(THREE);
+  const white = new THREE.Color("#ffffff");
   const raycastMeshes = [];
   const nodes = [];
 
   for (const t of talks) {
     const color = t.tags[0] === "solar" ? SOLAR : LUNAR;
+    const isGlobal = t.tags[1] === "global";
+    const isVision = t.tags[2] === "vision";
+    const geo = isGlobal ? sphereGeo : houseGeo;
     const group = new THREE.Group();
     const [x, y, z] = pos.get(t.id);
     group.position.set(x, y, z);
 
+    // Vision -> translucent + glow; Implementation -> opaque + thick border.
     const mat = new THREE.MeshStandardMaterial({
       color,
       emissive: color,
-      emissiveIntensity: 1.0,
-      roughness: 0.35,
+      emissiveIntensity: isVision ? 1.7 : 0.5,
+      roughness: isVision ? 0.3 : 0.5,
       metalness: 0.1,
+      transparent: isVision,
+      opacity: isVision ? 0.55 : 1,
     });
-    const mesh = new THREE.Mesh(sphereGeo, mat);
+    const mesh = new THREE.Mesh(geo, mat);
     mesh.userData.talk = t;
     group.add(mesh);
 
-    const spriteMat = new THREE.SpriteMaterial({
-      map: halo,
-      color,
-      transparent: true,
-      opacity: 0.5,
-      blending: THREE.AdditiveBlending,
-      depthWrite: false,
-    });
-    const sprite = new THREE.Sprite(spriteMat);
-    sprite.scale.setScalar(2.1);
-    group.add(sprite);
+    let sprite = null;
+    if (isVision) {
+      const spriteMat = new THREE.SpriteMaterial({
+        map: halo,
+        color,
+        transparent: true,
+        opacity: 0.5,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false,
+      });
+      sprite = new THREE.Sprite(spriteMat);
+      sprite.scale.setScalar(2.1);
+      group.add(sprite);
+    } else {
+      // Inverted-hull outline reads as a thick solid border.
+      const rim = new THREE.Color(color).lerp(white, 0.32);
+      const outline = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color: rim, side: THREE.BackSide }));
+      outline.scale.setScalar(1.2);
+      group.add(outline);
+    }
 
     const emojis = emojiFor(AXES, t.tags);
     const card = cardEl(t, emojis);
@@ -196,7 +235,7 @@ export async function mountConstellation(container, talks, AXES) {
 
     scene.add(group);
     raycastMeshes.push(mesh);
-    nodes.push({ t, group, mesh, mat, sprite, labelObj, baseY: y, seed: Math.random() * Math.PI * 2, scale: 1 });
+    nodes.push({ t, group, mesh, mat, sprite, labelObj, isVision, baseY: y, seed: Math.random() * Math.PI * 2, scale: 1 });
   }
 
   const controls = new OrbitControls(camera, renderer.domElement);
@@ -240,11 +279,11 @@ export async function mountConstellation(container, talks, AXES) {
     for (const n of nodes) {
       n.group.position.y = n.baseY + Math.sin(el * 0.6 + n.seed) * 0.08;
       const open = n.t.id === hovered || n.t.id === active;
-      const target = open ? 1.55 : 1;
+      const target = open ? 1.5 : 1;
       n.scale += (target - n.scale) * 0.15;
-      n.mesh.scale.setScalar(n.scale);
-      n.mat.emissiveIntensity = open ? 2.2 : 1.0;
-      n.sprite.material.opacity = open ? 0.85 : 0.5;
+      n.group.scale.setScalar(n.scale);
+      n.mat.emissiveIntensity = n.isVision ? (open ? 2.6 : 1.7) : open ? 1.1 : 0.5;
+      if (n.sprite) n.sprite.material.opacity = open ? 0.9 : 0.5;
       n.labelObj.visible = open;
     }
     controls.update();
@@ -273,6 +312,7 @@ export async function mountConstellation(container, talks, AXES) {
     renderer.domElement.removeEventListener("click", onClick);
     controls.dispose();
     sphereGeo.dispose();
+    houseGeo.dispose();
     halo.dispose();
     nodes.forEach((n) => n.mat.dispose());
     renderer.dispose();
