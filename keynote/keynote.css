@@ -434,3 +434,121 @@ body.kn-glass #kq-hostbar button {
 body.kn-glass #kq-hostbar button:hover { background: #d97a44; transform: translateY(-1px); }
 body.kn-glass #kq-hostbar button[data-action="reset"] { background: transparent; color: rgba(243,236,224,.6); border-color: rgba(255,255,255,.16); }
 body.kn-glass #kq-hostbar button[data-action="reset"]:hover { color: #f3ece0; }
+
+/* ============================================================================
+   Constellation / Timeline view on the /keynote index (graph.mjs, keynote.js).
+   Warm-dusk twin of the Learn AI London /valley 3D view.
+   ========================================================================== */
+.kn-timeline[hidden], .vg-wrap[hidden] { display: none; }
+
+.vg-toggle {
+  display: inline-flex;
+  gap: 4px;
+  margin: 22px auto 4px;
+  padding: 4px;
+  border-radius: 999px;
+  border: 1px solid rgba(243, 236, 224, 0.14);
+  background: rgba(20, 16, 9, 0.55);
+  -webkit-backdrop-filter: blur(18px) saturate(150%);
+  backdrop-filter: blur(18px) saturate(150%);
+}
+.vg-toggle__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 18px;
+  border: 0;
+  border-radius: 999px;
+  cursor: pointer;
+  background: transparent;
+  font: 600 11px/1 var(--sans);
+  letter-spacing: 2.4px;
+  text-transform: uppercase;
+  color: rgba(243, 236, 224, 0.6);
+  transition: color .25s ease, background .25s ease, box-shadow .25s ease;
+}
+.vg-toggle__btn:hover { color: #faf5ec; }
+.vg-toggle__btn.is-active {
+  color: #241206;
+  background: linear-gradient(100deg, #ffb454, #e5915a);
+  box-shadow: 0 0 22px -6px rgba(229, 145, 90, 0.8);
+}
+
+.vg-wrap {
+  position: relative;
+  width: 100%;
+  height: min(74vh, 680px);
+  margin-top: 14px;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid rgba(243, 236, 224, 0.1);
+  background: radial-gradient(120% 90% at 50% 0%, rgba(196, 98, 45, 0.12), transparent 70%);
+  box-shadow: inset 0 0 90px -30px rgba(196, 98, 45, 0.4);
+  touch-action: none;
+}
+.vg-wrap canvas { display: block; }
+.vg-hint {
+  position: absolute;
+  bottom: 14px; left: 0; right: 0;
+  text-align: center;
+  font: 500 10.5px/1 var(--sans);
+  letter-spacing: 2.6px;
+  text-transform: uppercase;
+  color: rgba(243, 236, 224, 0.5);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.vg-pole {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  pointer-events: none;
+  user-select: none;
+  white-space: nowrap;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.85);
+}
+.vg-pole__emoji { font-size: 18px; filter: drop-shadow(0 0 6px color-mix(in srgb, var(--pole) 70%, transparent)); }
+.vg-pole__label {
+  font: 600 9.5px/1 var(--sans);
+  letter-spacing: 2.6px;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--pole) 78%, white 22%);
+}
+
+.vg-card {
+  width: 190px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 11px 13px;
+  border-radius: 14px;
+  border: 1px solid color-mix(in srgb, var(--accent) 55%, transparent);
+  background: rgba(20, 16, 9, 0.82);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  backdrop-filter: blur(16px) saturate(160%);
+  box-shadow: 0 0 30px -8px color-mix(in srgb, var(--accent) 60%, transparent);
+  transform: translateY(-6px);
+  pointer-events: auto;
+  user-select: none;
+}
+.vg-card__emojis { font-size: 15px; letter-spacing: 2px; }
+.vg-card__title { font-family: var(--serif); font-weight: 700; font-size: 15px; line-height: 1.2; color: #faf5ec; }
+.vg-card__speaker { font: 500 12px/1.2 var(--sans); color: rgba(243, 236, 224, 0.66); }
+.vg-card__open {
+  margin-top: 2px;
+  font: 600 10px/1 var(--sans);
+  letter-spacing: 1.6px;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--accent) 82%, white 18%);
+  border: 0;
+}
+.vg-card__open:hover { color: #fff; }
+.vg-card__soon {
+  margin-top: 2px;
+  font: 600 9.5px/1 var(--sans);
+  letter-spacing: 1.6px;
+  text-transform: uppercase;
+  color: rgba(243, 236, 224, 0.5);
+}

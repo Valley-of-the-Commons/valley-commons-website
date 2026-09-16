@@ -3,7 +3,7 @@
 // based on the path. Content comes from content.mjs (client-safe, no answers).
 // The live quiz is layered on separately and only activates when a host opens a
 // session; the companion below is the durable artifact and always renders.
-import { ROOMS, WEEKS, MORE, COMING, AI_COURSE } from './content.mjs';
+import { ROOMS, WEEKS, MORE, COMING, AI_COURSE, CATEGORIES, AXES } from './content.mjs';
 
 const app = document.getElementById('app');
 
@@ -471,12 +471,42 @@ function renderIndex() {
     <header class="index__head">
       <span class="eyebrow">Valley of the Commons</span>
       <h1 class="index__title">Companions to the talks</h1>
-      <p class="index__sub">Each talk's argument in beats, with the sources it draws on. Pick a talk.</p>
+      <p class="index__sub">Each talk's argument in beats, with the sources it draws on. Explore the ideas as a constellation, or by date.</p>
     </header>
     ${aiCourseHtml()}
-    ${weeks}
-    ${coming}
-    ${more}`;
+    <div class="vg-toggle" role="tablist" aria-label="View">
+      <button role="tab" data-view="graph" class="vg-toggle__btn is-active"><span aria-hidden="true">&#10022;</span> Constellation</button>
+      <button role="tab" data-view="timeline" class="vg-toggle__btn"><span aria-hidden="true">&#9636;</span> Timeline</button>
+    </div>
+    <div class="vg-wrap" id="kn-graph"><p class="vg-hint">Drag to orbit &middot; scroll to zoom &middot; tap a star</p></div>
+    <div class="kn-timeline" hidden>${weeks}${coming}${more}</div>`;
+
+  // View toggle: the 3D Constellation (default) or the chronological Timeline.
+  // The graph mounts lazily on first reveal and stays mounted after.
+  const graphWrap = app.querySelector('#kn-graph');
+  const timeline = app.querySelector('.kn-timeline');
+  let graphMounted = false;
+  const mountGraphOnce = () => {
+    if (graphMounted) return;
+    graphMounted = true;
+    import('./graph.mjs')
+      .then((m) => m.mountConstellation(graphWrap, CATEGORIES, AXES))
+      .catch((err) => {
+        graphWrap.innerHTML = '<p class="vg-hint" style="position:static">The constellation could not load. Try the Timeline.</p>';
+        console.error('constellation failed', err);
+      });
+  };
+  app.querySelectorAll('.vg-toggle__btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const view = btn.dataset.view;
+      app.querySelectorAll('.vg-toggle__btn').forEach((b) => b.classList.toggle('is-active', b === btn));
+      const graph = view === 'graph';
+      graphWrap.hidden = !graph;
+      timeline.hidden = graph;
+      if (graph) mountGraphOnce();
+    });
+  });
+  mountGraphOnce();
 
   // Coming-soon cards: no page, so a click briefly swaps the arrow for a small
   // "Coming soon" message instead of navigating.

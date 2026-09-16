@@ -2881,3 +2881,38 @@ export const COMING = [
     ],
   },
 ];
+
+// Category tags for the 3D Constellation view (keynote-graph.mjs). Each talk
+// carries three tags, one per axis couple: solar/lunar (X), global/local (Y),
+// vision/impl (Z). href is the same-site companion (/keynote-<slug>), an
+// external Learn AI London page, or null when no companion exists yet. Talks
+// without a companion still appear as nodes (label, no link). Mirrors
+// learn-ai.london /valley (src/lib/valley/schedule.ts).
+export const AXES = {
+  x: { pos: { id: "solar", label: "Solarpunk", emoji: "\u{1F31E}" }, neg: { id: "lunar", label: "Lunarpunk", emoji: "\u{1F319}" } },
+  y: { pos: { id: "global", label: "Global", emoji: "\u{1F30D}" }, neg: { id: "local", label: "Local", emoji: "\u{1F3E1}" } },
+  z: { pos: { id: "vision", label: "Vision", emoji: "\u{1F52D}" }, neg: { id: "impl", label: "Implementation", emoji: "\u{1F527}" } },
+};
+
+export const CATEGORIES = [
+  { id: "w1-d1", speaker: "Felix Fritsch", talk: "Opening Day", href: "/keynote-w1-d1", spine: "#ff6b35", tags: ["solar", "local", "vision"] },
+  { id: "w1-d2", speaker: "Michel Bauwens", talk: "The Return of the Commons", href: "/keynote-w1-d2", spine: "#b14fff", tags: ["solar", "global", "vision"] },
+  { id: "w1-d3", speaker: "Adam Arvidsson", talk: "Industrious Modernity", href: "/keynote-w1-d3", spine: "#c9b3ff", tags: ["solar", "global", "vision"] },
+  { id: "w1-d4", speaker: "Amber Case", talk: "Calm Technology", href: "/keynote-w1-d4", spine: "#34d399", tags: ["lunar", "global", "vision"] },
+  { id: "w1-d5", speaker: "Jeff Emmett", talk: "From P2P to P4P", href: "/keynote-w1-d5", spine: "#d97757", tags: ["solar", "global", "impl"] },
+  { id: "w2-d1", speaker: "Roberto Valenti", talk: "Liminal Village", href: "/keynote-w2-d1", spine: "#ff6b35", tags: ["solar", "local", "impl"] },
+  { id: "w2-d2", speaker: "Kilian Jörg", talk: "Reclaiming the Commons", href: "/keynote-w2-d2", spine: "#b14fff", tags: ["solar", "global", "vision"] },
+  { id: "w2-d3", speaker: "Lorenzo Patuzzo", talk: "Monasteries of the 21st Century", href: "/keynote-w2-d3", spine: "#c9b3ff", tags: ["solar", "local", "impl"] },
+  { id: "w2-d4", speaker: "Stefan Schütz", talk: "Local Production & Money", href: "/keynote-w2-d4", spine: "#34d399", tags: ["solar", "local", "impl"] },
+  { id: "w2-d5", speaker: "Silvia Brandi", talk: "International FabLab Network", href: "/keynote-w2-d5", spine: "#d97757", tags: ["solar", "global", "impl"] },
+  { id: "w3-d1", speaker: "Una Wang", talk: "As Above, So Below", href: "/keynote-w3-d1", spine: "#ff6b35", tags: ["solar", "local", "impl"] },
+  { id: "w3-d2", speaker: "Matthias Fersterer", talk: "Klein Jasedow", href: "/keynote-w3-d2", spine: "#b14fff", tags: ["solar", "local", "impl"] },
+  { id: "w3-d3", speaker: "Luna and Sam Delesque", talk: "Building Traditional Dream Factory", href: "/keynote-w3-d3", spine: "#c9b3ff", tags: ["solar", "local", "impl"] },
+  { id: "w3-d4", speaker: "Clara Gromaches", talk: "Housing as a Commons", href: "/keynote-w3-d4", spine: "#34d399", tags: ["solar", "global", "vision"] },
+  { id: "w3-d5", speaker: "Charlie Fischer", talk: "Knowing at the Boundaries", href: "/keynote-w3-d5", spine: "#d97757", tags: ["solar", "local", "impl"] },
+  { id: "w4-d1", speaker: "Deca", talk: "Game Theory of Our Shared Purpose", href: "https://learn-ai.london/valley-w4-d1", spine: "#ff6b35", tags: ["solar", "global", "vision"] },
+  { id: "w4-d2", speaker: "Sterlin Lujan · Logos", talk: "Logos Circles", href: "/keynote-w4-d2", spine: "#b14fff", tags: ["lunar", "global", "vision"] },
+  { id: "w4-d3", speaker: "Daniela Gandorfer", talk: "Legal System in Transformation", href: null, spine: "#c9b3ff", tags: ["lunar", "global", "vision"] },
+  { id: "michel", speaker: "Michel Bauwens", talk: "Cosmo-Localism", href: "/keynote-michel", spine: "#b14fff", tags: ["solar", "global", "vision"] },
+  { id: "deca", speaker: "Deca", talk: "The Market, the State and the Commons", href: "/keynote-deca", spine: "#c9b3ff", tags: ["lunar", "global", "vision"] },
+];
