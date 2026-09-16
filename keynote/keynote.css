@@ -479,11 +479,7 @@ body.kn-glass #kq-hostbar button[data-action="reset"]:hover { color: #f3ece0; }
   width: 100%;
   height: min(74vh, 680px);
   margin-top: 14px;
-  border-radius: 20px;
   overflow: hidden;
-  border: 1px solid rgba(243, 236, 224, 0.1);
-  background: radial-gradient(120% 90% at 50% 0%, rgba(196, 98, 45, 0.12), transparent 70%);
-  box-shadow: inset 0 0 90px -30px rgba(196, 98, 45, 0.4);
   touch-action: none;
 }
 .vg-wrap canvas { display: block; }
