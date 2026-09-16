@@ -24,5 +24,13 @@ module.exports = {
     "w3-d1":        { 0: 2, 1: 1, 2: 3, 3: 0, 4: 2 },
     // Matthias Fersterer - Klein Jasedow: A Commoning Community
     "w3-d2":        { 0: 1, 1: 1, 2: 2, 3: 1, 4: 2 },
+    // Luna & Sam Delesque - Building Traditional Dream Factory
+    "w3-d3":        { 0: 0, 1: 1, 2: 2, 3: 1, 4: 0 },
+    // Clara Gromaches - Housing as a Commons
+    "w3-d4":        { 0: 1, 1: 2, 2: 1, 3: 2, 4: 1 },
+    // Charlie Fischer - Knowing at the Boundaries: land ownership mapping
+    "w3-d5":        { 0: 2, 1: 1, 2: 1, 3: 0, 4: 2 },
+    // Sterlin Lujan - Logos Circles: Activism for Parallel Societies
+    "w4-d2":        { 0: 1, 1: 0, 2: 2, 3: 0, 4: 1 },
   },
 };

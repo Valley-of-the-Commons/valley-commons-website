@@ -2083,6 +2083,754 @@ export const ROOMS = {
     cta: { label: "Valley of the Commons", url: "/keynote" },
   },
 
+  "w3-d3": {
+    slug: "w3-d3",
+    meta: {
+      eyebrow: "Six years building a tokenised regenerative village in the Alentejo, wins and hard truths",
+      speaker: "Luna and Sam Delesque",
+      socials: [
+        { label: "Samuel Delesque (personal site)", url: "https://samueldelesque.me/" },
+        { label: "Traditional Dream Factory", url: "https://www.traditionaldreamfactory.com/" },
+      ],
+      livestream: "https://www.youtube.com/watch?v=24ifZDgNdlY",
+      metaTitle: "Building Traditional Dream Factory \xb7 Luna & Sam Delesque",
+      metaDescription:
+        "Companion to Luna and Sam Delesque's talk at Valley of the Commons: how Traditional Dream Factory restores degraded land in the Alentejo, holds it in a Swiss commons trust, and governs a 60-citizen village through a token weighted by presence and sweat. In beats with sources, plus the live session.",
+    },
+    items: [
+      {
+        type: "quiz",
+        prompt: "What does one Traditional Dream Factory token entitle the holder to?",
+        options: [
+          "One night's stay per year, for life",
+          "A permanent house on the land",
+          "One share of the village's annual profits",
+          "A vote proportional only to money spent",
+        ],
+      },
+      {
+        type: "quiz",
+        prompt: "Where is Traditional Dream Factory?",
+        options: [
+          "Findhorn, Scotland",
+          "Abela, in the Alentejo region of Portugal",
+          "Sintra, near Lisbon",
+          "Tamera, in the south of Portugal",
+        ],
+      },
+      {
+        type: "quiz",
+        prompt: "What is the role of OASA, the Swiss non-profit?",
+        options: [
+          "It runs the day-to-day bookings and events",
+          "It markets the token to new buyers",
+          "It holds the land and buildings under a regeneration constitution",
+          "It is the blockchain that hosts the token",
+        ],
+      },
+      {
+        type: "quiz",
+        prompt: "Besides buying tokens, which two mechanisms add voting weight at TDF?",
+        options: [
+          "Proof of Stake and Proof of Work",
+          "Proof of Presence and Proof of Sweat",
+          "Proof of Payment and Proof of Residence",
+          "Proof of Vouching and Proof of Age",
+        ],
+      },
+      {
+        type: "quiz",
+        prompt: "Under OASA's rules, how much of TDF's land may be developed (built on)?",
+        options: [
+          "5%",
+          "25%",
+          "45%",
+          "50%",
+        ],
+      },
+      {
+        type: "poll",
+        prompt: "Which part of building a village would you personally find hardest?",
+        options: [
+          "Restoring the degraded land",
+          "Raising the money",
+          "Holding the community together",
+          "Building the technology",
+        ],
+      },
+      {
+        type: "poll",
+        prompt: "Would you buy into a community with a token giving you one night a year for life?",
+        options: [
+          "Yes, gladly",
+          "Only after visiting in person",
+          "Only if I could resell it",
+          "No, not for me",
+        ],
+      },
+      {
+        type: "poll",
+        prompt: "Where should voting power in a community mostly come from?",
+        options: [
+          "Money contributed",
+          "Work put in (sweat)",
+          "Time physically present",
+          "One person, one vote",
+        ],
+      },
+      {
+        type: "poll",
+        prompt: "What matters most in an intentional community?",
+        options: [
+          "Regenerating the land",
+          "Financial viability",
+          "Strong social rituals and agreements",
+          "Good governance software",
+        ],
+      },
+      {
+        type: "poll",
+        prompt: "Would you rather steward land in common or own property outright?",
+        options: [
+          "Steward it in common",
+          "Own it outright",
+          "A mix of both",
+          "I am not sure",
+        ],
+      },
+    ],
+    beats: [
+      {
+        n: 1,
+        title: "What TDF is",
+        body: "Traditional Dream Factory is a regenerative village in Abela, in Portugal's Alentejo, built on an old chicken factory the team has slowly renovated. It stewards 25 hectares, owns the factory buildings, and leases the land with a right to buy over five years. At the time of the talk it has around 60 'citizens' (global members who treat TDF as a home), roughly 30 people on the ground in season, and over 320 guests a year. It sits an hour and a half from Lisbon and 35 minutes from the beach, next to Abela village, deliberately connected to the locals rather than an off-grid bubble.",
+        links: [
+          { label: "Traditional Dream Factory", url: "https://www.traditionaldreamfactory.com/" },
+          { label: "TDF food forest (Open Forest Protocol)", url: "https://atlas.openforestprotocol.org/1746539547000" },
+        ],
+      },
+      {
+        n: 2,
+        title: "Three bodies keep the land safe",
+        body: "TDF is structured as three interlocking entities so that a founder leaving, or a conflict, can never put the land at risk. OASA, a Swiss non-profit association set up around 2021, holds the land, the buildings and now Closer under a constitution committed to regeneration, with a stated goal of protecting 100,000 hectares. A Portuguese company, Enciada, is the operating vehicle, wholly owned by OASA, so profit flows back into regeneration. Closer is the software operating system, built first by Sam and now by a larger dev team.",
+        links: [
+          { label: "OASA (land held in trust for regeneration)", url: "https://oasa.earth/" },
+          { label: "Closer platform", url: "https://closer.earth/" },
+        ],
+      },
+      {
+        n: 3,
+        title: "One night a year, for life",
+        body: "TDF is a tokenised village on the Celo blockchain. The utility token opened at 222 euros in 2021 and traded near 267 euros at the time of the talk, rising on a bonding curve so each purchase or sale nudges the price up. One token equals one night's stay per year for life, so 30 tokens buy a month a year; buyers can now pay by bank card, with the web3 handled in the back end. The token is both the fundraising mechanism and the governance mechanism, held in the buyer's own wallet.",
+        links: [
+          { label: "The Blockchain Socialist: TDF as a DAO in Portugal", url: "https://theblockchainsocialist.com/a-regenerative-village-as-a-dao-in-portugal-traditional-dream-factory/" },
+          { label: "Learn more about TDF", url: "https://www.traditionaldreamfactory.com/learn-more" },
+        ],
+      },
+      {
+        n: 4,
+        title: "Proof of Presence, Proof of Sweat",
+        body: "On top of the token, TDF adds weights so that money does not equal power. Proof of Presence is recorded on-chain when you show up and stay; Proof of Sweat is earned by working for the project, including tech, coordination and artistic work, not just physical labour. Someone who buys 60 tokens but never appears can carry less voting weight than someone with 5 tokens who has done a month-long residency. Sweat decays about 10% to reward continued participation, and the sweat reserve (20% of tokens) is running lower after six years, making sweat scarcer and more valued.",
+        links: [
+          { label: "Closer governance (Proof of Presence / Proof of Sweat)", url: "https://closer.earth/" },
+        ],
+      },
+      {
+        n: 5,
+        title: "Documentation as the source of truth",
+        body: "Early on, Sam, Annie and the first members wrote a 'pink paper' (still downloadable) capturing the first vision, agreements, principles and values. It has since become a 'game guide' kept on GitHub as the community's living source of truth: values, agreements, how governance and the token work, and social protocols on alcohol, pets, religion and conflict. The game guide can now only be changed through the DAO, and governance itself moved off tools like Snapshot onto Closer, where citizens read a proposal, comment and vote in one place.",
+        links: [
+          { label: "Closer platform", url: "https://closer.earth/" },
+        ],
+      },
+      {
+        n: 6,
+        title: "Farming rocks, then regenerating",
+        body: "The land was severely degraded by overgrazing and industrial farming; the team joked they were 'farming rocks'. They have planted around 4,000 trees (about half survive in the hard, drying Alentejo climate), grown a food forest of 65-plus species, and dug swales, ponds and a natural pool, raising the water table from around 20 metres up to about 3 metres in places. OASA's rules cap development at 5% of the land, allow 45% for agriculture and food, and permanently rewild 50%; water is tested twice a year via DNA sampling to build a biodiversity baseline for future biodiversity credits.",
+        links: [
+          { label: "Sam's honest note on regeneration (Substack)", url: "https://traditionaldreamfactory.substack.com/p/tdf-2026-an-honest-note-on-regeneration" },
+        ],
+      },
+      {
+        n: 7,
+        title: "Social architecture, not 'figure it out'",
+        body: "TDF runs on structured social practice rather than the hope that people will just get along. Principles borrow from Burning Man (consent, gifting, leave a positive trace) and are digitally signed by everyone who books. Weekly anchors include a 9am standup, sharing and feedback circles, meal circles and Sunday saunas, plus regular Nonviolent Communication workshops and a DAO-ratified conflict-resolution protocol. Membership runs in phases: a two-week cultural onboarding, buying 30 tokens, and being vouched in by roughly 10% of citizens, with 'outboarding' possible for clear values breaches.",
+        links: [
+          { label: "The 10 Principles of Burning Man", url: "https://burningman.org/about/10-principles/" },
+          { label: "Center for Nonviolent Communication", url: "https://www.cnvc.org/" },
+        ],
+      },
+      {
+        n: 8,
+        title: "The money, and letting go",
+        body: "The 2022 token launch did not sell out or raise the roughly 3.5 million euros hoped for, despite an expensive campaign; sales instead grew slowly, accelerating in the last year. Over five years TDF raised about 1.2 million euros and took roughly 400,000 euros in mostly friends-and-family loans at low or zero interest, and in 2025 operations broke roughly even (about 80,000 euros in and out), helped by events, glamping and a small monthly subscription. Luna's closing lessons: secure water before you plant, write structures and agreements early, do not build software while building a village, distribute weight and ownership from day one, hire slowly, take breaks, and put people before the project.",
+        links: [
+          { label: "The talk (video)", url: "https://www.youtube.com/watch?v=24ifZDgNdlY" },
+        ],
+      },
+    ],
+    cta: { label: "Valley of the Commons", url: "/keynote" },
+  },
+  "w3-d4": {
+    slug: "w3-d4",
+    meta: {
+      eyebrow: "How housing is taken out of the speculative market and held in common",
+      speaker: "Clara Gromaches",
+      socials: [
+        { label: "Clara Gromaches (site)", url: "https://claragromaches.com/" },
+        { label: "Clara Gromaches on LinkedIn", url: "https://www.linkedin.com/in/cgromaches/" },
+      ],
+      livestream: "https://www.youtube.com/watch?v=3lN8V0sA6qo",
+      metaTitle: "Housing as a Commons \xb7 Clara Gromaches",
+      metaDescription:
+        "Companion to Clara Gromaches's talk at Valley of the Commons: the legal, historical and material foundations of holding housing and land in common, from stewarded-property law and the Mietshauser Syndikat to Red Vienna and earth construction. In beats with sources, plus the live session.",
+    },
+    items: [
+      {
+        type: "quiz",
+        prompt: "In the David Graeber line Clara opens with, property is fundamentally what?",
+        options: [
+          "A relation between a person and a thing",
+          "An agreement between people",
+          "A right granted by the state",
+          "A gift from nature",
+        ],
+      },
+      {
+        type: "quiz",
+        prompt: "In the Mietshauser Syndikat model, who can veto selling a house back into the speculative market?",
+        options: [
+          "The local municipality",
+          "The individual resident who bought in",
+          "The syndicate/network, alongside the resident community",
+          "The bank holding the mortgage",
+        ],
+      },
+      {
+        type: "quiz",
+        prompt: "Which three characteristics define 'stewarded property' in Clara's framing?",
+        options: [
+          "Ownership, profit, inheritance",
+          "Possession, custom, inalienability",
+          "Rent, lease, sale",
+          "Land, labour, capital",
+        ],
+      },
+      {
+        type: "quiz",
+        prompt: "Which city did Clara repeatedly cite as a global reference for social and affordable housing?",
+        options: [
+          "Barcelona",
+          "Freiburg",
+          "Vienna",
+          "Zurich",
+        ],
+      },
+      {
+        type: "quiz",
+        prompt: "Why does Clara say earth construction performs well in earthquake areas?",
+        options: [
+          "It is heavier than concrete",
+          "It vibrates with the ground at a similar frequency, making it more resistant",
+          "It is reinforced with steel",
+          "It cannot crack",
+        ],
+      },
+      {
+        type: "poll",
+        prompt: "For a Valley dwelling, how much of daily life would you want to share?",
+        options: [
+          "Almost everything (shared kitchen, meals, spaces)",
+          "A lot, but I keep a private bedroom",
+          "A private flat plus a shared common house",
+          "My own house, occasionally using shared facilities",
+        ],
+      },
+      {
+        type: "poll",
+        prompt: "Which legal vehicle for holding housing out of the market appeals to you most?",
+        options: [
+          "Foundation model (assets cannot be sold, only transferred)",
+          "Mietshauser Syndikat network veto",
+          "Right-of-use cooperative",
+          "Community land trust (land and building split)",
+        ],
+      },
+      {
+        type: "poll",
+        prompt: "If you could build here with one local material, which?",
+        options: [
+          "Earth / clay",
+          "Straw",
+          "Timber",
+          "Stone",
+        ],
+      },
+      {
+        type: "poll",
+        prompt: "What matters most when starting a community from zero?",
+        options: [
+          "A clear, specific shared mission",
+          "The right site and climate",
+          "Legal protection against dispossession",
+          "The economic and funding model",
+        ],
+      },
+      {
+        type: "poll",
+        prompt: "How should invisible care work (cooking, cleaning, childcare) be handled?",
+        options: [
+          "An obligatory shared service, like seva, for everyone",
+          "Paid, professionalised roles",
+          "A rotating volunteer roster",
+          "Left to individual households",
+        ],
+      },
+    ],
+    beats: [
+      {
+        n: 1,
+        title: "Property is an agreement between people",
+        body: "Clara opens on the legal foundations, quoting David Graeber that property 'is not a relation between a person and a thing, it is an agreement between people', and traces how it evolved over 300 years. She frames private property through William Blackstone's 'sole and despotic dominion' and a Lockean 'my freedom ends where yours begins' individualism, arguing this isolates the individual from community, tradition and nature. She ties private property to environmental loss: most of the world's land is held customarily by communities but only a small share is legally recognised, and deforestation is driven by agricultural expansion on private land.",
+        links: [
+          { label: "David Graeber on property (quote)", url: "https://www.goodreads.com/quotes/11031746-the-reason-it-is-possible-to-imagine-property-as-a" },
+          { label: "William Blackstone", url: "https://en.wikipedia.org/wiki/William_Blackstone" },
+        ],
+      },
+      {
+        n: 2,
+        title: "Four ways to hold property",
+        body: "She lays out four paradigms. Private property is exclusion and dominion. Collective property, traced to Rousseau's general will and Robert Owen's cooperative communism, she critiques because a co-op or non-profit can still vote to sell out and hand assets back to the market (she uses OpenAI's drift toward for-profit as an analogy). Public property is managed by the state for citizens but never by them. Stewarded property goes beyond ownership toward a right to use, manage and inhabit, rather than to buy or sell.",
+        links: [
+          { label: "Robert Owen", url: "https://en.wikipedia.org/wiki/Robert_Owen" },
+        ],
+      },
+      {
+        n: 3,
+        title: "Stewarded property: possession, custom, inalienability",
+        body: "Clara defines stewarded property by three traits. Possession is the right to inhabit long-term (use value) rather than to trade (exchange value); custom means the rights and agreements are held between the people managing the commons, which is also why commons are fragile, since agreements are relationships; inalienability means some things are too fundamental to be made 'mine'. Under this frame housing becomes a fundamental right rather than a speculative asset. She notes the 'tragedy of the commons' arises specifically from open access with no boundaries or agreements, not from commons that are actually governed.",
+        links: [],
+      },
+      {
+        n: 4,
+        title: "Commons dismantled, commons that survived",
+        body: "She surveys enclosures: the seven-generations land governance of Native Americans, broken by treaty and force; the English enclosure acts that pushed farmers into cities and fuelled the Industrial Revolution through a mass transfer of wealth; and Spain's desamortizacion and parallel European disentailment laws. Against these she sets commons that endured, noting land held in common continuously in Switzerland since around 1114, and standing legal frameworks for commonly held land in Spain, Italy, Austria and Switzerland. Her point: societies know how to hold land in common but not housing, and since caring for land needs people living nearby, housing is the next frontier.",
+        links: [
+          { label: "Enclosure of the commons", url: "https://en.wikipedia.org/wiki/Enclosure" },
+        ],
+      },
+      {
+        n: 5,
+        title: "Legal vehicles that lock housing out of the market",
+        body: "Clara walks through concrete mechanisms. The Catalan Emprius foundation model works because in Spain a foundation cannot simply sell its assets: if dissolved, its land and housing must pass to another foundation with a similar goal. The Mietshauser Syndikat, originating in Freiburg, gives each house two owners, the resident community and the syndicate, so the network can veto any sale back to the market. She distinguishes these from things that look like commons but are not, such as right-of-use cooperatives where the co-op still holds the land and a large assembly could vote to sell, the Spanish surface-right model of leasing public land for around 100 years, and community land trusts, which split land from building.",
+        links: [
+          { label: "Mietshauser Syndikat", url: "https://en.wikipedia.org/wiki/Mietsh%C3%A4user_Syndikat" },
+          { label: "Sostre Civic (right-of-use cooperatives)", url: "https://sostrecivic.coop/" },
+          { label: "Community land trusts explained", url: "https://www.localhousingsolutions.org/housing-policy-library/community-land-trusts/" },
+        ],
+      },
+      {
+        n: 6,
+        title: "A genealogy of collective living",
+        body: "Clara shows historical experiments in shared living. The Familistere de Guise, Godin's 'social palace' for factory workers, used glass-roofed courtyards to increase social encounter; Melusina Fay Peirce's 19th-century cooperative-housekeeping proposal tried to collectivise and pay for invisible care work; Red Vienna's Gemeindebau, tax-funded, embedded communal kitchens, nurseries, schools and laundries and made Vienna a global reference for affordable housing; Soviet-era buildings used shared nurseries to draw people into communal living; and Auroville's solar communal kitchen in India shows self-provided services binding a community, organised as a fractal of clusters within clusters.",
+        links: [
+          { label: "Familistere de Guise (Godin)", url: "https://en.wikipedia.org/wiki/Jean-Baptiste_Andr%C3%A9_Godin" },
+          { label: "Melusina Fay Peirce, cooperative housekeeping", url: "https://en.wikipedia.org/wiki/Melusina_Fay_Peirce" },
+          { label: "Red Vienna social housing", url: "https://www.wien.info/en/art-culture/red-vienna/social-housing-buildings-359256" },
+        ],
+      },
+      {
+        n: 7,
+        title: "Permanent-plus-temporary, and seva",
+        body: "She highlights the Amritapuri ashram in Kerala as a model for a settlement that is permanent and temporary at once: a stable core of long-term residents plus a large inflow staying days to months. What levels everyone's status there is seva, obligatory voluntary time given to the community (cooking, cleaning, care work). Clara argues this could be adapted for Western communities that flow between permanent and temporary members, since every new arrival changes the relationships and some mechanism is needed to keep the balance fair.",
+        links: [
+          { label: "Amritapuri ashram", url: "https://amma.org/groups-centres/amritapuri/" },
+        ],
+      },
+      {
+        n: 8,
+        title: "Landing it in the Alps: climate, materials, form",
+        body: "For the Valley site Clara gives design principles, led by climate and solar geometry: the summer sun sits around 66 degrees and winter around 19, so orienting homes south and sizing shading lets a house stay cool in summer and passively warm its floor in winter, while mountain, tree and neighbour shadows must be read off the local solar chart. She argues for place-based, traditional building and reusing abandoned houses, pointing to abundant local materials: timber, earth, stone and straw. She showcases earth construction (cheap where clay is present, humidity-regulating, earthquake-resilient because it vibrates with the ground, now available prefabricated and 3D-printed) and straw (cheapest, excellent insulation), citing Anna Heringer's earth-and-timber work and Peter Zumthor as an Alpine reference, and closes by parking the economics as a provocation for the next week.",
+        links: [
+          { label: "Anna Heringer (earth architecture)", url: "https://en.wikipedia.org/wiki/Anna_Heringer" },
+          { label: "Peter Zumthor", url: "https://en.wikipedia.org/wiki/Peter_Zumthor" },
+        ],
+      },
+    ],
+    cta: { label: "Valley of the Commons", url: "/keynote" },
+  },
+  "w3-d5": {
+    slug: "w3-d5",
+    meta: {
+      eyebrow: "How land ownership, set decades in advance, quietly decides what housing is ever possible",
+      speaker: "Charlie Fischer",
+      socials: [
+        { label: "Charlie Fisher on LinkedIn", url: "https://www.linkedin.com/in/charlie-fisher-23987236/" },
+        { label: "OASA (land conservancy he co-founded)", url: "https://oasa.earth/" },
+      ],
+      livestream: "https://www.youtube.com/watch?v=bRkjSjlRI7Y",
+      metaTitle: "Knowing at the Boundaries \xb7 Charlie Fischer",
+      metaDescription:
+        "Companion to Charlie Fischer's talk at Valley of the Commons: mapping land ownership as a design method for collaborative housing, why enclosure and the price of land shape what is possible, and why a place's prior enabling conditions decide what communities can ever build. In beats with sources, plus the live session.",
+    },
+    items: [
+      {
+        type: "quiz",
+        prompt: "In 2014, roughly what share of land ownership did Fischer's group map across Oxfordshire, mostly by hand?",
+        options: [
+          "About 25%",
+          "About 50%",
+          "About 77%",
+          "About 95%",
+        ],
+      },
+      {
+        type: "quiz",
+        prompt: "What does Fischer say most predicts whether a collaborative-housing project succeeds?",
+        options: [
+          "The skills and capital of the individuals running it",
+          "The local enabling conditions, what had been done in that place before",
+          "The size of the initial grant",
+          "Whether a famous architect designed it",
+        ],
+      },
+      {
+        type: "quiz",
+        prompt: "What happened to the roughly 15-million-pound site north of Oxford his consortium bid on in 2016?",
+        options: [
+          "His consortium won and built the affordable homes as planned",
+          "The price was pushed past 22 million, his group lost, and the winner later dropped the affordable housing",
+          "The council bought it and built a health centre",
+          "It was left undeveloped as green belt",
+        ],
+      },
+      {
+        type: "quiz",
+        prompt: "In Fischer's data, roughly how many collaborative-housing organisations had actually built even one home?",
+        options: [
+          "About one in five",
+          "About half",
+          "About four in five",
+          "Nearly all of them",
+        ],
+      },
+      {
+        type: "quiz",
+        prompt: "What mistake did the Bristol self-build on the old builder's yard make?",
+        options: [
+          "They used the wrong building materials",
+          "They failed to get planning permission",
+          "They forgot to put a land trust underneath it, so the homes became valuable and inaccessible",
+          "They ran out of money before completion",
+        ],
+      },
+      {
+        type: "poll",
+        prompt: "Where should communities put most of their energy to make housing possible?",
+        options: [
+          "Buying land now",
+          "Shaping local policy and finance conditions",
+          "Building relationships and trust",
+          "Raising capital",
+        ],
+      },
+      {
+        type: "poll",
+        prompt: "Is it acceptable for community groups to play the same financial and political game as private developers?",
+        options: [
+          "Yes, on the same terms as everyone",
+          "Only if their integrity is preserved",
+          "No, it corrupts the mission",
+          "It depends on the stakes",
+        ],
+      },
+      {
+        type: "poll",
+        prompt: "Which time horizon feels most useful for planning land and housing?",
+        options: [
+          "5 to 10 years",
+          "A working lifetime (25 to 30 years)",
+          "100 years",
+          "Perpetual, a thousand-year view",
+        ],
+      },
+      {
+        type: "poll",
+        prompt: "New build or renovation for the housing we need?",
+        options: [
+          "Mostly new build",
+          "Mostly renovation and retrofit",
+          "A balanced mix",
+          "Whatever the carbon budget allows",
+        ],
+      },
+      {
+        type: "poll",
+        prompt: "Why do cooperative and community groups so often fail to cooperate with each other?",
+        options: [
+          "They cast each other as different",
+          "They compete for the same scarce funding",
+          "No one leads with a strong first act of cooperation",
+          "The wider culture rarely models cooperation",
+        ],
+      },
+    ],
+    beats: [
+      {
+        n: 1,
+        title: "Mapping reveals hidden time",
+        body: "Fischer frames the talk around mapping, because understanding ownership has been central to his process: he starts by tracing who owned a piece of land, not just today but across many decades, alongside the cultural histories of how it was used. His point is that the visible boundary hides far more depth and time than it shows. By the moment people notice a threat and react, that is a lagging indicator: the real decision was often made six months, or decades, earlier.",
+        links: [
+          { label: "Cadastre (land-ownership mapping)", url: "https://en.wikipedia.org/wiki/Cadastre" },
+        ],
+      },
+      {
+        n: 2,
+        title: "Oxfordshire and the long shadow of enclosure",
+        body: "In 2014 Fischer helped map roughly 77% of land ownership across Oxfordshire, largely by hand, using registries and out-of-copyright one-inch maps to see change over time. The pattern was shaped by centuries of enclosure (England's had mostly finished by around 1890), which concentrated land in the church, the state and institutions such as the Oxford and Cambridge colleges. He described very long-minded entities (St John's College's endowment alone was around a billion pounds) using land as a 'golden ring' around cities to shape future development, with an investor class stacked behind them.",
+        links: [
+          { label: "A short history of enclosure in Britain (The Land)", url: "https://www.thelandmagazine.org.uk/articles/short-history-enclosure-britain" },
+        ],
+      },
+      {
+        n: 3,
+        title: "Everyone is inside the same system",
+        body: "Fischer rejects an 'us versus them' framing: citizens building housing, colleges and developers all work with the same planning system, the same finance and the same human emotions, just different parts of it. A recurring thread of his work is that groups trying to change housing become 'marketised' themselves, because they assemble their projects out of the existing market's materials. Recognising this is useful, he argues, because it lets a group decide which parts of what they do they want to keep out of market forces.",
+        links: [],
+      },
+      {
+        n: 4,
+        title: "The price of land eats everything else",
+        body: "He recounts a 2016 attempt to buy land north of Oxford for 260 self-build homes with a large land trust, modelled on 1990s West German quarters and backed by a wealthy individual. Land known to be worth about 15 million pounds was pushed by the seller's agent past 22 million, and everything else the scheme wanted (affordable housing, green transport, energy) was squeezed out in that gap; his consortium came third. The winners stalled, brought in lawyers, took finance linked to the landowner, and eventually delivered million-pound homes with the affordable housing and health centre dropped. He traces this to a legal duty to obtain 'best consideration reasonably obtained', now read as extracting the maximum price.",
+        links: [],
+      },
+      {
+        n: 5,
+        title: "Enabling conditions come from place, not people",
+        body: "His central thesis: the local enabling conditions of a place, what has already been done there in previous decades, are a precursor to what becomes possible. Interviewing people running collaborative-housing projects across four English cities, he found success was not really about their skills, capital or networks, but about what had been achieved locally before. He charts how organisation types replace each other over time (large housing co-operatives, then tenant management organisations, then a wave of community land trusts after England gained a national CLT body in 2010), while collaborative housing stays around 1% of stock, and only about one in five such organisations ever builds a home.",
+        links: [
+          { label: "Community land trust (overview)", url: "https://en.wikipedia.org/wiki/Community_land_trust" },
+        ],
+      },
+      {
+        n: 6,
+        title: "Marginal on purpose, at the boundary",
+        body: "This is where 'boundaries' becomes explicit. Fischer argues these groups keep themselves marginal, on the edges, constantly relating to a systemic shift they hope to inspire, and that this divergent position is worth leaning into. He describes groups moving between a settled 'stratum' and a productive 'chaos' at the edge, often when a community is under threat of demolition, which forces it to define its boundaries and organise. His example is a neighbourhood that fought demolition, 'rendered points technical', built a community hub with its own revenue, and after roughly 20 years reached the point of allocating and building its own housing.",
+        links: [
+          { label: "Ostrom's design principles for commons (boundary principle)", url: "https://en.wikipedia.org/wiki/Elinor_Ostrom" },
+        ],
+      },
+      {
+        n: 7,
+        title: "Cases: LILAC, developers, and the forgotten trust",
+        body: "He runs through built examples. LILAC in Leeds (completed 2014) uses a Mutual Home Ownership Society where members pay about 35% of income and equity is detached from property value, keeping it affordable in perpetuity. The Climate Innovation District in Leeds shows a developer folding whole phases into a community trust so local assets (shops, an energy company) stay behind. A Bristol self-build on a contaminated builder's yard succeeded but 'forgot to put a trust underneath it', so the homes became valuable and inaccessible, a mistake he says keeps recurring across Europe.",
+        links: [
+          { label: "LILAC (Low Impact Living Affordable Community, Leeds)", url: "https://world-habitat.org/world-habitat-awards/winners-and-finalists/lilac-low-impact-living-affordable-community/" },
+        ],
+      },
+      {
+        n: 8,
+        title: "Cape Town, relational registries, fertile ground",
+        body: "He closes on current work with the South African Development Action Group and the International Center for Community Land Trusts, exploring a CLT as an intermediary in Cape Town's informal settlements that can hold tenure without exposing residents' identities to the state, under Roman-Dutch law, via an Ethereum fellowship. He cites Puerto Rico, where a centralised registry took about 20 years to register only around 450 of some 5,000 homes because residents reasonably distrust formal registration, and proposes more dispersed 'relational registries'. His takeaway: it is not about resources, skills or experience, but about creating the fertile ground, the soils, in which such projects can grow.",
+        links: [
+          { label: "Development Action Group, Cape Town", url: "https://www.dag.org.za/" },
+          { label: "International Center for Community Land Trusts", url: "https://www.cltweb.org/" },
+        ],
+      },
+    ],
+    cta: { label: "Valley of the Commons", url: "/keynote" },
+  },
+  "w4-d2": {
+    slug: "w4-d2",
+    meta: {
+      eyebrow: "Building parallel societies through exit, one small local circle at a time",
+      speaker: "Sterlin Lujan",
+      socials: [
+        { label: "Sterlin Lujan on X", url: "https://x.com/sterlinlujan" },
+        { label: "Logos Network", url: "https://logos.co" },
+      ],
+      livestream: "https://www.youtube.com/watch?v=fb-ELbnuW_w",
+      metaTitle: "Logos Circles \xb7 Sterlin Lujan",
+      metaDescription:
+        "Companion to Sterlin Lujan's talk at Valley of the Commons: why the systems are failing, the case for exit over reform, the parallel polis of communist Czechoslovakia as a model, the Logos technology stack, and Logos Circles as a grassroots activism model. In beats with sources, plus the live session.",
+    },
+    items: [
+      {
+        type: "quiz",
+        prompt: "Who does Lujan credit with popularising the term 'the meaning crisis'?",
+        options: [
+          "Robert Putnam",
+          "John Vervaeke",
+          "Shoshana Zuboff",
+          "Albert Hirschman",
+        ],
+      },
+      {
+        type: "quiz",
+        prompt: "Which historical movement does Lujan present as the primary model Logos is imitating?",
+        options: [
+          "The parallel polis in communist Czechoslovakia",
+          "The French Revolution",
+          "The American frontier settlements",
+          "The Paris Commune",
+        ],
+      },
+      {
+        type: "quiz",
+        prompt: "What are the three main layers of the Logos stack (Basecamp)?",
+        options: [
+          "Wallet, exchange, marketplace",
+          "Identity, reputation, voting",
+          "Storage, messaging, blockchain",
+          "Compute, bandwidth, hosting",
+        ],
+      },
+      {
+        type: "quiz",
+        prompt: "Whose book does Lujan credit for the idea of a 'winnable issue'?",
+        options: [
+          "Saul Alinsky's Rules for Radicals",
+          "Karl Marx's Das Kapital",
+          "Vaclav Havel's The Power of the Powerless",
+          "Balaji Srinivasan's The Network State",
+        ],
+      },
+      {
+        type: "quiz",
+        prompt: "Which Logos Circle win involved Raspberry Pis for a school?",
+        options: [
+          "A circle in Lisbon securing a community centre",
+          "A circle in Zanzibar, Tanzania",
+          "A circle in Nigeria funding medical treatment",
+          "A cleanup at the Liberland border",
+        ],
+      },
+      {
+        type: "poll",
+        prompt: "Which framing resonates more with you for building alternatives?",
+        options: [
+          "Exit",
+          "Voice / reform",
+          "Capacity building",
+          "Something else",
+        ],
+      },
+      {
+        type: "poll",
+        prompt: "Where do you see the most leverage for a small group to make change?",
+        options: [
+          "Local community projects",
+          "Technology and protocols",
+          "National politics",
+          "Culture and storytelling",
+        ],
+      },
+      {
+        type: "poll",
+        prompt: "What is the biggest risk of the 'exit' approach?",
+        options: [
+          "Loss of legal protections",
+          "Excluding people who cannot afford to leave",
+          "Fragmentation and isolation",
+          "It never scales",
+        ],
+      },
+      {
+        type: "poll",
+        prompt: "If you started a Logos Circle here, which 'winnable issue' would you pick?",
+        options: [
+          "Public / green space",
+          "Local food production",
+          "Transport and access",
+          "Reopening trails and paths",
+        ],
+      },
+      {
+        type: "poll",
+        prompt: "How do you read the 'end of politics' idea raised in the talk?",
+        options: [
+          "Genuinely possible and desirable",
+          "Just new political forms, not the end",
+          "Mostly a semantic dispute",
+          "A dangerous illusion",
+        ],
+      },
+    ],
+    beats: [
+      {
+        n: 1,
+        title: "The systems are broken",
+        body: "Lujan opens with the claim that the major systems (democracy, the economy, governance) fail to meet human needs and often actively harm people. He cites figures he attributes largely to Pew: around 60% of adults are dissatisfied with how democracy works in their country, and by the end of 2025 there were 92 autocracies against 87 democracies. He argues that over recent centuries governments and corporations have consolidated control of nearly every sector of life, framing this through the Austrian-school idea of a 'mixed economy' and the Westphalian nation state.",
+        links: [
+          { label: "Pew Research Center: views of democracy", url: "https://www.pewresearch.org/topic/politics-policy/political-parties-polarization/political-systems/democracy/" },
+        ],
+      },
+      {
+        n: 2,
+        title: "The meaning crisis",
+        body: "He connects systemic failure to what he calls the meaning crisis, a term he credits to cognitive scientist John Vervaeke and the lecture series 'Awakening from the Meaning Crisis'. He cites a near-doubling of mental-health disorders in recent decades and roughly 720,000 to 746,000 suicides a year, about one every 43 seconds. He argues this stems from a long 'disenchantment' of the world since the Enlightenment and a loss of individual agency, and invokes Robert Putnam's Bowling Alone to describe the erosion of the civic 'middleware' of clubs and associations.",
+        links: [
+          { label: "John Vervaeke, Awakening from the Meaning Crisis", url: "https://www.youtube.com/playlist?list=PLND1JCRq8Vuh3f0P5qjrSdb5eC1ZfZwWJ" },
+          { label: "Robert Putnam, Bowling Alone", url: "https://en.wikipedia.org/wiki/Bowling_Alone" },
+        ],
+      },
+      {
+        n: 3,
+        title: "Exit, not reform",
+        body: "Rather than fighting or reforming the existing system, Lujan advocates building a new one, an approach he calls 'exit'. He stresses that exit need not mean physically leaving: it can be spiritual, cultural or technological, and he cites Bitcoin and crypto as a financial exit. In the Q&A he grounds the idea in Albert Hirschman's Exit, Voice, and Loyalty, noting Hirschman himself fled Nazi Germany and helped others escape, and pushes back on the claim that exit is a purely anarcho-capitalist notion.",
+        links: [
+          { label: "Albert O. Hirschman, Exit, Voice, and Loyalty", url: "https://www.hup.harvard.edu/books/9780674276604" },
+          { label: "Shoshana Zuboff, The Age of Surveillance Capitalism", url: "https://en.wikipedia.org/wiki/The_Age_of_Surveillance_Capitalism" },
+        ],
+      },
+      {
+        n: 4,
+        title: "The parallel polis",
+        body: "Lujan roots the project in the 'parallel polis' of Czechoslovakia from the 1960s to the 1980s under communist rule. He cites Vaclav Havel's 1978 essay The Power of the Powerless and the Charter 77 movement, describing how dissidents built their own 'second cultures': independent education, economic exchange and self-publishing (samizdat) that circulated censored material. He argues this grew large enough to 'ignore the regime out of existence', culminating in the peaceful Velvet Revolution of 1989, and presents it as the primary model Logos is trying to imitate on a planetary scale.",
+        links: [
+          { label: "Vaclav Havel, The Power of the Powerless (1978)", url: "https://www.nonviolent-conflict.org/wp-content/uploads/1979/01/the-power-of-the-powerless.pdf" },
+          { label: "Charter 77", url: "https://en.wikipedia.org/wiki/Charter_77" },
+        ],
+      },
+      {
+        n: 5,
+        title: "What Logos is",
+        body: "Logos is described as two things: a movement (the side Lujan works on) and a technology stack, backed by a team of 250-plus people and at testnet for v1. The stack uses a Linux-style micro-kernel architecture called Basecamp with three layers: decentralised censorship-resistant storage (formerly Codex), peer-to-peer private messaging (formerly Waku, descended from Ethereum's dropped Whisper protocol), and a blockchain governance layer (formerly Nomos). He frames it as public-good, protocol-level infrastructure on which developers can already build applications, citing a censorship-resistant 'pirate radio' app built by a colleague.",
+        links: [
+          { label: "Logos Network", url: "https://logos.co" },
+          { label: "State of the Logos Network (blog)", url: "https://blog.logos.co/article/november-2025" },
+        ],
+      },
+      {
+        n: 6,
+        title: "Logos Circles and winnable issues",
+        body: "Logos Circles are small self-organised groups of people already living in a community who come together to tackle one specific, 'winnable' issue. Lujan credits the winnable-issue concept to Saul Alinsky's Rules for Radicals, stressing clarity, focus, emotional resonance and measurable goals so a small, agile group can win and build momentum. He insists Logos does not act top-down or 'colonialist' but offers resources, networks, technologists and a training course to communities that share its values of decentralisation, mutual aid and trust networks.",
+        links: [
+          { label: "Saul Alinsky, Rules for Radicals", url: "https://en.wikipedia.org/wiki/Rules_for_Radicals" },
+        ],
+      },
+      {
+        n: 7,
+        title: "Wins on the ground",
+        body: "Lujan reports 40-plus circles worldwide, the largest concentration in Africa (notably Nigeria and Tanzania). Examples: the prototype Lisbon circle pressured local authorities into handing over a community centre for rejected artists and now runs an urban re-wilding campaign; a Zanzibar circle raised roughly 10,000 dollars via a vibe-coded funding platform to buy Raspberry Pis for a school; a Nigerian circle raised money for a member's emergency medical treatment and is building an emergency-request app; and a team ran a trash cleanup at the Liberland border in Serbia.",
+        links: [
+          { label: "Logos Network", url: "https://logos.co" },
+        ],
+      },
+      {
+        n: 8,
+        title: "Exit versus voice: the debate",
+        body: "The talk closes with pointed pushback from the audience, arguing that 'exit' is a historically libertarian frame, that poorer people cannot exit without losing protections and infrastructure, and that 'capacity building' or 'alternatives' would be better language. Lujan concedes the concern, distances himself from strict market-libertarianism, and reframes the disagreement as largely semantic, invoking Gaelic Ireland's stateless Brehon law, panarchy (Paul-Emile de Puydt, 1860), and Robert Ellickson's Order Without Law on ranchers settling disputes without the state. He also points to the founders' book, Farewell to Westphalia, by Jarrad Hope and Peter Ludlow.",
+        links: [
+          { label: "Farewell to Westphalia (Hope & Ludlow)", url: "https://logos.co/farewell-to-westphalia" },
+          { label: "Paul-Emile de Puydt, Panarchy (1860)", url: "https://www.panarchy.org/depuydt/1860.eng.html" },
+          { label: "Robert Ellickson, Order Without Law", url: "https://www.hup.harvard.edu/books/9780674641693" },
+        ],
+      },
+    ],
+    cta: { label: "Valley of the Commons", url: "/keynote" },
+  },
+
 };
 
 export const WEEKS = [
@@ -2099,14 +2847,7 @@ export const WEEKS = [
   {
     label: "Week 3 \xb7 7 - 11 Sep",
     theme: "Future Living in Community",
-    slugs: ["w3-d1", "w3-d2"],
-    // Announced but not yet published: rendered under the same week header as
-    // "coming soon" cards (no page yet). Move into slugs when a companion ships.
-    coming: [
-      { speaker: "Samuel and Luna", talk: "Building Traditional Dream Factory" },
-      { speaker: "Clara Gromaches", talk: "Housing as a Commons" },
-      { speaker: "Charlie Fischer", talk: "Knowing at the boundaries: land mapping ownership as a design approach" },
-    ],
+    slugs: ["w3-d1", "w3-d2", "w3-d3", "w3-d4", "w3-d5"],
   },
 ];
 
@@ -2132,11 +2873,11 @@ export const COMING = [
     label: "Week 4 · 14 - 18 Sep",
     theme: "Governance & Funding Models",
     talks: [
-      { speaker: "Deca", talk: "Game Theory of Our Shared Purpose", url: "https://learn-ai.london/valley-w4-d5" },
-      { speaker: "Daniela Gandorfer", talk: "Talk title TBC" },
-      { speaker: "Rashmi Abbigeri · Metagov", talk: "Talk title TBC" },
-      { speaker: "Sterlin Lujan · Logos", talk: "Talk title TBC" },
-      { speaker: "VotC Team", talk: "Closing Keynote" },
+      { speaker: "Deca", talk: "Game Theory of Our Shared Purpose", url: "https://learn-ai.london/valley-w4-d1" },
+      { speaker: "Sterlin Lujan · Logos", talk: "Logos Circles: Activism for Parallel Societies", url: "/keynote-w4-d2" },
+      { speaker: "Daniela Gandorfer", talk: "Legal System in Transformation" },
+      { speaker: "Simon", talk: "Talk title TBC" },
+      { speaker: "Rashmi Abbigeri · Metagov", talk: "Talk title TBC, then VotC Team closing ceremony" },
     ],
   },
 ];
