@@ -1,0 +1,32 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Cover · alt B (mandala)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..600&family=Hanken+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="_tokens.css"/>
+<style>
+.mandala{position:relative;width:360px;height:340px;margin-bottom:6px;}
+.ring{animation:spin 60s linear infinite;transform-origin:center;}
+.ring.b{animation-direction:reverse;animation-duration:80s;}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style></head><body>
+<div class="cosmos"><div class="stars far"></div><div class="stars near"></div></div>
+<div class="stage">
+  <div class="mandala"><svg width="360" height="340" viewBox="0 0 360 340" id="m"></svg></div>
+  <p class="eyebrow">Valley of the Commons <span class="dot">·</span> closing keynote</p>
+  <h1 style="font-size:80px;max-width:14em;margin-top:20px;">Game Theory of<br/>Our <span class="serif-em fg-em">Shared Purpose</span></h1>
+  <p class="sub">Two games. One purpose.</p>
+</div>
+<div class="tag"><b>ALT B</b> &nbsp; cover · interlocking mandala</div>
+<script>
+const NS="http://www.w3.org/2000/svg",S=document.getElementById('m');
+function el(t,a){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);return e;}
+function hexRing(cx,cy,R,col,cls){const g=el('g',{class:cls});const pts=[];
+  for(let i=0;i<6;i++){const a=-Math.PI/2+i*Math.PI/3;pts.push([cx+R*Math.cos(a),cy+R*Math.sin(a)]);}
+  for(let i=0;i<6;i++){const p=pts[i],q=pts[(i+1)%6];g.appendChild(el('line',{x1:p[0],y1:p[1],x2:q[0],y2:q[1],stroke:col,'stroke-opacity':.4,'stroke-width':1.2}));
+    const c=el('circle',{cx:p[0],cy:p[1],r:5,fill:col});c.style.filter=`drop-shadow(0 0 7px ${col})`;g.appendChild(c);}
+  g.setAttribute('transform-origin',`${cx} ${cy}`);return g;}
+S.appendChild(hexRing(150,170,96,'var(--warm)','ring'));
+S.appendChild(hexRing(210,170,96,'var(--emerald)','ring b'));
+const c=el('circle',{cx:180,cy:170,r:8,fill:'var(--ice)'});c.style.filter='drop-shadow(0 0 14px var(--ice))';S.appendChild(c);
+</script></body></html>

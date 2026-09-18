@@ -14,7 +14,7 @@ export const ROOMS = {
         { label: "X @deca12x", url: "https://x.com/deca12x" },
         { label: "Substack", url: "https://agartha1.substack.com/" },
       ],
-      metaTitle: "The Market, the State and the Commons \xb7 Learn AI London",
+      metaTitle: "The Market, the State and the Commons \xb7 Deca",
       metaDescription:
         "Companion to the talk at the London School of Solarpunk: the argument in seven beats, the full reading list, and the live session.",
     },
@@ -2860,6 +2860,9 @@ export const AI_COURSE = {
   eyebrow: "New \xb7 Learn to build it",
   title: "Build your own agentic system",
   sub: "The full journey, from zero: the prompts, the maps, the lessons. Password in the group.",
+  // WARNING: this is the LAL page; the CTA is currently NOT rendered (see
+  // keynote.js renderIndex). Before re-enabling aiCourseHtml(), repoint this to
+  // the VOTC /valley-ai mirror, or it reintroduces a live learn-ai.london link.
   url: "https://learn-ai.london/valley-ai",
 };
 
@@ -2873,7 +2876,7 @@ export const COMING = [
     label: "Week 4 · 14 - 18 Sep",
     theme: "Governance & Funding Models",
     talks: [
-      { speaker: "Deca", talk: "Game Theory of Our Shared Purpose", url: "https://learn-ai.london/valley-w4-d1" },
+      { speaker: "Deca", talk: "Game Theory of Our Shared Purpose", url: "/keynote-w4-d1" },
       { speaker: "Sterlin Lujan · Logos", talk: "Logos Circles: Activism for Parallel Societies", url: "/keynote-w4-d2" },
       { speaker: "Daniela Gandorfer", talk: "Legal System in Transformation" },
       { speaker: "Simon", talk: "Talk title TBC" },
@@ -2910,7 +2913,7 @@ export const CATEGORIES = [
   { id: "w3-d3", speaker: "Luna and Sam Delesque", talk: "Building Traditional Dream Factory", href: "/keynote-w3-d3", spine: "#c9b3ff", tags: ["solar", "local", "impl"] },
   { id: "w3-d4", speaker: "Clara Gromaches", talk: "Housing as a Commons", href: "/keynote-w3-d4", spine: "#34d399", tags: ["solar", "global", "vision"] },
   { id: "w3-d5", speaker: "Charlie Fischer", talk: "Knowing at the Boundaries", href: "/keynote-w3-d5", spine: "#d97757", tags: ["solar", "local", "impl"] },
-  { id: "w4-d1", speaker: "Deca", talk: "Game Theory of Our Shared Purpose", href: "https://learn-ai.london/valley-w4-d1", spine: "#ff6b35", tags: ["solar", "global", "vision"] },
+  { id: "w4-d1", speaker: "Deca", talk: "Game Theory of Our Shared Purpose", href: "/keynote-w4-d1", spine: "#ff6b35", tags: ["solar", "global", "vision"] },
   { id: "w4-d2", speaker: "Sterlin Lujan · Logos", talk: "Logos Circles", href: "/keynote-w4-d2", spine: "#b14fff", tags: ["lunar", "global", "vision"] },
   { id: "w4-d3", speaker: "Daniela Gandorfer", talk: "Legal System in Transformation", href: null, spine: "#c9b3ff", tags: ["lunar", "global", "vision"] },
   { id: "michel", speaker: "Michel Bauwens", talk: "Cosmo-Localism", href: "/keynote-michel", spine: "#b14fff", tags: ["solar", "global", "vision"] },

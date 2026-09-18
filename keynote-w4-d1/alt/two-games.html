@@ -1,0 +1,56 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Two game-theoretic systems (nested)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..600&family=Hanken+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="_tokens.css"/>
+<style>.stage{padding:0;}.gi{font-family:var(--display);font-style:italic;}
+.cap{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;}
+.replay{position:fixed;bottom:60px;left:50%;transform:translateX(-50%);z-index:5;font-family:var(--mono);
+  font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);border:1px solid var(--line);
+  background:rgba(255,255,255,.03);border-radius:999px;padding:9px 18px;cursor:pointer;}
+.replay:hover{color:var(--fg);border-color:var(--ice);}
+</style></head><body>
+<div class="cosmos"><div class="stars far"></div></div>
+<div class="stage"><svg id="d" width="1180" height="640" viewBox="0 0 1180 640" style="z-index:2"></svg></div>
+<button class="replay" id="replay">▶ play the transition</button>
+<div class="tag"><b>DIAGRAM</b> &nbsp; two game-theoretic systems · nested</div>
+<script>
+const NS="http://www.w3.org/2000/svg",s=document.getElementById('d');
+function el(t,a,txt){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(txt!=null)e.textContent=txt;return e;}
+// outer ellipse = the transition game (the whole road from here to there)
+const outer=el('ellipse',{cx:560,cy:340,rx:520,ry:250,fill:'rgba(255,107,53,.05)',stroke:'var(--warm)','stroke-opacity':.55,'stroke-width':1.6});
+outer.style.filter='drop-shadow(0 0 30px rgba(255,107,53,.25))';s.appendChild(outer);
+s.appendChild(el('text',{x:560,y:120,'text-anchor':'middle',class:'cap',fill:'var(--warm)'},'1 · THE TRANSITION GAME'));
+s.appendChild(el('text',{x:560,y:152,'text-anchor':'middle',class:'gi','font-size':'23',fill:'#ffd0bd'},'from here to there'));
+s.appendChild(el('text',{x:560,y:182,'text-anchor':'middle','font-family':'var(--body)','font-size':'15',fill:'rgba(232,233,240,.7)'},'its equilibrium is the road that carries us into the end-state'));
+// inner ellipse = the end-state system
+const inner=el('ellipse',{cx:830,cy:370,rx:230,ry:170,fill:'rgba(52,211,153,.07)',stroke:'var(--emerald)','stroke-opacity':.7,'stroke-width':1.6});
+inner.style.filter='drop-shadow(0 0 26px rgba(52,211,153,.3))';s.appendChild(inner);
+s.appendChild(el('text',{x:830,y:330,'text-anchor':'middle',class:'cap',fill:'var(--emerald)'},'2 · THE END-STATE SYSTEM'));
+s.appendChild(el('text',{x:830,y:362,'text-anchor':'middle',class:'gi','font-size':'21',fill:'#bff3dd'},'a desirable equilibrium'));
+s.appendChild(el('text',{x:830,y:392,'text-anchor':'middle','font-family':'var(--body)','font-size':'14',fill:'rgba(232,233,240,.72)'},'individually rational play,'));
+s.appendChild(el('text',{x:830,y:412,'text-anchor':'middle','font-family':'var(--body)','font-size':'14',fill:'rgba(232,233,240,.72)'},'collective flourishing'));
+// us now
+const usx=250,usy=400;
+s.appendChild(el('text',{x:usx,y:usy+42,'text-anchor':'middle',class:'cap',fill:'var(--ice)'},'US, NOW'));
+const us=el('circle',{cx:usx,cy:usy,r:12,fill:'var(--ice)'});us.style.filter='drop-shadow(0 0 14px var(--ice))';
+const pulse=el('circle',{cx:usx,cy:usy,r:12,fill:'none',stroke:'var(--ice)','stroke-width':1.4});
+pulse.appendChild(el('animate',{attributeName:'r',values:'12;30;12',dur:'2.4s',repeatCount:'indefinite'}));
+pulse.appendChild(el('animate',{attributeName:'stroke-opacity',values:'.7;0;.7',dur:'2.4s',repeatCount:'indefinite'}));
+s.appendChild(pulse);s.appendChild(us);
+// arrow path from us-now into the end state
+const PATH="M266 400 C 420 400, 520 372, 620 372";
+const arrow=el('path',{d:PATH,fill:'none',stroke:'var(--ice)','stroke-opacity':.5,'stroke-width':2,'stroke-dasharray':'2 9','stroke-linecap':'round'});s.appendChild(arrow);
+s.appendChild(el('path',{d:'M612 366 L 624 372 L 612 378',fill:'none',stroke:'var(--ice)','stroke-opacity':.6,'stroke-width':2}));
+// traveller
+function runTraveller(){
+  const t=el('circle',{r:7,fill:'#fff'});t.style.filter='drop-shadow(0 0 12px var(--ice))';s.appendChild(t);
+  const m=el('animateMotion',{dur:'3.4s',repeatCount:'1',path:PATH,fill:'freeze'});t.appendChild(m);
+  m.beginElement();
+  setTimeout(()=>{t.remove();},3600);
+}
+document.getElementById('replay').addEventListener('click',runTraveller);
+setTimeout(runTraveller,600);
+setInterval(runTraveller,5000);
+</script></body></html>

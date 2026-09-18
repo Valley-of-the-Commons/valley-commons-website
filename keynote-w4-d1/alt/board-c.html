@@ -1,0 +1,35 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Two-game board · alt C (one continuous loop)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..600&family=Hanken+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="_tokens.css"/>
+<style>.stage{padding:0;}.flabel{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;}.gi{font-family:var(--display);font-style:italic;}</style>
+</head><body>
+<div class="cosmos"><div class="stars far"></div></div>
+<div class="stage"><svg id="loop" width="1280" height="640" viewBox="0 0 1280 640" style="z-index:2"></svg></div>
+<div class="tag"><b>ALT C</b> &nbsp; two-game board · one continuous loop</div>
+<script>
+const NS="http://www.w3.org/2000/svg",s=document.getElementById('loop');
+function el(t,a){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);return e;}
+const L="M640 320 C 640 150 360 150 360 320 C 360 490 640 490 640 320";
+const R="M640 320 C 640 150 920 150 920 320 C 920 490 640 490 640 320";
+const FULL=L+" C 640 150 920 150 920 320 C 920 490 640 490 640 320";
+// lobes
+const lp=el('path',{d:L,fill:'rgba(255,107,53,.05)',stroke:'var(--warm)','stroke-opacity':.6,'stroke-width':2});lp.style.filter='drop-shadow(0 0 12px var(--warm))';s.appendChild(lp);
+const rp=el('path',{d:R,fill:'rgba(52,211,153,.05)',stroke:'var(--emerald)','stroke-opacity':.6,'stroke-width':2});rp.style.filter='drop-shadow(0 0 12px var(--emerald))';s.appendChild(rp);
+// nodes seeded on each lobe
+[[360,320],[470,200],[470,440]].forEach(([x,y])=>{const c=el('circle',{cx:x,cy:y,r:6,fill:'var(--warm)','fill-opacity':.7});c.style.filter='drop-shadow(0 0 8px var(--warm))';s.appendChild(c);});
+[[920,320],[810,200],[810,440]].forEach(([x,y])=>{const c=el('circle',{cx:x,cy:y,r:6,fill:'var(--emerald)','fill-opacity':.7});c.style.filter='drop-shadow(0 0 8px var(--emerald))';s.appendChild(c);});
+// crossover node
+const cn=el('circle',{cx:640,cy:320,r:9,fill:'var(--ice)'});cn.style.filter='drop-shadow(0 0 14px var(--ice))';s.appendChild(cn);
+// traveller
+const tr=el('circle',{r:7,fill:'#fff'});tr.style.filter='drop-shadow(0 0 12px var(--ice))';s.appendChild(tr);
+tr.appendChild(el('animateMotion',{dur:'9s',repeatCount:'indefinite',path:FULL}));
+// labels
+s.appendChild(el('text',{x:360,y:110,'text-anchor':'middle',class:'flabel',fill:'var(--warm)'}));s.lastChild.textContent='THE TRANSITION GAME';
+s.appendChild(el('text',{x:360,y:142,'text-anchor':'middle',class:'gi',fill:'#ffd0bd','font-size':'26'}));s.lastChild.textContent='escape Moloch';
+s.appendChild(el('text',{x:920,y:110,'text-anchor':'middle',class:'flabel',fill:'var(--emerald)'}));s.lastChild.textContent='THE END GAME';
+s.appendChild(el('text',{x:920,y:142,'text-anchor':'middle',class:'gi',fill:'#bff3dd','font-size':'26'}));s.lastChild.textContent='govern the commons';
+s.appendChild(el('text',{x:640,y:560,'text-anchor':'middle',class:'flabel',fill:'var(--ice)'}));s.lastChild.textContent='ONE SYSTEM · YOU PLAY BOTH AT ONCE';
+</script></body></html>

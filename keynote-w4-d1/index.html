@@ -1,0 +1,909 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Game Theory of Our Shared Purpose · Valley of the Commons</title>
+<link rel="stylesheet" href="/keynote-w4-d1/lib/reset.css" />
+<link rel="stylesheet" href="/keynote-w4-d1/lib/reveal.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..600&family=Hanken+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --void:#07080f; --ink:#0b0d16; --panel:rgba(12,15,26,.62);
+    --fg:#e8e9f0; --dim:#8a8fa3;
+    --warm:#ff6b35; --violet:#b14fff; --ice:#c9b3ff; --emerald:#34d399;
+    --line:rgba(255,255,255,.10);
+    --display:"Fraunces",Georgia,serif;
+    --mono:"JetBrains Mono",ui-monospace,monospace;
+    --body:"Hanken Grotesk",-apple-system,system-ui,sans-serif;
+  }
+  *,*::before,*::after{box-sizing:border-box;}
+  html,body{background:var(--void);}
+  .cosmos{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;
+    background:
+      radial-gradient(60% 45% at 78% 12%, rgba(177,79,255,.12) 0%, transparent 60%),
+      radial-gradient(55% 50% at 15% 88%, rgba(255,107,53,.10) 0%, transparent 62%),
+      radial-gradient(120% 120% at 50% 40%, #0a0b14 0%, #07080f 60%, #050609 100%);}
+  .stars{position:absolute;inset:-40%;background-repeat:repeat;}
+  .stars.far{background-image:
+      radial-gradient(1px 1px at 40px 60px,rgba(255,255,255,.5),transparent),
+      radial-gradient(1px 1px at 130px 200px,rgba(201,179,255,.5),transparent),
+      radial-gradient(1px 1px at 240px 120px,rgba(255,255,255,.4),transparent),
+      radial-gradient(1px 1px at 320px 280px,rgba(255,255,255,.45),transparent);
+    background-size:400px 400px;animation:drift 240s linear infinite,tw 7s ease-in-out infinite;}
+  .stars.mid{background-image:
+      radial-gradient(1.4px 1.4px at 80px 120px,rgba(255,255,255,.7),transparent),
+      radial-gradient(1.4px 1.4px at 300px 60px,rgba(201,179,255,.6),transparent),
+      radial-gradient(1.4px 1.4px at 200px 260px,rgba(255,255,255,.6),transparent);
+    background-size:320px 320px;animation:drift 170s linear infinite reverse,tw 4.5s ease-in-out infinite;}
+  .stars.near{background-image:
+      radial-gradient(2px 2px at 160px 90px,rgba(255,255,255,.85),transparent),
+      radial-gradient(2px 2px at 60px 240px,rgba(52,211,153,.5),transparent);
+    background-size:480px 480px;animation:drift 120s linear infinite;}
+  @keyframes drift{from{transform:translate3d(0,0,0)}to{transform:translate3d(-160px,-120px,0)}}
+  @keyframes tw{0%,100%{opacity:.6}50%{opacity:1}}
+  @media (prefers-reduced-motion:reduce){.stars{animation:none!important}}
+
+  .reveal{font-family:var(--body);color:var(--fg);}
+  .reveal .slides{text-align:left;}
+  .reveal .slides section{height:100%;}
+  .slidewrap{position:relative;z-index:2;height:720px;display:flex;flex-direction:column;justify-content:center;padding:70px 92px;}
+  .slidewrap.center{align-items:center;text-align:center;}
+
+  .eyebrow{font-family:var(--mono);font-size:15px;letter-spacing:.32em;text-transform:uppercase;color:var(--dim);margin:0 0 22px;}
+  .eyebrow .dot{color:var(--warm);}
+  .reveal h1{font-family:var(--display);font-weight:400;font-size:76px;line-height:1.02;letter-spacing:-.02em;margin:0;color:var(--fg);font-optical-sizing:auto;}
+  .reveal h2{font-family:var(--display);font-weight:400;font-size:52px;line-height:1.06;letter-spacing:-.015em;margin:0 0 26px;color:var(--fg);}
+  .reveal h3{font-family:var(--display);font-weight:400;font-size:32px;margin:0 0 12px;color:var(--fg);}
+  .lede{font-size:25px;line-height:1.5;color:rgba(232,233,240,.86);max-width:21em;margin:0;}
+  .lede.sm{font-size:21px;}
+  .fg-warm{color:var(--warm);} .fg-em{color:var(--emerald);} .fg-vi{color:var(--violet);} .fg-ice{color:var(--ice);}
+  .dim{color:var(--dim);}
+  .serif-em{font-family:var(--display);font-style:italic;}
+  .kick{font-family:var(--mono);font-size:14px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);}
+
+  .foot{position:absolute;left:92px;bottom:34px;z-index:3;font-family:var(--mono);font-size:12.5px;letter-spacing:.16em;text-transform:uppercase;color:rgba(138,143,163,.7);}
+  .foot .num{color:var(--warm);}
+
+  .row{display:flex;gap:14px;flex-wrap:wrap;}
+  .pill{font-family:var(--mono);font-size:14px;letter-spacing:.04em;color:var(--fg);border:1px solid var(--line);border-radius:999px;padding:9px 16px;background:rgba(255,255,255,.03);}
+  .pill.em{border-color:rgba(52,211,153,.5);color:#bff3dd;}
+  .pill.warm{border-color:rgba(255,107,53,.5);color:#ffd0bd;}
+  ul.beats{list-style:none;margin:22px 0 0;padding:0;display:flex;flex-direction:column;gap:14px;max-width:24em;}
+  ul.beats li{display:flex;gap:16px;align-items:baseline;font-size:21px;color:rgba(232,233,240,.9);}
+  ul.beats li b{font-family:var(--mono);font-size:14px;color:var(--warm);min-width:20px;}
+  .callout{font-family:var(--display);font-style:italic;font-size:28px;line-height:1.3;color:var(--ice);border-left:2px solid var(--violet);padding-left:22px;max-width:20em;}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;width:100%;}
+  .glass{background:var(--panel);backdrop-filter:blur(20px);border:1px solid var(--line);border-radius:18px;padding:24px 26px;}
+
+  .stage{position:relative;z-index:2;width:100%;height:720px;display:flex;align-items:center;justify-content:center;}
+  svg{overflow:visible;}
+  .flabel{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;fill:var(--dim);}
+  .glabel{font-family:var(--display);}
+
+  /* speaker link chips */
+  .speakers{display:flex;gap:10px;flex-wrap:wrap;margin-top:26px;}
+  .slink{font-family:var(--mono);font-size:12.5px;letter-spacing:.04em;color:var(--ice);text-decoration:none;border:1px solid rgba(201,179,255,.3);border-radius:999px;padding:7px 13px;transition:all .2s;}
+  .slink:hover{border-color:var(--ice);background:rgba(201,179,255,.1);color:#fff;}
+  .slink .who{color:var(--fg);} .slink .arr{color:var(--dim);margin-left:6px;}
+
+  /* network detail bottom bar */
+  #netpanel{position:absolute;left:70px;right:70px;bottom:14px;top:auto;width:auto;z-index:6;
+    display:flex;gap:6px 24px;align-items:baseline;flex-wrap:wrap;max-height:82px;overflow:hidden;
+    background:rgba(9,11,20,.92);backdrop-filter:blur(18px);border:1px solid var(--line);
+    border-radius:14px;padding:12px 22px;opacity:0;transform:translateY(8px);transition:opacity .28s,transform .28s;pointer-events:none;}
+  #netpanel.on{opacity:1;transform:none;pointer-events:auto;}
+  #netpanel .pt{font-family:var(--display);font-size:21px;margin:0;}
+  #netpanel .pl{font-family:var(--mono);font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;margin:0;}
+  #netpanel .pl.light{color:var(--ice);} #netpanel .pl.heavy{color:var(--warm);}
+  #netpanel .pv{font-size:15px;line-height:1.4;color:rgba(232,233,240,.88);margin:0;}
+  #netpanel a{color:var(--emerald);text-decoration:none;font-family:var(--mono);font-size:13px;}
+  #netpanel a:hover{text-decoration:underline;}
+  .hint{font-family:var(--mono);font-size:12.5px;letter-spacing:.06em;color:var(--dim);}
+  .legend{position:absolute;top:44px;right:70px;z-index:5;display:flex;gap:16px;font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);}
+  .legend i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:6px;vertical-align:middle;}
+
+  /* prisoner's dilemma */
+  .pd-toggle{display:flex;gap:10px;margin-bottom:22px;}
+  .pd-btn{font-family:var(--mono);font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--dim);
+    border:1px solid var(--line);background:rgba(255,255,255,.03);border-radius:999px;padding:9px 16px;cursor:pointer;transition:all .2s;}
+  .pd-btn.active{color:#fff;border-color:var(--ice);background:rgba(201,179,255,.12);}
+  .matrix{border-collapse:separate;border-spacing:8px;}
+  .matrix td{width:158px;height:92px;border-radius:12px;text-align:center;vertical-align:middle;font-family:var(--mono);font-size:14px;border:1px solid var(--line);background:rgba(255,255,255,.03);transition:all .3s;}
+  .matrix .axis{background:none;border:none;font-size:12.5px;color:var(--dim);letter-spacing:.08em;width:130px;}
+  .matrix .pay{font-size:22px;color:var(--fg);} .matrix .cap{font-size:11px;color:var(--dim);}
+  td.nash{border-color:rgba(255,107,53,.6);background:rgba(255,107,53,.12);box-shadow:0 0 24px -8px var(--warm);}
+  td.pareto{border-color:var(--emerald);background:rgba(52,211,153,.14);box-shadow:0 0 26px -8px var(--emerald);}
+  .pd-verdict{margin-top:20px;font-family:var(--display);font-style:italic;font-size:23px;max-width:16em;}
+  .pd-round{margin-top:16px;max-width:460px;}
+  .pd-round input{width:100%;accent-color:var(--emerald);}
+
+  /* quadrants */
+  .quad{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:12px;width:760px;height:440px;}
+  .qc{border:1px solid var(--line);border-radius:14px;padding:20px 22px;background:rgba(255,255,255,.03);transition:all .25s;cursor:default;position:relative;}
+  .qc:hover{background:rgba(255,255,255,.06);}
+  .qc .qt{font-family:var(--display);font-size:24px;margin:0 0 8px;}
+  .qc .qd{font-size:15px;color:rgba(232,233,240,.78);line-height:1.4;}
+  .qc.you{border-color:var(--emerald);box-shadow:0 0 30px -10px var(--emerald);}
+  .qc.you .qt{color:var(--emerald);}
+  .qaxis{position:absolute;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);}
+
+  /* monastery image beats */
+  .mono{position:relative;z-index:2;height:720px;display:flex;align-items:flex-end;padding:0;overflow:hidden;}
+  .mono.topcap{align-items:flex-start;}
+  .mono .bg{position:absolute;inset:0;background-size:cover;background-position:center;animation:kb 28s ease-in-out infinite alternate;}
+  @keyframes kb{from{transform:scale(1.02)}to{transform:scale(1.09)}}
+  .mono .frame{position:absolute;inset:0;z-index:1;background:linear-gradient(180deg, rgba(7,8,15,.14), transparent 24%, transparent 38%, rgba(7,8,15,.72) 78%, rgba(7,8,15,.95));}
+  .mono .frame::after{content:"";position:absolute;left:0;bottom:0;width:62%;height:60%;background:radial-gradient(120% 100% at 0% 100%, rgba(7,8,15,.72), transparent 70%);}
+  .mono.topcap .frame::after{top:0;bottom:auto;background:radial-gradient(120% 100% at 0% 0%, rgba(7,8,15,.72), transparent 70%);}
+  .mono .frame.top{background:linear-gradient(0deg, rgba(7,8,15,.14), transparent 24%, transparent 38%, rgba(7,8,15,.72) 78%, rgba(7,8,15,.95));}
+  .mono .ovl{position:absolute;inset:0;pointer-events:none;z-index:1;overflow:hidden;}
+  .mono .caption{position:relative;z-index:2;padding:52px 60px;max-width:33em;}
+  .mono .caption .eyebrow{margin-bottom:12px;color:#f0bd78;text-shadow:0 1px 3px rgba(0,0,0,.8),0 2px 16px rgba(0,0,0,.7);}
+  .mono .caption h2{font-size:46px;margin-bottom:12px;color:#fff6ea;text-shadow:0 1px 3px rgba(0,0,0,.75),0 3px 26px rgba(0,0,0,.85);}
+  .mono .caption h2 .serif-em{color:#f2c98a;}
+  .mono .caption .lede{color:rgba(244,240,232,.94);text-shadow:0 2px 18px rgba(0,0,0,.72);font-size:22px;}
+  .glowpulse{position:absolute;width:130px;height:170px;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,rgba(255,240,200,.55),transparent 68%);animation:gp 3.6s ease-in-out infinite;}
+  @keyframes gp{0%,100%{opacity:.35;transform:translate(-50%,-50%) scale(1)}50%{opacity:.85;transform:translate(-50%,-50%) scale(1.16)}}
+  .moonglow{position:absolute;width:190px;height:190px;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,rgba(201,179,255,.32),transparent 64%);animation:gp 6.5s ease-in-out infinite;}
+  .twinkle{position:absolute;width:7px;height:7px;border-radius:50%;background:rgba(255,110,110,.95);box-shadow:0 0 9px rgba(255,70,70,.9);animation:tw 2.6s ease-in-out infinite;}
+  .ember{position:absolute;width:4px;height:4px;border-radius:50%;background:rgba(255,180,80,.95);box-shadow:0 0 6px rgba(255,150,50,.85);}
+  @keyframes rise{0%{transform:translateY(0);opacity:0}18%{opacity:1}100%{transform:translateY(-190px) translateX(var(--dx,0));opacity:0}}
+  .lthread{position:absolute;bottom:0;width:2px;background:linear-gradient(0deg, rgba(255,240,205,0), rgba(255,240,205,.75), rgba(255,240,205,0));animation:shim 3s ease-in-out infinite;}
+  @keyframes shim{0%,100%{opacity:.15}50%{opacity:.7}}
+  .moonshine{position:absolute;width:180px;height:180px;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,rgba(222,228,255,.6),rgba(200,210,255,.16) 45%,transparent 68%);animation:gp 5s ease-in-out infinite;mix-blend-mode:screen;}
+  .armshine{position:absolute;width:64px;height:96px;transform:translate(-50%,-50%) rotate(8deg);background:radial-gradient(ellipse 38% 60% at 50% 42%,rgba(255,255,255,.9),transparent 70%);opacity:0;animation:glint 4.2s ease-in-out infinite;mix-blend-mode:screen;}
+  @keyframes glint{0%,70%,100%{opacity:0}84%{opacity:.95}}
+
+  /* keynote buttons (reusable pattern, links to companion pages) */
+  .kbtns{display:flex;gap:8px;flex-wrap:wrap;}
+  .kbtn{font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-decoration:none;border-radius:999px;padding:6px 12px;border:1px solid var(--line);color:#cfd3e0;transition:transform .2s,background .2s,border-color .2s;}
+  .kbtn.solar{color:#bff3dd;border-color:rgba(52,211,153,.45);}
+  .kbtn.solar:hover{background:rgba(52,211,153,.16);border-color:var(--emerald);transform:translateY(-2px);}
+  .kbtn.lunar{color:#e6d4ff;border-color:rgba(177,79,255,.45);}
+  .kbtn.lunar:hover{background:rgba(177,79,255,.16);border-color:var(--violet);transform:translateY(-2px);}
+  .kbtn-group{position:absolute;z-index:4;display:flex;flex-direction:column;gap:9px;}
+  .kbtn-group .lbl{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;}
+  /* keynote-button hover popup (title + speaker) */
+  .kpop{position:fixed;z-index:9999;pointer-events:none;background:rgba(9,11,20,.96);border:1px solid var(--line);border-radius:11px;padding:10px 15px;opacity:0;transition:opacity .18s ease;transform:translate(-50%,-100%);max-width:20em;text-align:center;box-shadow:0 14px 44px -14px rgba(0,0,0,.85);}
+  .kpop.on{opacity:1;}
+  .kpop .kt{font-family:var(--display);font-size:17px;color:#fff6ea;display:block;line-height:1.22;}
+  .kpop .ks{font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:var(--ice);margin-top:5px;display:block;}
+  .dtip{position:fixed;z-index:9990;pointer-events:none;max-width:23em;background:rgba(9,11,20,.96);border:1px solid var(--line);border-radius:11px;padding:11px 15px;font-family:var(--body);font-size:15.5px;line-height:1.42;color:rgba(232,233,240,.95);opacity:0;transform:translateY(6px);transition:opacity .18s,transform .18s;box-shadow:0 14px 44px -14px rgba(0,0,0,.85);}
+  .dtip.on{opacity:1;transform:none;}
+  /* reusable floating info window (Ostrom principles, network nodes) */
+  .iw-backdrop{position:fixed;inset:0;z-index:9997;background:rgba(3,4,9,.5);opacity:0;pointer-events:none;transition:opacity .28s;}
+  .iw-backdrop.on{opacity:1;pointer-events:auto;}
+  .infowin{position:fixed;z-index:9998;left:50%;top:50%;transform:translate(-50%,-46%);width:min(480px,80vw);background:rgba(10,12,22,.98);border:1px solid var(--line);border-radius:18px;padding:28px 32px;opacity:0;pointer-events:none;transition:opacity .28s,transform .28s;box-shadow:0 30px 100px -20px rgba(0,0,0,.9);}
+  .infowin.on{opacity:1;transform:translate(-50%,-50%);pointer-events:auto;}
+  .infowin .iw-sub{font-family:var(--mono);font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;margin:0 0 8px;color:var(--emerald);}
+  .infowin .iw-title{font-family:var(--display);font-size:29px;color:#fff;margin:0 0 12px;line-height:1.12;}
+  .infowin .iw-body{font-size:17px;line-height:1.55;color:rgba(232,233,240,.9);white-space:pre-line;}
+  .infowin .iw-close{position:absolute;top:12px;right:18px;cursor:pointer;color:var(--dim);font-family:var(--mono);font-size:22px;line-height:1;}
+  .infowin .iw-close:hover{color:#fff;}
+  .infowin a.iw-link{display:inline-block;margin-top:16px;font-family:var(--mono);font-size:13px;color:var(--emerald);text-decoration:none;border:1px solid rgba(52,211,153,.4);border-radius:999px;padding:7px 13px;}
+  .infowin a.iw-link:hover{background:rgba(52,211,153,.14);}
+  /* hover tooltip */
+  .tip{position:absolute;z-index:8;pointer-events:none;background:rgba(9,11,20,.94);border:1px solid var(--line);border-radius:10px;padding:9px 15px;font-family:var(--body);font-size:17px;color:var(--fg);opacity:0;transform:translateY(6px);transition:opacity .2s,transform .2s;max-width:15em;text-align:center;}
+  .tip.on{opacity:1;transform:none;}
+  /* quadrant reveal on click */
+  .qc{cursor:pointer;}
+  .qc .qd{opacity:0;transform:translateY(6px);transition:opacity .4s,transform .4s;}
+  .qc.shown .qd{opacity:1;transform:none;}
+  .qc .tap{position:absolute;bottom:14px;right:16px;font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);opacity:.55;transition:opacity .3s;}
+  .qc.shown .tap{opacity:0;}
+  /* moon cursor + universal parallax/hover on illustrations */
+  .stage svg{transition:filter .3s ease;will-change:transform;cursor:url(/keynote-w4-d1/img/moon.png) 23 23, default;}
+  .stage:hover svg{filter:brightness(1.06);}
+  .qc, .kbtn, .slink, [id^="nn-"], #shog-core, #shog-face{cursor:url(/keynote-w4-d1/img/moon.png) 23 23, pointer;}
+  .alltalks{position:fixed;top:20px;right:22px;z-index:50;font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:var(--fg);text-decoration:none;background:rgba(10,12,22,.62);backdrop-filter:blur(20px);border:1px solid var(--line);border-radius:999px;padding:8px 15px;transition:border-color .2s,background .2s;}
+  .alltalks:hover{border-color:var(--ice);background:rgba(201,179,255,.12);}
+  .reveal .progress{color:var(--warm);}
+  .reveal .controls{color:var(--dim);}
+  .qr{width:150px;height:150px;border:1px solid var(--line);border-radius:12px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:11px;color:var(--dim);text-align:center;background:rgba(255,255,255,.03);}
+</style>
+</head>
+<body>
+<div class="cosmos"><div class="stars far"></div><div class="stars mid"></div><div class="stars near"></div></div>
+<a class="alltalks" href="/keynote">All the talks &rarr;</a>
+
+<div class="reveal"><div class="slides">
+
+<!-- 01 COVER -->
+<section data-background-color="transparent">
+  <div class="slidewrap center">
+    <div style="position:relative;width:340px;height:300px;margin-bottom:10px;"><svg id="emblem" width="340" height="300" viewBox="0 0 340 300"></svg></div>
+    <p class="eyebrow">Valley of the Commons <span class="dot">·</span> week four keynote</p>
+    <h1 style="font-size:82px;max-width:15em;">Game Theory of<br/>Our <span class="serif-em fg-em">Shared Purpose</span></h1>
+  </div>
+  <div class="foot"><span class="num">Deca</span> &nbsp; Reichenau an der Rax</div>
+</section>
+
+<!-- 02 THE METACRISIS -->
+<section data-background-color="transparent">
+  <div class="stage"><svg id="metacrisis" width="1180" height="620" viewBox="0 0 1180 620"></svg></div>
+  <div class="slidewrap" style="position:absolute;top:0;left:0;pointer-events:none;">
+    <div style="max-width:19em;">
+      <h2 style="font-size:64px;">The metacrisis.</h2>
+    </div>
+  </div>
+  <div class="foot"><span class="num">01</span> &nbsp; the state we are in</div>
+</section>
+
+<!-- 03 THE SHOGGOTH -->
+<section data-background-color="transparent">
+  <div class="stage"><svg id="shoggoth" width="900" height="600" viewBox="0 0 900 600"></svg></div>
+  <div class="slidewrap" style="position:absolute;top:0;left:0;pointer-events:none;">
+    <div style="max-width:20em;">
+      <p class="eyebrow">and a catalyst</p>
+      <h2 style="font-size:60px;">The Shoggoth.</h2>
+    </div>
+  </div>
+  <div class="foot"><span class="num">02</span> &nbsp; the accelerant</div>
+</section>
+
+<!-- 04 MOLOCH -->
+<section data-background-color="transparent">
+  <div class="stage"><svg id="moloch" width="900" height="600" viewBox="0 0 900 600"></svg></div>
+  <div class="slidewrap" style="position:absolute;top:0;left:0;pointer-events:none;">
+    <div style="max-width:22em;">
+      <p class="eyebrow">underneath it all</p>
+      <h2 style="font-size:68px;">Moloch.</h2>
+    </div>
+  </div>
+  <div class="foot"><span class="num">03</span> &nbsp; Moloch</div>
+</section>
+
+<!-- 05 THE QUADRANTS -->
+<section data-background-color="transparent">
+  <div class="slidewrap center">
+    <p class="eyebrow">three ways to meet it</p>
+    <div class="quad" id="quad">
+      <div class="qc"><p class="qt">The naive</p><p class="qd">Do not see the problem, or have not let it land. Not optimists, just unaware.</p><span class="tap">tap</span></div>
+      <div class="qc you"><p class="qt">The real optimists</p><p class="qd">See it clearly, do not look away. To work on it is to believe it can be solved. The actual optimists. <span class="dim">Schmachtenberger, via Tristan Harris</span></p><span class="tap">tap</span></div>
+      <div class="qc" style="cursor:default;display:flex;align-items:flex-end;"><p class="kick" style="color:rgba(138,143,163,.55)">awareness &rarr;</p></div>
+      <div class="qc"><p class="qt">The nihilists</p><p class="qd">See it, and are overwhelmed. "It's all broken, so I will be too."</p><span class="tap">tap</span></div>
+    </div>
+    <p class="lede sm" style="margin-top:26px;">This room is the third kind. That is why we are here.</p>
+  </div>
+  <div class="foot"><span class="num">04</span> &nbsp; where people stand</div>
+</section>
+
+<!-- 06 TWO NESTED GAMES -->
+<section data-background-color="transparent">
+  <div class="stage"><svg id="twogames" width="1180" height="600" viewBox="0 0 1180 600"></svg></div>
+  <div class="slidewrap" style="position:absolute;top:0;left:0;pointer-events:none;justify-content:flex-start;">
+    <p class="eyebrow" style="margin:0;">the device <span class="dot">·</span> hold two games at once</p>
+  </div>
+  <div class="foot"><span class="num">05</span> &nbsp; two nested games</div>
+</section>
+
+<!-- 07 PRISONER'S DILEMMA (interactive) -->
+<section data-background-color="transparent">
+  <div class="slidewrap">
+    <p class="eyebrow">why we stay stuck</p>
+    <div style="display:grid;grid-template-columns:auto 1fr;gap:56px;align-items:center;">
+      <div>
+        <div class="pd-toggle">
+          <button class="pd-btn active" data-mode="0">the classic</button>
+          <button class="pd-btn" data-mode="1">our real traps</button>
+          <button class="pd-btn" data-mode="2">the commons fix</button>
+        </div>
+        <table class="matrix"><tbody>
+          <tr><td class="axis"></td><td class="axis" id="c1">they cooperate</td><td class="axis" id="c2">they defect</td></tr>
+          <tr><td class="axis" id="r1">you cooperate</td><td id="cc"><div class="pay">3 · 3</div><div class="cap"></div></td><td id="cd"><div class="pay">0 · 5</div><div class="cap"></div></td></tr>
+          <tr><td class="axis" id="r2">you defect</td><td id="dc"><div class="pay">5 · 0</div><div class="cap"></div></td><td id="dd"><div class="pay">1 · 1</div><div class="cap"></div></td></tr>
+        </tbody></table>
+      </div>
+      <div>
+        <h3 id="pd-title">Two prisoners. One rational trap.</h3>
+        <p class="lede sm dim" id="pd-body">Each does best by betraying, so both betray, and both do worse than if they had trusted. Everyone rational. Everyone losing.</p>
+        <p class="pd-verdict fg-warm" id="pd-verdict">Betray · betray is the only equilibrium.</p>
+        <div class="pd-round" id="pd-round" style="display:none;">
+          <p class="hint" style="margin-bottom:8px;">rounds you will meet again: <b id="pd-r">1</b></p>
+          <input id="pd-slider" type="range" min="1" max="50" value="1" />
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span class="num">06</span> &nbsp; the prisoner's dilemma</div>
+</section>
+
+<!-- 08 SOLARPUNK / LUNARPUNK (concept, buttons moved to dedicated slides) -->
+<section data-background-color="transparent">
+  <div class="stage"><svg id="solarlunar" width="1200" height="600" viewBox="0 0 1200 600"></svg></div>
+  <div class="slidewrap" style="position:absolute;top:0;left:0;pointer-events:none;justify-content:flex-start;">
+    <p class="eyebrow" style="margin:0;">two halves of the commons <span class="dot">·</span> solarpunk / lunarpunk</p>
+  </div>
+  <div class="foot"><span class="num">07</span> &nbsp; the yin-yang</div>
+</section>
+
+<!-- 08b SOLARPUNK KEYNOTES (dedicated) -->
+<section data-background-color="transparent">
+  <div class="slidewrap center">
+    <p class="eyebrow fg-em">solarpunk keynotes <span class="dim">· the world we want</span></p>
+    <h2 style="margin-bottom:6px;">The people building it.</h2>
+    <div class="kbtns" style="justify-content:center;max-width:40em;margin-top:22px;">
+      <a class="kbtn solar" href="/keynote-w1-d1" title="Felix Fritsch · Opening Day">W1·D1</a>
+      <a class="kbtn solar" href="/keynote-w1-d2" title="Michel Bauwens · The Return of the Commons">W1·D2</a>
+      <a class="kbtn solar" href="/keynote-w1-d3" title="Adam Arvidsson · Industrious Modernity">W1·D3</a>
+      <a class="kbtn solar" href="/keynote-w2-d1" title="Roberto Valenti · A regenerative-commons stack">W2·D1</a>
+      <a class="kbtn solar" href="/keynote-w2-d2" title="Kilian Jörg · Reclaiming the Commons">W2·D2</a>
+      <a class="kbtn solar" href="/keynote-w2-d3" title="Lorenzo Patuzzo · Monasteries of the 21st Century">W2·D3</a>
+      <a class="kbtn solar" href="/keynote-w2-d4" title="Stefan Schütz · Regional money & production">W2·D4</a>
+      <a class="kbtn solar" href="/keynote-w2-d5" title="Silvia Brandi · International FabLab networks">W2·D5</a>
+      <a class="kbtn solar" href="/keynote-w3-d2" title="Matthias Fersterer · Klein Jasedow">W3·D2</a>
+      <a class="kbtn solar" href="/keynote-michel" title="Michel Bauwens · A commons-based civilization">MICHEL</a>
+    </div>
+  </div>
+  <div class="foot"><span class="num">08</span> &nbsp; solarpunk keynotes</div>
+</section>
+
+<!-- 08c LUNARPUNK KEYNOTES (dedicated) -->
+<section data-background-color="transparent">
+  <div class="slidewrap center">
+    <p class="eyebrow fg-vi">lunarpunk keynotes <span class="dim">· protecting it</span></p>
+    <h2 style="margin-bottom:6px;">The people guarding it.</h2>
+    <div class="kbtns" style="justify-content:center;max-width:34em;margin-top:22px;">
+      <a class="kbtn lunar" href="/keynote-w1-d4" title="Amber Case · Calm Technology">W1·D4</a>
+      <a class="kbtn lunar" href="/keynote-w1-d5" title="Jeff Emmett · From P2P to P4P">W1·D5</a>
+      <a class="kbtn lunar" href="/keynote-w3-d1" title="Una Wang · Infrastructure as a precondition">W3·D1</a>
+    </div>
+  </div>
+  <div class="foot"><span class="num">09</span> &nbsp; lunarpunk keynotes</div>
+</section>
+
+<!-- 09 BUILDERS & VISIONARIES (concept) -->
+<section data-background-color="transparent">
+  <div class="stage"><svg id="bv" width="1200" height="600" viewBox="0 0 1200 600"></svg></div>
+  <div class="slidewrap" style="position:absolute;top:0;left:0;pointer-events:none;justify-content:flex-start;">
+    <p class="eyebrow" style="margin:0;">to cross from here to there <span class="dot">·</span> builders &amp; visionaries</p>
+  </div>
+  <div class="foot"><span class="num">10</span> &nbsp; the why meets the how</div>
+</section>
+
+<!-- 10 NETWORK SOCIETY NOT NETWORK STATE -->
+<section data-background-color="transparent">
+  <div class="slidewrap">
+    <p class="eyebrow">the end-state, named</p>
+    <h2 style="max-width:18em;">An international <span class="fg-em">network society.</span> <span class="dim" style="font-size:.7em;">Not a Network State.</span></h2>
+    <div class="two" style="margin-top:16px;max-width:1020px;">
+      <div class="glass" style="border-color:rgba(255,107,53,.35)">
+        <p class="kick fg-warm">network state</p>
+        <ul class="beats" style="margin-top:10px;"><li><b>·</b><span>one commandment, founder-king</span></li><li><b>·</b><span>membership by capital, exit</span></li><li><b>·</b><span>crowdfunded sovereignty</span></li></ul>
+        <p class="kick dim" style="margin-top:14px;">Balaji Srinivasan</p>
+      </div>
+      <div class="glass" style="border-color:rgba(52,211,153,.4)">
+        <p class="kick fg-em">network society</p>
+        <ul class="beats" style="margin-top:10px;"><li><b>·</b><span>plural, intersecting memberships</span></li><li><b>·</b><span>place-full, commons-governed</span></li><li><b>·</b><span>no single right scale</span></li></ul>
+        <p class="kick dim" style="margin-top:14px;">Siddarth · Weyl · Slaughter</p>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span class="num">09</span> &nbsp; society, not state</div>
+</section>
+
+<!-- 11 COSMOLOCAL -->
+<section data-background-color="transparent">
+  <div class="stage"><svg id="cosmolocal" width="1100" height="600" viewBox="0 0 1100 600"></svg></div>
+  <div class="slidewrap" style="position:absolute;top:0;left:0;pointer-events:none;justify-content:flex-start;">
+    <p class="eyebrow" style="margin:0;">the end-state runs on <span class="dot">·</span> cosmolocalism</p>
+  </div>
+  <div class="foot"><span class="num">10</span> &nbsp; share light, do heavy locally</div>
+</section>
+
+<!-- 12 OSTROM -->
+<section data-background-color="transparent">
+  <div class="stage"><svg id="ostrom" width="1100" height="620" viewBox="0 0 1100 620"></svg></div>
+  <div class="slidewrap" style="position:absolute;top:0;left:0;pointer-events:none;justify-content:flex-start;">
+    <p class="eyebrow" style="margin:0;">and it is governed as a commons <span class="dot">·</span> Elinor Ostrom</p>
+  </div>
+  <div class="foot"><span class="num">11</span> &nbsp; the tragedy is not inevitable</div>
+</section>
+
+<!-- 13 MEMBRANES (swapped before calm tech) -->
+<section data-background-color="transparent">
+  <div class="stage"><svg id="membrane" width="640" height="600" viewBox="0 0 640 600"></svg></div>
+  <div class="slidewrap" style="position:absolute;top:0;right:0;align-items:flex-end;text-align:right;pointer-events:none;">
+    <div style="max-width:20em;">
+      <p class="eyebrow">and it has a membrane</p>
+      <h2>In the biosphere<br/>and the <span class="serif-em fg-ice">noosphere.</span></h2>
+    </div>
+  </div>
+  <div class="foot"><span class="num">12</span> &nbsp; permeable membranes</div>
+</section>
+
+<!-- 14 CALM TECH -->
+<section data-background-color="transparent">
+  <div class="slidewrap">
+    <p class="eyebrow">a calm relationship to technology</p>
+    <h2 style="max-width:16em;">Technology in the <span class="serif-em fg-ice">periphery</span> of attention.</h2>
+    <div class="speakers"><a class="slink" href="/keynote-w1-d4"><span class="who">Amber Case</span> · Calm Technology<span class="arr">→</span></a></div>
+  </div>
+  <div class="foot"><span class="num">13</span> &nbsp; calm technology</div>
+</section>
+
+<!-- 15 CITADEL -->
+<section data-background-color="transparent">
+  <div class="mono">
+    <div class="bg" style="background-image:url(/keynote-w4-d1/img/citadel.jpg)"></div>
+    <div class="frame"></div>
+    <div class="caption"><p class="eyebrow">the 21st-century monastery</p><h2>The <span class="serif-em">citadel.</span></h2></div>
+  </div>
+  <div class="foot"><span class="num">14</span> &nbsp; the monastery</div>
+</section>
+
+<!-- 16 COSMOLOCAL (image) -->
+<section data-background-color="transparent">
+  <div class="mono">
+    <div class="bg" style="background-image:url(/keynote-w4-d1/img/cosmolocal.jpg)"></div>
+    <div class="ovl" id="ovl-cosmo"></div>
+    <div class="frame"></div>
+    <div class="caption"><p class="eyebrow">cosmolocalism</p><h2>Heavy done locally.<br/><span class="serif-em">Light shared with all.</span></h2></div>
+  </div>
+  <div class="foot"><span class="num">15</span> &nbsp; cosmolocalism</div>
+</section>
+
+<!-- 17 MEMBRANE (image) -->
+<section data-background-color="transparent">
+  <div class="mono">
+    <div class="bg" style="background-image:url(/keynote-w4-d1/img/membrane.jpg)"></div>
+    <div class="ovl"><div class="glowpulse" style="left:70%;top:57%"></div><div class="moonshine" style="left:13.5%;top:42%"></div></div>
+    <div class="frame"></div>
+    <div class="caption"><p class="eyebrow">the permeable membrane</p><h2>No one should sleep in <span class="serif-em">their armour.</span></h2></div>
+  </div>
+  <div class="foot"><span class="num">16</span> &nbsp; within the walls</div>
+</section>
+
+<!-- 18 THE HEARTH / INSIDE (image, top caption) -->
+<section data-background-color="transparent">
+  <div class="mono topcap">
+    <div class="bg" style="background-image:url(/keynote-w4-d1/img/inside.jpg)"></div>
+    <div class="ovl" id="ovl-embers"></div>
+    <div class="frame top"></div>
+    <div class="caption"><p class="eyebrow">inside the walls</p><h2>Free in the <span class="serif-em">noosphere.</span></h2></div>
+  </div>
+  <div class="foot"><span class="num">17</span> &nbsp; the hearth</div>
+</section>
+
+<!-- 18b THE LIBRARY (image) -->
+<section data-background-color="transparent">
+  <div class="mono topcap">
+    <div class="bg" style="background-image:url(/keynote-w4-d1/img/library.jpg)"></div>
+    <div class="frame top"></div>
+    <div class="caption"><p class="eyebrow">keepers of the word</p><h2>The <span class="serif-em">library.</span></h2></div>
+  </div>
+  <div class="foot"><span class="num">18</span> &nbsp; storing the knowledge</div>
+</section>
+
+<!-- 18c THE MYCELIUM (image) -->
+<section data-background-color="transparent">
+  <div class="mono">
+    <div class="bg" style="background-image:url(/keynote-w4-d1/img/mycelium.jpg)"></div>
+    <div class="frame"></div>
+    <div class="caption"><p class="eyebrow">held everywhere, seizable nowhere</p><h2>A <span class="serif-em">mycelial commons.</span></h2></div>
+  </div>
+  <div class="foot"><span class="num">19</span> &nbsp; storing it safely</div>
+</section>
+
+<!-- 19 THE DARK FOREST (image) -->
+<section data-background-color="transparent">
+  <div class="mono">
+    <div class="bg" style="background-image:url(/keynote-w4-d1/img/darkforest.jpg)"></div>
+    <div class="ovl"><div class="moonglow" style="left:83%;top:16%"></div><div class="armshine" style="left:29%;top:57%"></div><div class="twinkle" style="left:58%;top:44%"></div><div class="twinkle" style="left:73%;top:58%;animation-delay:1.1s"></div><div class="twinkle" style="left:50%;top:66%;animation-delay:.6s"></div></div>
+    <div class="frame"></div>
+    <div class="caption"><p class="eyebrow">the knights</p><h2>Armour for the <span class="serif-em">dark forest.</span></h2></div>
+  </div>
+  <div class="foot"><span class="num">18</span> &nbsp; the dark forest</div>
+</section>
+
+<!-- 18 WHERE THE GAMES MEET -->
+<section data-background-color="transparent">
+  <div class="slidewrap">
+    <p class="eyebrow">where the two games meet</p>
+    <h2 style="max-width:17em;">The communities forming now are <span class="fg-warm">both</span> the vehicle <span class="fg-em">and</span> the prototype.</h2>
+    <p class="lede sm" style="margin-top:14px;"><span class="serif-em fg-ice">Protopian society-incubators.</span></p>
+  </div>
+  <div class="foot"><span class="num">19</span> &nbsp; the bridge</div>
+</section>
+
+<!-- 19 THE NETWORK OF COMMUNITIES -->
+<section data-background-color="transparent">
+  <div class="stage"><svg id="network" width="1180" height="640" viewBox="0 0 1180 640"></svg></div>
+  <div class="legend"><span><i style="background:var(--emerald)"></i>land &amp; community</span><span><i style="background:var(--violet)"></i>infrastructure</span><span><i style="background:var(--ice)"></i>knowledge</span></div>
+  <div id="netpanel">
+    <p class="pt" id="np-title">A network society</p>
+    <p class="pv" id="np-sub">Each node a living cell. Click one.</p>
+    <p class="pl light">shares</p><p class="pv" id="np-light">knowledge, design, compute</p>
+    <p class="pl heavy">roots</p><p class="pv" id="np-heavy">food, energy, land, care</p>
+    <a id="np-link" href="#" target="_blank" rel="noopener" style="display:none;">visit →</a>
+  </div>
+  <div class="slidewrap" style="position:absolute;top:0;left:0;pointer-events:none;">
+    <p class="eyebrow" style="margin:44px 0 0;">the network society <span class="dot">·</span> the people who were here <span class="hint" style="text-transform:none;letter-spacing:0;">· click a node</span></p>
+  </div>
+  <div class="foot"><span class="num">20</span> &nbsp; the communities as cells</div>
+</section>
+
+<!-- 20 THREE VALUES -->
+<section data-background-color="transparent">
+  <div class="slidewrap center">
+    <p class="eyebrow">and how we choose who to build with <span class="dot">·</span> three values, in order</p>
+    <div style="display:flex;flex-direction:column;gap:16px;margin-top:10px;">
+      <h2 style="margin:0;">1 &nbsp; <span class="fg-em">Heart-centered.</span></h2>
+      <h2 style="margin:0;">2 &nbsp; <span class="fg-ice">Maximally truth-seeking.</span></h2>
+      <h2 style="margin:0;">3 &nbsp; <span class="fg-warm">In the arena.</span></h2>
+    </div>
+    <p class="lede sm dim" style="margin-top:30px;max-width:30em;">"The credit belongs to the man who is actually in the arena." <span class="serif-em">Theodore Roosevelt, Sorbonne, 1910.</span></p>
+  </div>
+  <div class="foot"><span class="num">21</span> &nbsp; the values</div>
+</section>
+
+<!-- 21 YOU ARE NOT ALONE -->
+<section data-background-color="transparent">
+  <div class="slidewrap center">
+    <p class="eyebrow">the invitation</p>
+    <h1 style="font-size:92px;">You are <span class="serif-em fg-em">not alone.</span></h1>
+    <p class="kick fg-warm" style="margin-top:32px;">Heart-centered · truth-seeking · in the arena</p>
+  </div>
+  <div class="foot"><span class="num">22</span> &nbsp; Valley of the Commons</div>
+</section>
+
+<!-- 22 THE GAME (QR placeholder) -->
+<section data-background-color="transparent">
+  <div class="slidewrap center">
+    <p class="eyebrow">now, let's actually play</p>
+    <h2 style="max-width:16em;">Can we escape the trap <span class="serif-em fg-em">together?</span></h2>
+    <div style="margin-top:26px;display:flex;justify-content:center;">
+      <div style="background:#fff;padding:12px;border-radius:14px;line-height:0;box-shadow:0 8px 40px rgba(0,0,0,.45);">
+        <svg style="width:172px;height:172px;display:block" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 31 31" shape-rendering="crispEdges"><path fill="#ffffff" d="M0 0h31v31H0z"/><path stroke="#07080f" d="M1 1.5h7m1 0h2m1 0h1m1 0h1m2 0h5m1 0h7M1 2.5h1m5 0h1m1 0h1m1 0h2m4 0h1m1 0h1m3 0h1m5 0h1M1 3.5h1m1 0h3m1 0h1m2 0h1m1 0h4m1 0h1m3 0h1m1 0h1m1 0h3m1 0h1M1 4.5h1m1 0h3m1 0h1m1 0h3m1 0h4m1 0h3m2 0h1m1 0h3m1 0h1M1 5.5h1m1 0h3m1 0h1m3 0h1m1 0h1m1 0h3m2 0h1m2 0h1m1 0h3m1 0h1M1 6.5h1m5 0h1m4 0h1m1 0h2m1 0h4m2 0h1m5 0h1M1 7.5h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7M9 8.5h1m2 0h1m3 0h4M1 9.5h1m1 0h2m1 0h3m1 0h1m1 0h2m1 0h6m2 0h1m2 0h1m1 0h2M1 10.5h1m1 0h1m5 0h1m4 0h1m2 0h1m2 0h6m3 0h1M2 11.5h1m1 0h2m1 0h1m1 0h2m3 0h1m3 0h2m1 0h5m1 0h2M2 12.5h1m1 0h1m4 0h1m1 0h1m1 0h2m1 0h2m3 0h1m7 0h1M1 13.5h1m3 0h4m1 0h9m1 0h1m1 0h1m1 0h1m1 0h2M2 14.5h2m4 0h1m2 0h1m4 0h5m2 0h1m3 0h3M3 15.5h1m2 0h4m1 0h1m1 0h3m2 0h1m1 0h3m1 0h1m2 0h3M2 16.5h1m1 0h1m1 0h1m3 0h3m3 0h2m1 0h3m3 0h1m2 0h1M2 17.5h3m2 0h1m2 0h2m3 0h1m1 0h1m1 0h4m1 0h3m1 0h1M3 18.5h2m3 0h1m3 0h2m2 0h1m2 0h1m1 0h1m2 0h1m1 0h3M1 19.5h1m1 0h2m2 0h5m1 0h5m4 0h1m1 0h2m1 0h1M3 20.5h2m3 0h1m4 0h7m2 0h1m4 0h1M2 21.5h1m4 0h2m1 0h1m1 0h1m1 0h6m1 0h7M9 22.5h2m1 0h1m4 0h1m3 0h1m3 0h5M1 23.5h7m1 0h2m1 0h1m2 0h1m4 0h2m1 0h1m1 0h2m1 0h1M1 24.5h1m5 0h1m1 0h3m2 0h2m3 0h1m1 0h1m3 0h2m2 0h1M1 25.5h1m1 0h3m1 0h1m4 0h2m2 0h3m2 0h5m1 0h3M1 26.5h1m1 0h3m1 0h1m1 0h1m3 0h2m1 0h4m2 0h1m1 0h3m2 0h1M1 27.5h1m1 0h3m1 0h1m1 0h2m1 0h2m5 0h1m1 0h1m2 0h1m2 0h1m1 0h1M1 28.5h1m5 0h1m3 0h1m1 0h5m1 0h1m1 0h3m1 0h2m1 0h1M1 29.5h7m1 0h1m5 0h2m4 0h2m2 0h1m2 0h1"/></svg>
+      </div>
+    </div>
+    <p class="lede sm dim" style="margin-top:22px;max-width:28em;">Scan to join the live trust tournament on your phone.</p>
+    <!-- "open projector view" removed for the VOTC mirror: /trust-tournament is a
+         LAL-only feature with no VOTC equivalent yet. Re-add here, pointing
+         internally, once trust-tournament is mirrored (follow-up project). -->
+
+  </div>
+  <div class="foot"><span class="num">23</span> &nbsp; the trust tournament</div>
+</section>
+
+</div></div>
+
+<script src="/keynote-w4-d1/lib/gsap.min.js"></script>
+<script src="/keynote-w4-d1/lib/confetti.min.js"></script>
+<script src="/keynote-w4-d1/lib/reveal.js"></script>
+<script>
+const NS="http://www.w3.org/2000/svg";
+function el(tag,attrs,txt){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(txt!=null)e.textContent=txt;return e;}
+
+/* cover emblem: nested moving systems — outer (from here to there) contains inner (end-state) */
+(function(){const s=document.getElementById('emblem');if(!s)return;const cx=170,cy=150;
+  const st=document.createElement('style');st.textContent='@keyframes rot{to{transform:rotate(360deg)}}@keyframes rotr{to{transform:rotate(-360deg)}}';document.head.appendChild(st);
+  function hex(r,col,dur,dir){const g=el('g',{});g.setAttribute('style',`transform-origin:${cx}px ${cy}px;animation:${dir} ${dur}s linear infinite`);
+    const pts=[];for(let i=0;i<6;i++){const a=-Math.PI/2+i*Math.PI/3;pts.push([cx+r*Math.cos(a),cy+r*Math.sin(a)]);}
+    for(let i=0;i<6;i++){const p=pts[i],q=pts[(i+1)%6];g.appendChild(el('line',{x1:p[0],y1:p[1],x2:q[0],y2:q[1],stroke:col,'stroke-opacity':.45,'stroke-width':1.2}));
+      const c=el('circle',{cx:p[0],cy:p[1],r:5,fill:col});c.style.filter=`drop-shadow(0 0 7px ${col})`;g.appendChild(c);}
+    return g;}
+  s.appendChild(hex(120,'var(--warm)',66,'rot'));     // the transition system: broad, contains everything
+  s.appendChild(hex(56,'var(--emerald)',46,'rotr'));  // the end-state system: nested inside
+  const cm=el('circle',{cx,cy,r:6,fill:'var(--ice)'});cm.style.filter='drop-shadow(0 0 12px var(--ice))';s.appendChild(cm);
+  const t=el('circle',{r:5,fill:'#fff'});t.style.filter='drop-shadow(0 0 10px var(--ice))';s.appendChild(t);
+  t.appendChild(el('animateMotion',{dur:'13s',repeatCount:'indefinite',path:`M ${cx} ${cy-88} A 88 88 0 1 1 ${cx-0.1} ${cy-88} Z`}));})();
+
+/* metacrisis: five symptoms -> meaning crisis */
+(function(){const s=document.getElementById('metacrisis');if(!s)return;const cx=760,cy=320,R=210;
+  const P=['environmental','economic','mental health','geopolitical polarisation','the end of shared truth'];
+  s.appendChild(el('circle',{cx,cy,r:60,fill:'rgba(177,79,255,.10)',stroke:'var(--violet)','stroke-width':1.4}));
+  s.lastChild.style.filter='drop-shadow(0 0 22px var(--violet))';
+  s.appendChild(el('text',{x:cx,y:cy-4,'text-anchor':'middle','font-family':'var(--display)','font-style':'italic','font-size':'22',fill:'#e9dcff'},'the meaning'));
+  s.appendChild(el('text',{x:cx,y:cy+22,'text-anchor':'middle','font-family':'var(--display)','font-style':'italic','font-size':'22',fill:'#e9dcff'},'crisis'));
+  P.forEach((t,i)=>{const a=(-Math.PI/2)+i*2*Math.PI/5;const x=cx+R*Math.cos(a),y=cy+R*Math.sin(a);
+    const ln=el('line',{x1:cx+62*Math.cos(a),y1:cy+62*Math.sin(a),x2:x,y2:y,stroke:'var(--warm)','stroke-opacity':.3,'stroke-width':1.4});s.appendChild(ln);
+    const c=el('circle',{cx:x,cy:y,r:11,fill:'var(--warm)','fill-opacity':.5});c.style.filter='drop-shadow(0 0 10px var(--warm))';c.style.animation=`tw ${2.4+i*0.3}s ease-in-out infinite`;s.appendChild(c);
+    const anchor=Math.cos(a)>0.25?'start':Math.cos(a)<-0.25?'end':'middle';
+    s.appendChild(el('text',{x:x+Math.cos(a)*22,y:y+Math.sin(a)*22+5,'text-anchor':anchor,'font-family':'var(--body)','font-size':'17',fill:'rgba(232,233,240,.9)'},t));});})();
+
+/* shoggoth: parallax dark mass + friendly mask, hover tooltips */
+(function(){const s=document.getElementById('shoggoth');if(!s)return;const cx=560,cy=300;
+  const coreG=el('g',{id:'shog-core'});s.appendChild(coreG);
+  for(let i=0;i<12;i++){const a=i*2*Math.PI/12;const r2=150+((i*37)%60);
+    coreG.appendChild(el('path',{d:`M${cx} ${cy} Q ${cx+90*Math.cos(a)} ${cy+90*Math.sin(a)} ${cx+r2*Math.cos(a)} ${cy+r2*Math.sin(a)}`,fill:'none',stroke:'var(--violet)','stroke-opacity':.22,'stroke-width':2}));}
+  for(let i=0;i<7;i++){const a=i*2*Math.PI/7;coreG.appendChild(el('circle',{cx:cx+46*Math.cos(a),cy:cy+46*Math.sin(a),r:40,fill:'rgba(177,79,255,.12)',stroke:'var(--violet)','stroke-opacity':.4,'stroke-width':1}));}
+  const cc=el('circle',{cx,cy,r:70,fill:'rgba(20,10,30,.72)',stroke:'var(--violet)','stroke-width':1.4});cc.style.filter='drop-shadow(0 0 26px var(--violet))';coreG.appendChild(cc);
+  for(let i=0;i<9;i++){const a=(i*2.7),rr=20+((i*13)%42);const ex=cx+rr*Math.cos(a),ey=cy+rr*Math.sin(a);
+    const e2=el('circle',{cx:ex,cy:ey,r:5,fill:'var(--ice)'});e2.style.animation=`tw ${1.6+i*0.2}s ease-in-out infinite`;coreG.appendChild(e2);
+    coreG.appendChild(el('circle',{cx:ex,cy:ey,r:2,fill:'#0a0410'}));}
+  const faceG=el('g',{id:'shog-face'});s.appendChild(faceG);
+  const fx=cx+172,fy=cy+128;
+  const fc=el('circle',{cx:fx,cy:fy,r:46,fill:'rgba(255,201,74,.16)',stroke:'var(--warm)','stroke-width':1.8});fc.style.filter='drop-shadow(0 0 14px var(--warm))';faceG.appendChild(fc);
+  faceG.appendChild(el('circle',{cx:fx-16,cy:fy-12,r:5,fill:'var(--warm)'}));
+  faceG.appendChild(el('circle',{cx:fx+16,cy:fy-12,r:5,fill:'var(--warm)'}));
+  faceG.appendChild(el('path',{d:`M${fx-20} ${fy+8} Q ${fx} ${fy+30} ${fx+20} ${fy+8}`,fill:'none',stroke:'var(--warm)','stroke-width':2.2}));
+  function tip(lines,x,y,col){const g=el('g',{opacity:'0'});g.style.transition='opacity .2s';g.style.pointerEvents='none';
+    const w=Math.max.apply(null,lines.map(l=>l.length))*8.7+28,h=lines.length*23+18;
+    g.appendChild(el('rect',{x:x-w/2,y:y,width:w,height:h,rx:9,fill:'rgba(9,11,20,.95)',stroke:col,'stroke-opacity':.55}));
+    lines.forEach((l,i)=>g.appendChild(el('text',{x:x,y:y+27+i*23,'text-anchor':'middle','font-family':'var(--body)','font-size':'17',fill:'#fff'},l)));
+    s.appendChild(g);return g;}
+  const faceTip=tip(['scrolling reels'],fx,fy+58,'var(--warm)');
+  const coreTip=tip(['a supercomputer staring','at your pre-frontal cortex'],cx,cy-196,'var(--violet)');
+  function hover(g,t){g.addEventListener('mouseenter',()=>t.setAttribute('opacity','1'));g.addEventListener('mouseleave',()=>t.setAttribute('opacity','0'));}
+  hover(faceG,faceTip);hover(coreG,coreTip);
+  const sec=s.closest('section');
+  sec.addEventListener('mousemove',function(e){const r=s.getBoundingClientRect();const nx=(e.clientX-r.left)/r.width-0.5,ny=(e.clientY-r.top)/r.height-0.5;
+    coreG.style.transform='translate('+(nx*20)+'px,'+(ny*16)+'px)';faceG.style.transform='translate('+(nx*54)+'px,'+(ny*44)+'px)';});})();
+
+/* moloch: crabs-in-a-bucket ring */
+(function(){const s=document.getElementById('moloch');if(!s)return;const cx=560,cy=300,R=150;
+  const n=10,pts=[];for(let i=0;i<n;i++){const a=i*2*Math.PI/n;pts.push([cx+R*Math.cos(a),cy+R*Math.sin(a)]);}
+  pts.forEach((p,i)=>{const q=pts[(i+3)%n];s.appendChild(el('line',{x1:p[0],y1:p[1],x2:q[0],y2:q[1],stroke:'var(--warm)','stroke-opacity':.18,'stroke-width':1}));});
+  s.appendChild(el('circle',{cx,cy,r:44,fill:'none',stroke:'var(--warm)','stroke-width':1.5,'stroke-dasharray':'3 6'}));
+  pts.forEach((p,i)=>{const c=el('circle',{cx:p[0],cy:p[1],r:9,fill:'var(--warm)','fill-opacity':.55});c.style.filter='drop-shadow(0 0 8px var(--warm))';c.style.animation=`tw ${2.4+i*0.2}s ease-in-out infinite`;s.appendChild(c);
+    s.appendChild(el('line',{x1:p[0],y1:p[1],x2:cx,y2:cy,stroke:'var(--warm)','stroke-opacity':.12,'stroke-width':1}));});})();
+
+/* two nested games */
+(function(){const s=document.getElementById('twogames');if(!s)return;
+  const outer=el('ellipse',{cx:540,cy:320,rx:500,ry:236,fill:'rgba(255,107,53,.05)',stroke:'var(--warm)','stroke-opacity':.55,'stroke-width':1.6});outer.style.filter='drop-shadow(0 0 30px rgba(255,107,53,.22))';s.appendChild(outer);
+  s.appendChild(el('text',{x:540,y:118,'text-anchor':'middle',class:'flabel',fill:'var(--warm)'},'1 · THE TRANSITION GAME'));
+  s.appendChild(el('text',{x:540,y:148,'text-anchor':'middle','font-family':'var(--display)','font-style':'italic','font-size':'22',fill:'#ffd0bd'},'from here to there'));
+  const inner=el('ellipse',{cx:800,cy:350,rx:216,ry:158,fill:'rgba(52,211,153,.07)',stroke:'var(--emerald)','stroke-opacity':.7,'stroke-width':1.6});inner.style.filter='drop-shadow(0 0 24px rgba(52,211,153,.3))';s.appendChild(inner);
+  s.appendChild(el('text',{x:800,y:318,'text-anchor':'middle',class:'flabel',fill:'var(--emerald)'},'2 · THE END-STATE'));
+  s.appendChild(el('text',{x:800,y:348,'text-anchor':'middle','font-family':'var(--display)','font-style':'italic','font-size':'20',fill:'#bff3dd'},'a desirable equilibrium'));
+  const ux=250,uy=380;s.appendChild(el('text',{x:ux,y:uy+38,'text-anchor':'middle',class:'flabel',fill:'var(--ice)'},'US, NOW'));
+  const us=el('circle',{cx:ux,cy:uy,r:11,fill:'var(--ice)'});us.style.filter='drop-shadow(0 0 12px var(--ice))';
+  const pr=el('circle',{cx:ux,cy:uy,r:11,fill:'none',stroke:'var(--ice)','stroke-width':1.2});pr.appendChild(el('animate',{attributeName:'r',values:'11;28;11',dur:'2.4s',repeatCount:'indefinite'}));pr.appendChild(el('animate',{attributeName:'stroke-opacity',values:'.7;0;.7',dur:'2.4s',repeatCount:'indefinite'}));s.appendChild(pr);s.appendChild(us);
+  const PATH="M264 380 C 420 380, 520 352, 600 352";
+  s.appendChild(el('path',{d:PATH,fill:'none',stroke:'var(--ice)','stroke-opacity':.45,'stroke-width':2,'stroke-dasharray':'2 9','stroke-linecap':'round'}));
+  for(let k=0;k<3;k++){const t=el('circle',{r:5,fill:'#fff'});t.style.filter='drop-shadow(0 0 10px var(--ice))';s.appendChild(t);t.appendChild(el('animateMotion',{dur:'4.2s',repeatCount:'indefinite',path:PATH,begin:(k*1.4)+'s'}));}
+  const glow=el('ellipse',{cx:800,cy:350,rx:216,ry:158,fill:'none',stroke:'var(--emerald)','stroke-width':1});
+  glow.appendChild(el('animate',{attributeName:'stroke-opacity',values:'.5;0;.5',dur:'3.8s',repeatCount:'indefinite'}));
+  glow.appendChild(el('animate',{attributeName:'rx',values:'216;232;216',dur:'3.8s',repeatCount:'indefinite'}));
+  glow.appendChild(el('animate',{attributeName:'ry',values:'158;170;158',dur:'3.8s',repeatCount:'indefinite'}));s.appendChild(glow);})();
+
+/* builders & visionaries (ported) */
+(function(){const s=document.getElementById('bv');if(!s)return;
+  function line(x,y,t,anchor){s.appendChild(el('text',{x,y,'text-anchor':anchor||'start','font-family':'var(--body)','font-size':'14',fill:'rgba(232,233,240,.72)'},t));}
+  function cap(x,y,t,col,anchor){s.appendChild(el('text',{x,y,'text-anchor':anchor||'start','font-family':'var(--mono)','font-size':'11.5','letter-spacing':'.14em',fill:col},t));}
+  const bx=320,by=320;s.appendChild(el('circle',{cx:bx,cy:by,r:110,fill:'none',stroke:'var(--warm)','stroke-opacity':.4,'stroke-width':1.4}));
+  for(let i=0;i<8;i++){const a=i*Math.PI/4;const x1=bx+24*Math.cos(a),y1=by+24*Math.sin(a),x2=bx+102*Math.cos(a),y2=by+102*Math.sin(a);
+    s.appendChild(el('line',{x1,y1,x2,y2,stroke:'var(--warm)','stroke-opacity':.55,'stroke-width':1.6}));
+    s.appendChild(el('path',{d:`M${x2} ${y2} l ${-8*Math.cos(a-0.4)} ${-8*Math.sin(a-0.4)} M${x2} ${y2} l ${-8*Math.cos(a+0.4)} ${-8*Math.sin(a+0.4)}`,stroke:'var(--warm)','stroke-opacity':.55,'stroke-width':1.6,fill:'none'}));
+    const p=el('circle',{cx:x2,cy:y2,r:3,fill:'var(--warm)'});p.appendChild(el('animate',{attributeName:'r',values:'2;5;2',dur:(2+i*0.15)+'s',repeatCount:'indefinite'}));s.appendChild(p);}
+  const bc=el('circle',{cx:bx,cy:by,r:12,fill:'var(--warm)','fill-opacity':.6});bc.style.filter='drop-shadow(0 0 12px var(--warm))';s.appendChild(bc);
+  s.appendChild(el('text',{x:bx,y:by+138,'text-anchor':'middle',class:'flabel',fill:'var(--warm)'},'US, NOW'));
+  cap(90,90,'BUILDERS · the striker in the arena','var(--warm)');line(90,116,'flow, authentic exploration · expand the realm of feasibility');
+  const mx=610,my=320;const mn=el('rect',{x:mx-15,y:my-15,width:30,height:30,rx:7,fill:'rgba(201,179,255,.14)',stroke:'var(--ice)','stroke-width':1.6});mn.style.filter='drop-shadow(0 0 16px var(--ice))';s.appendChild(mn);
+  s.appendChild(el('text',{x:mx,y:my+42,'text-anchor':'middle','font-family':'var(--display)','font-style':'italic','font-size':'19',fill:'var(--ice)'},'they meet'));
+  s.appendChild(el('line',{x1:bx+102,y1:by,x2:mx-17,y2:my,stroke:'var(--warm)','stroke-opacity':.3,'stroke-width':1.4}));
+  const px=1030,py=320;
+  const pbLine=el('path',{d:'M1008 320 C 880 320, 760 320, 628 320',fill:'none',stroke:'var(--emerald)','stroke-opacity':.4,'stroke-width':1.6,'stroke-dasharray':'2 8'});s.appendChild(pbLine);
+  const protoG=el('g',{id:'protopia'});protoG.style.cursor='pointer';s.appendChild(protoG);
+  protoG.appendChild(el('circle',{cx:px,cy:py,r:20,fill:'rgba(52,211,153,.12)',stroke:'var(--emerald)','stroke-width':1.6}));protoG.lastChild.style.filter='drop-shadow(0 0 18px var(--emerald))';
+  protoG.appendChild(el('circle',{cx:px,cy:py,r:6,fill:'var(--emerald)','fill-opacity':.7}));
+  protoG.appendChild(el('text',{x:px,y:py+42,'text-anchor':'middle','font-family':'var(--display)','font-style':'italic','font-size':'21',fill:'#bff3dd'},'Protopia'));
+  (function(){var off={x:0,y:0};var sec=s.closest('section');
+    function updateLine(){var bx=1008+off.x,by=320+off.y;pbLine.setAttribute('d','M '+bx+' '+by+' C '+(bx-160)+' '+by+', 760 320, 628 320');}
+    sec.addEventListener('mousemove',function(e){var r=s.getBoundingClientRect();if(!r.width)return;var sx=(e.clientX-r.left)/r.width*1200,sy=(e.clientY-r.top)/r.height*600;var tx=px+off.x,ty=py+off.y;var d=Math.hypot(sx-tx,sy-ty);
+      if(d<78){var ang=Math.atan2(ty-sy,tx-sx);off.x+=Math.cos(ang)*16;off.y+=Math.sin(ang)*16;off.x=Math.max(-px+150,Math.min(1180-px,off.x));off.y=Math.max(-py+90,Math.min(560-py,off.y));protoG.style.transition='transform .1s ease-out';protoG.style.transform='translate('+off.x+'px,'+off.y+'px)';updateLine();}});
+    protoG.addEventListener('click',function(){if(window.confetti){var r=s.getBoundingClientRect();var ox=(r.left+((px+off.x)/1200)*r.width)/window.innerWidth,oy=(r.top+((py+off.y)/600)*r.height)/window.innerHeight;confetti({particleCount:140,spread:78,startVelocity:42,origin:{x:ox,y:oy},colors:['#ff6b35','#b14fff','#34d399','#c9b3ff','#ffd166','#fff']});}});})();
+  cap(1110,90,'VISIONARIES · the coach in the arena','var(--emerald)','end');line(1110,116,'techno-shamanism, wisdom · reverse-engineer, guide builders','end');
+  s.appendChild(el('text',{x:600,y:560,'text-anchor':'middle','font-family':'var(--display)','font-style':'italic','font-size':'21',fill:'var(--ice)'},'wisdom schools for builders — Michel Bauwens, at the Valley'));})();
+
+/* solarpunk / lunarpunk yin-yang (ported) */
+(function(){const s=document.getElementById('solarlunar');if(!s)return;const cx=600,cy=310,R=190;
+  const yy=el('g',{});yy.setAttribute('style','transform-origin:600px 310px;animation:spinyy 90s linear infinite');s.appendChild(yy);
+  const st=document.createElement('style');st.textContent='@keyframes spinyy{to{transform:rotate(360deg)}}';document.head.appendChild(st);
+  const base=el('circle',{cx,cy,r:R,fill:'rgba(177,79,255,.12)',stroke:'var(--violet)','stroke-width':1.6});base.style.filter='drop-shadow(0 0 32px rgba(177,79,255,.32))';yy.appendChild(base);
+  yy.appendChild(el('path',{d:`M ${cx} ${cy-R} A ${R} ${R} 0 0 1 ${cx} ${cy+R} A ${R/2} ${R/2} 0 0 1 ${cx} ${cy} A ${R/2} ${R/2} 0 0 0 ${cx} ${cy-R} Z`,fill:'rgba(52,211,153,.16)'}));
+  yy.lastChild.style.filter='drop-shadow(0 0 20px rgba(52,211,153,.3))';
+  yy.appendChild(el('circle',{cx,cy:cy-R/2,r:15,fill:'rgba(177,79,255,.5)',stroke:'var(--violet)','stroke-width':1}));
+  yy.appendChild(el('circle',{cx,cy:cy+R/2,r:15,fill:'rgba(52,211,153,.5)',stroke:'var(--emerald)','stroke-width':1}));
+  // one continuous fish-boundary loop: outer arc down + the S back up; tangent at the poles, so no reversal and no sharp turns
+  const flow=`M ${cx} ${cy-R} A ${R} ${R} 0 0 1 ${cx} ${cy+R} A ${R/2} ${R/2} 0 0 1 ${cx} ${cy} A ${R/2} ${R/2} 0 0 0 ${cx} ${cy-R} Z`;
+  yy.appendChild(el('path',{d:`M ${cx} ${cy-R} A ${R/2} ${R/2} 0 0 0 ${cx} ${cy} A ${R/2} ${R/2} 0 0 1 ${cx} ${cy+R}`,fill:'none',stroke:'var(--ice)','stroke-opacity':.28,'stroke-width':1.2}));
+  const trav=el('circle',{r:6.5,fill:'#fff'});trav.style.filter='drop-shadow(0 0 13px var(--ice))';yy.appendChild(trav);
+  trav.appendChild(el('animateMotion',{dur:'17s',repeatCount:'indefinite',path:flow}));
+  function line(x,y,t,anchor,col){s.appendChild(el('text',{x,y,'text-anchor':anchor||'start','font-family':'var(--body)','font-size':'15',fill:col||'rgba(232,233,240,.82)'},t));}
+  s.appendChild(el('text',{x:80,y:150,class:'flabel',fill:'var(--emerald)','font-size':'12.5'},'SOLARPUNK · the world I want'));
+  ['circular, regenerative supply chains','governance, commoning, living together','self-aligned, inside and out','protopian oases of order in a hostile world'].forEach((t,i)=>line(80,178+i*24,'· '+t,'start','#bff3dd'));
+  s.appendChild(el('text',{x:1120,y:400,'text-anchor':'end',class:'flabel',fill:'var(--violet)','font-size':'12.5'},'LUNARPUNK · protecting the oases'));
+  ['permeable membranes around each oasis','cryptography, privacy, self-sovereignty','safe passage through the dark forest','the knights and the castle walls'].forEach((t,i)=>line(1120,428+i*24,t+' ·','end','#e6d4ff'));})();
+
+/* cosmolocal: light layer floats freely, heavy layer stays grounded (differential parallax) */
+(function(){const s=document.getElementById('cosmolocal');if(!s)return;
+  const heavy=el('g',{id:'cosmo-heavy'});const light=el('g',{id:'cosmo-light'});s.appendChild(heavy);s.appendChild(light);
+  // LIGHT (shared, floats)
+  light.appendChild(el('text',{x:550,y:60,'text-anchor':'middle',class:'flabel',fill:'var(--ice)'},'LIGHT · SHARED GLOBALLY'));
+  light.appendChild(el('text',{x:550,y:84,'text-anchor':'middle','font-family':'var(--body)','font-size':'15',fill:'rgba(232,233,240,.7)'},'knowledge · design · code · compute'));
+  light.appendChild(el('path',{d:'M120 190 Q 550 96 980 190',fill:'none',stroke:'var(--ice)','stroke-opacity':.4,'stroke-width':1.4,'stroke-dasharray':'2 7'}));
+  for(let i=0;i<22;i++){const t=i/21;const x=120+(980-120)*t;const y=190-Math.sin(t*Math.PI)*94;const c=el('circle',{cx:x,cy:y,r:2.4,fill:'var(--ice)','fill-opacity':.75});c.style.animation=`tw ${2+i*0.12}s ease-in-out infinite`;light.appendChild(c);}
+  // HEAVY (local, grounded) + the beams/roots
+  const bases=[300,550,800];bases.forEach(bx=>{const by=470;
+    const g=el('circle',{cx:bx,cy:by,r:44,fill:'rgba(52,211,153,.06)',stroke:'var(--emerald)','stroke-width':1.6});g.style.filter='drop-shadow(0 0 12px var(--emerald))';heavy.appendChild(g);
+    heavy.appendChild(el('circle',{cx:bx,cy:by,r:13,fill:'var(--emerald)','fill-opacity':.5}));
+    const up=el('line',{x1:bx,y1:by-44,x2:bx,y2:200,stroke:'var(--ice)','stroke-opacity':.5,'stroke-width':1.5});up.style.filter='drop-shadow(0 0 4px var(--ice))';heavy.appendChild(up);
+    const spark=el('circle',{r:3,fill:'#fff'});heavy.appendChild(spark);spark.appendChild(el('animate',{attributeName:'cy',values:(by-44)+';200',dur:'2.6s',repeatCount:'indefinite'}));spark.appendChild(el('animate',{attributeName:'cx',values:bx+';'+bx,dur:'2.6s',repeatCount:'indefinite'}));spark.appendChild(el('animate',{attributeName:'opacity',values:'0;1;0',dur:'2.6s',repeatCount:'indefinite'}));
+    heavy.appendChild(el('line',{x1:bx,y1:by+44,x2:bx,y2:560,stroke:'var(--emerald)','stroke-opacity':.4,'stroke-width':1.4}));});
+  heavy.appendChild(el('text',{x:550,y:592,'text-anchor':'middle',class:'flabel',fill:'var(--emerald)'},'HEAVY · DONE LOCALLY · food · energy · water · fabrication'));
+  const sec=s.closest('section');
+  sec.addEventListener('mousemove',function(e){var r=s.getBoundingClientRect();if(!r.width)return;var nx=(e.clientX-r.left)/r.width-0.5,ny=(e.clientY-r.top)/r.height-0.5;light.style.transition='';heavy.style.transition='';light.style.transform='translate('+(nx*38)+'px,'+(ny*30)+'px)';heavy.style.transform='translate('+(nx*7)+'px,'+(ny*5)+'px)';});
+  sec.addEventListener('mouseleave',function(){light.style.transition=heavy.style.transition='transform .5s ease';light.style.transform='';heavy.style.transform='';});})();
+
+/* ostrom ring */
+(function(){const s=document.getElementById('ostrom');if(!s)return;const cx=560,cy=320,R=188;
+  const P=['clear boundaries','benefits ∝ costs','collective choice','monitoring','graduated sanctions','fast conflict resolution','local autonomy','nested enterprises'];
+  const TLDR=['Everyone knows who is in the commons and who is not, and where the resource begins and ends.','What you take out is proportional to what you put in; the rules fit local conditions, not a distant template.','The people who live by the rules are the ones who get to make and change them.','The resource, and each other, are watched by monitors who are accountable to the group.','First offences get gentle penalties; they escalate only for repeat or serious breaches.','Cheap, fast, local ways to settle disputes before they fester into conflict.','The community’s right to organise itself is recognised by the authorities outside it.','For a large commons, small units nest inside larger ones, each governing its own layer. Nesting is one building block of polycentric governance.'];
+  const CENTER='Elinor Ostrom won the 2009 Nobel in Economics for showing the tragedy of the commons is not inevitable. Communities do govern shared resources sustainably, for centuries, when the rules follow these eight design principles.';
+  const cg=el('g',{});cg.style.cursor='pointer';s.appendChild(cg);
+  const ring=el('circle',{cx,cy,r:66,fill:'rgba(52,211,153,.06)',stroke:'var(--emerald)','stroke-opacity':.5,'stroke-width':1.2});cg.appendChild(ring);
+  cg.appendChild(el('text',{x:cx,y:cy-6,'text-anchor':'middle','font-family':'var(--display)','font-style':'italic','font-size':'28',fill:'var(--emerald)'},'Ostrom'));
+  cg.appendChild(el('text',{x:cx,y:cy+20,'text-anchor':'middle',class:'flabel',fill:'var(--dim)'},'8 rules for a commons'));
+  cg.addEventListener('mouseenter',function(){if(window.gsap)gsap.to(ring,{attr:{r:76},duration:.6,ease:'elastic.out(1,0.4)',overwrite:true});});
+  cg.addEventListener('mouseleave',function(){if(window.gsap)gsap.to(ring,{attr:{r:66},duration:.4,overwrite:true});});
+  cg.addEventListener('click',function(){window.__infowin&&window.__infowin('Elinor Ostrom','The tragedy is not inevitable',CENTER,'var(--emerald)');});
+  P.forEach((t,i)=>{const a=(-Math.PI/2)+i*2*Math.PI/8;const x=cx+R*Math.cos(a),y=cy+R*Math.sin(a);
+    s.appendChild(el('line',{x1:cx+66*Math.cos(a),y1:cy+66*Math.sin(a),x2:x,y2:y,stroke:'var(--emerald)','stroke-opacity':.18,'stroke-width':1}));
+    const g=el('g',{});g.style.cursor='pointer';s.appendChild(g);
+    const c=el('circle',{cx:x,cy:y,r:8,fill:'var(--emerald)','fill-opacity':.7});c.style.filter='drop-shadow(0 0 8px var(--emerald))';c.style.animation=`tw ${2.6+i*0.2}s ease-in-out infinite`;g.appendChild(c);
+    const anchor=Math.cos(a)>0.2?'start':Math.cos(a)<-0.2?'end':'middle';
+    g.appendChild(el('text',{x:x+Math.cos(a)*20,y:y+Math.sin(a)*20+4,'text-anchor':anchor,'font-family':'var(--body)','font-size':'16',fill:'rgba(232,233,240,.9)'},t));
+    g.addEventListener('mouseenter',function(){if(window.gsap)gsap.to(c,{attr:{r:14},duration:.4,ease:'back.out(2.5)',overwrite:true});});
+    g.addEventListener('mouseleave',function(){if(window.gsap)gsap.to(c,{attr:{r:8},duration:.3,overwrite:true});});
+    g.addEventListener('click',function(){window.__infowin&&window.__infowin('Ostrom · principle '+(i+1),t,TLDR[i],'var(--emerald)');});});})();
+
+/* membrane cell */
+(function(){const s=document.getElementById('membrane');if(!s)return;const cx=320,cy=300;
+  [[210,'var(--emerald)',.5],[168,'var(--ice)',.4]].forEach(([r,col,op])=>s.appendChild(el('circle',{cx,cy,r,fill:'none',stroke:col,'stroke-opacity':op,'stroke-width':1.6,'stroke-dasharray':'2 9'})));
+  s.appendChild(el('circle',{cx,cy,r:120,fill:'rgba(52,211,153,.05)'}));
+  const nuc=el('circle',{cx,cy,r:52,fill:'none',stroke:'var(--violet)','stroke-width':1.4});nuc.style.filter='drop-shadow(0 0 14px var(--violet))';s.appendChild(nuc);
+  s.appendChild(el('circle',{cx,cy,r:20,fill:'var(--violet)','fill-opacity':.4}));
+  for(let i=0;i<8;i++){const a=i*2*Math.PI/8;const x1=cx+130*Math.cos(a),y1=cy+130*Math.sin(a),x2=cx+250*Math.cos(a),y2=cy+250*Math.sin(a);
+    s.appendChild(el('line',{x1,y1,x2,y2,stroke:'var(--ice)','stroke-opacity':.45,'stroke-width':1.4}));
+    const d=el('circle',{cx:x2,cy:y2,r:4,fill:'var(--ice)'});d.style.filter='drop-shadow(0 0 6px var(--ice))';s.appendChild(d);}
+  s.appendChild(el('text',{x:cx,y:cy+4,'text-anchor':'middle',class:'flabel',fill:'#fff'},'CULTURE'));
+  s.appendChild(el('text',{x:cx,y:70,'text-anchor':'middle',class:'flabel',fill:'var(--ice)'},'NOOSPHERE · knowledge flows out'));
+  s.appendChild(el('text',{x:cx,y:552,'text-anchor':'middle',class:'flabel',fill:'var(--emerald)'},'BIOSPHERE · matter loops closed'));})();
+
+/* prisoner's dilemma interactive */
+(function(){
+  const modes=[
+    {title:"Two prisoners. One rational trap.",c1:"they stay silent",c2:"they betray",r1:"you stay silent",r2:"you betray",
+     cc:["3 · 3","both walk free-ish"],cd:["0 · 5","you take the fall"],dc:["5 · 0","they take the fall"],dd:["1 · 1","both do time"],
+     body:"Each does best by betraying, so both betray, and both do worse than if they had trusted. Everyone rational. Everyone losing.",
+     verdict:"Betray · betray is the only equilibrium.",vclass:"fg-warm",round:false,nash:'dd',pareto:null},
+    {title:"The same trap, everywhere.",c1:"others restrain",c2:"others exploit",r1:"you restrain",r2:"you exploit",
+     cc:["3 · 3","shared future"],cd:["0 · 5","you lose the edge"],dc:["5 · 0","they lose the edge"],dd:["1 · 1","tragedy of the commons"],
+     body:"Emissions. Arms races. Overfishing. The attention economy. Every one is this same matrix with the labels changed. That is why they feel impossible.",
+     verdict:"Rational actors, collective ruin.",vclass:"fg-warm",round:false,nash:'dd',pareto:null},
+    {title:"How a commons breaks it.",c1:"others cooperate",c2:"others defect",r1:"you cooperate",r2:"you defect",
+     cc:["3 · 3","the stable win"],cd:["0 · 5","punished by the group"],dc:["5 · 0","punished by the group"],dd:["1 · 1","reputation lost"],
+     body:"Axelrod's answer: repeat the game, so reciprocity (tit-for-tat) makes cooperation pay. Ostrom went further: real communities actually escape the tragedy, not by theory but by their own rules, monitoring and graduated sanctions, not repetition alone. Drag the rounds up.",
+     verdict:"With repetition, cooperate · cooperate wins.",vclass:"fg-em",round:true,nash:null,pareto:'cc'}
+  ];
+  function apply(m){
+    document.getElementById('pd-title').textContent=m.title;
+    document.getElementById('pd-body').textContent=m.body;
+    const v=document.getElementById('pd-verdict');v.textContent=m.verdict;v.className='pd-verdict '+m.vclass;
+    document.getElementById('c1').textContent=m.c1;document.getElementById('c2').textContent=m.c2;
+    document.getElementById('r1').textContent=m.r1;document.getElementById('r2').textContent=m.r2;
+    [['cc',m.cc],['cd',m.cd],['dc',m.dc],['dd',m.dd]].forEach(([id,val])=>{const td=document.getElementById(id);td.querySelector('.pay').textContent=val[0];td.querySelector('.cap').textContent=val[1];td.classList.remove('nash','pareto');});
+    if(m.nash)document.getElementById(m.nash).classList.add('nash');
+    if(m.pareto)document.getElementById(m.pareto).classList.add('pareto');
+    document.getElementById('pd-round').style.display=m.round?'block':'none';
+  }
+  document.querySelectorAll('.pd-btn').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('.pd-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');apply(modes[+b.dataset.mode]);}));
+  const sl=document.getElementById('pd-slider');
+  if(sl)sl.addEventListener('input',()=>{const r=+sl.value;document.getElementById('pd-r').textContent=r;
+    const v=document.getElementById('pd-verdict');
+    if(r>=8){document.getElementById('cc').classList.add('pareto');document.getElementById('dd').classList.remove('nash');v.textContent="Now trust pays. Tit-for-tat beats betrayal.";v.className='pd-verdict fg-em';}
+    else{v.textContent="Too few rounds: betrayal still tempts.";v.className='pd-verdict fg-warm';}});
+  apply(modes[0]);
+})();
+
+/* network of communities (colour-coded, linked) */
+(function(){const s=document.getElementById('network');if(!s)return;
+  const COL={land:'var(--emerald)',infra:'var(--violet)',know:'var(--ice)'};
+  const N=[
+    {id:'valley',t:'Valley of the Commons',x:590,y:320,r:34,hub:1,type:'land',light:'the whole pattern: tech, governance, the gathering',heavy:'the Reichenau land, the house, four weeks of life',url:'https://valleyofthecommons.com'},
+    {id:'brussels',t:'Commons Hub Brussels',x:360,y:170,r:22,type:'land',light:'civic tooling, Open Collective, funding rails',heavy:'a physical hub, its city',url:'/keynote-w1-d1'},
+    {id:'akasha',t:'Akasha Hub',x:820,y:170,r:22,type:'land',light:'documentation, the hubs network method',heavy:'Barcelona space, residencies',url:'/keynote-w2-d3'},
+    {id:'auroville',t:'Auroville',x:250,y:340,r:26,type:'land',light:'50 years of intentional-city practice',heavy:'a township, farms, thousands of residents',url:'https://auroville.org'},
+    {id:'tdf',t:'Traditional Dream Factory',x:940,y:340,r:24,type:'land',light:'regen coliving playbook, $TDF, land-trust model',heavy:'Alentejo village, soil, water',url:'https://traditionaldreamfactory.com'},
+    {id:'klein',t:'Klein Jasedow',x:360,y:490,r:24,type:'land',light:'50 years of commoning, Oya magazine',heavy:'the land, the Klanghaus, a village school',url:'/keynote-w3-d2'},
+    {id:'embassy',t:'Embassy Network',x:820,y:490,r:22,type:'land',light:'self-governance patterns for coliving',heavy:'houses in many cities',url:'https://embassynetwork.com'},
+    {id:'regenerativa',t:'Regenerativa',x:500,y:110,r:20,type:'land',light:'the socio-techno-legal stack, Holons',heavy:'the Marche bioregion',url:'/keynote-w2-d1'},
+    {id:'farmlab',t:'FarmLab',x:590,y:540,r:20,type:'infra',light:'fabrication designs, 3000+ lab network',heavy:'machines on a real farm',url:'/keynote-w2-d5'},
+    {id:'metagov',t:'MetaGov',x:190,y:250,r:18,type:'infra',light:'governance research, DAO standards',heavy:'(mostly light: a research network)',url:'https://metagov.org'},
+    {id:'oasa',t:'OASA',x:1000,y:250,r:18,type:'infra',light:'the community-land-trust legal wrapper',heavy:'holds title to real land, in trust',url:'https://www.oasa.co'},
+    {id:'p2p',t:'P2P Foundation',x:700,y:110,r:20,type:'know',light:'the commons theory itself: cosmolocal, P2P',heavy:'(a pure light node)',url:'/keynote-w1-d2'},
+    {id:'urbe',t:'Urbe',x:150,y:410,r:18,type:'infra',light:'Italian Ethereum builder collective (Deca)',heavy:'Rome community, in-person gatherings',url:'https://urbe.build'},
+    {id:'agartha',t:'Agartha',x:270,y:565,r:18,type:'land',light:'curated community of aligned builders (Deca)',heavy:'gatherings, the curation itself',url:'https://agartha.one'},
+    {id:'consilience',t:'Consilience Project',x:590,y:86,r:16,type:'know',light:'civilizational design, the information commons',heavy:'(a pure light node)',url:'https://consilienceproject.org'},
+    {id:'no1s1',t:'no1s1',x:1060,y:145,r:15,type:'infra',light:'a house that owns itself, on-chain',heavy:'a real house in Zurich',url:'https://dezentrum.ch/en/case-studies/no1s1'},
+    {id:'chiemgauer',t:'Chiemgauer',x:1055,y:410,r:17,type:'infra',light:'a 20-year regional-currency model',heavy:'circulates in the Chiemgau region',url:'/keynote-w2-d4'},
+    {id:'komma',t:'Komma',x:720,y:565,r:16,type:'infra',light:'housing-and-land-as-commons mechanisms',heavy:'real housing projects',url:'https://www.komma.systems/en'},
+    {id:'demearth',t:'Democracy Earth',x:480,y:575,r:16,type:'infra',light:'protocols for decentralised governance',heavy:'(mostly light: a protocol org)',url:'https://democracy.earth'},
+  ];
+  const idx={};N.forEach(n=>idx[n.id]=n);
+  const E=[['valley','brussels'],['valley','akasha'],['valley','auroville'],['valley','tdf'],['valley','klein'],['valley','embassy'],['valley','regenerativa'],['valley','p2p'],['valley','metagov'],['valley','oasa'],['valley','farmlab'],['valley','urbe'],['valley','agartha'],['valley','consilience'],['valley','no1s1'],['valley','chiemgauer'],['valley','komma'],['valley','demearth'],['akasha','tdf'],['klein','auroville'],['brussels','p2p'],['p2p','metagov'],['tdf','oasa'],['embassy','akasha'],['urbe','agartha'],['p2p','consilience'],['metagov','demearth']];
+  E.forEach(([a,b])=>{const p=idx[a],q=idx[b];s.appendChild(el('line',{x1:p.x,y1:p.y,x2:q.x,y2:q.y,stroke:'var(--ice)','stroke-opacity':.14,'stroke-width':1}));});
+  const panel=document.getElementById('netpanel');
+  function sel(n){var typeLabel=n.hub?'the host node':(n.type==='land'?'land & community':n.type==='infra'?'infrastructure':'knowledge');
+    var col=n.type==='infra'?'var(--violet)':(n.type==='know'?'var(--ice)':'var(--emerald)');
+    var body='Shares (light) — '+n.light+'\n\nRoots (heavy) — '+n.heavy;
+    window.__infowin&&window.__infowin(typeLabel,n.t,body,col,n.url);
+    N.forEach(m=>{const g=document.getElementById('nn-'+m.id);if(g)g.style.opacity=(m===n||m.id==='valley'||E.some(([a,b])=>(a===n.id&&b===m.id)||(b===n.id&&a===m.id)))?1:.35;});}
+  N.forEach(n=>{const col=COL[n.type];const g=el('g',{id:'nn-'+n.id,style:'cursor:pointer;transition:opacity .3s'});s.appendChild(g);
+    g.appendChild(el('circle',{cx:n.x,cy:n.y,r:n.r+7,fill:'none',stroke:col,'stroke-opacity':.35,'stroke-width':1,'stroke-dasharray':'2 6'}));
+    const c=el('circle',{cx:n.x,cy:n.y,r:n.r,fill:`color-mix(in srgb, ${col} 12%, transparent)`,stroke:col,'stroke-width':1.5});c.style.filter=`drop-shadow(0 0 ${n.hub?18:9}px ${col})`;g.appendChild(c);
+    g.appendChild(el('circle',{cx:n.x,cy:n.y,r:n.r*0.32,fill:col,'fill-opacity':.5}));
+    g.appendChild(el('text',{x:n.x,y:n.y+n.r+22,'text-anchor':'middle','font-family':'var(--mono)','font-size':'12.5',fill:'rgba(232,233,240,.85)'},n.t.length>22?n.t.split(' ')[0]+' …':n.t));
+    g.addEventListener('click',()=>sel(n));});})();
+
+/* monastery overlays: rising light-threads (cosmolocal) + embers (hearth) */
+(function(){
+  const c=document.getElementById('ovl-cosmo');
+  if(c){[40,45,50,55,48].forEach((x,i)=>{const t=document.createElement('div');t.className='lthread';t.style.left=x+'%';t.style.top='8%';t.style.height='56%';t.style.bottom='auto';t.style.animationDelay=(i*0.5)+'s';c.appendChild(t);});}
+  const e=document.getElementById('ovl-embers');
+  if(e){for(let i=0;i<12;i++){const d=document.createElement('div');d.className='ember';d.style.left=(46+Math.random()*12)+'%';d.style.top=(76+Math.random()*8)+'%';d.style.setProperty('--dx',(Math.random()*40-20)+'px');d.style.animation='rise '+(2.6+Math.random()*1.8)+'s linear '+(Math.random()*3)+'s infinite';e.appendChild(d);}}
+})();
+
+/* quadrant reveal on click */
+document.querySelectorAll('#quad .qc').forEach(function(c){if(c.querySelector('.qt'))c.addEventListener('click',function(){c.classList.toggle('shown');});});
+
+/* reusable floating info window (window.__infowin) */
+(function(){var bd=document.createElement('div');bd.className='iw-backdrop';document.body.appendChild(bd);
+  var win=document.createElement('div');win.className='infowin';win.innerHTML='<span class="iw-close">×</span><p class="iw-sub"></p><h3 class="iw-title"></h3><p class="iw-body"></p><a class="iw-link" target="_blank" rel="noopener" style="display:none">visit →</a>';document.body.appendChild(win);
+  function close(){win.classList.remove('on');bd.classList.remove('on');}
+  bd.addEventListener('click',close);win.querySelector('.iw-close').addEventListener('click',close);
+  window.__infowin=function(sub,title,body,color,link){win.querySelector('.iw-sub').textContent=sub;win.querySelector('.iw-sub').style.color=color||'var(--emerald)';win.querySelector('.iw-title').textContent=title;win.querySelector('.iw-body').textContent=body;var l=win.querySelector('.iw-link');if(link){l.href=link;l.style.display='inline-block';}else{l.style.display='none';}win.classList.add('on');bd.classList.add('on');};})();
+
+/* keynote-button hover popup: title + speaker */
+(function(){var pop=document.createElement('div');pop.className='kpop';pop.innerHTML='<span class="kt"></span><span class="ks"></span>';document.body.appendChild(pop);
+  document.querySelectorAll('.kbtn').forEach(function(b){
+    var raw=b.getAttribute('title')||'';var parts=raw.split(' · ');var speaker=parts.shift()||'';var talk=parts.join(' · ')||speaker;
+    b.removeAttribute('title');
+    b.addEventListener('mouseenter',function(){pop.querySelector('.kt').textContent=talk;pop.querySelector('.ks').textContent=speaker;var r=b.getBoundingClientRect();pop.style.left=(r.left+r.width/2)+'px';pop.style.top=(r.top-9)+'px';pop.classList.add('on');});
+    b.addEventListener('mouseleave',function(){pop.classList.remove('on');});
+  });})();
+
+/* diagram hover explainers */
+(function(){var tip=document.createElement('div');tip.className='dtip';document.body.appendChild(tip);
+  var EX={
+    metacrisis:'Not many crises but one: each is a symptom, and under them all sits the crisis of meaning.',
+    moloch:'Moloch: the trap where everyone competing rationally makes everyone lose. A coordination failure no single player can escape alone, now supercharged by AI as an arms race no one can afford to slow down.',
+    twogames:'The transition game is the whole road; the end-state is nested inside it, a desirable equilibrium we steer toward.',
+    membrane:'A community is a living cell: open enough to teach and host, closed enough to protect its culture and its ground.',
+    cosmolocal:'Share what is light (knowledge, design, code) globally; do what is heavy (food, energy, fabrication) locally.'
+  };
+  Object.keys(EX).forEach(function(id){var svg=document.getElementById(id);if(!svg)return;var sec=svg.closest('section');if(!sec)return;
+    sec.addEventListener('mouseenter',function(){tip.textContent=EX[id];tip.classList.add('on');});
+    sec.addEventListener('mousemove',function(e){tip.style.left=Math.min(e.clientX+16,window.innerWidth-330)+'px';tip.style.top=(e.clientY+18)+'px';});
+    sec.addEventListener('mouseleave',function(){tip.classList.remove('on');});});})();
+
+/* universal parallax float on every illustration (shoggoth keeps its richer layered version) */
+document.querySelectorAll('.stage svg').forEach(function(svg){
+  if(svg.id==='shoggoth'||svg.id==='cosmolocal')return;
+  var sec=svg.closest('section');if(!sec)return;
+  sec.addEventListener('mousemove',function(e){var r=svg.getBoundingClientRect();if(!r.width)return;var nx=(e.clientX-r.left)/r.width-0.5,ny=(e.clientY-r.top)/r.height-0.5;svg.style.transition='';svg.style.transform='translate('+(nx*16)+'px,'+(ny*13)+'px)';});
+  sec.addEventListener('mouseleave',function(){svg.style.transition='transform .45s ease';svg.style.transform='';});
+});
+
+/* reveal init */
+Reveal.initialize({
+  width:1280,height:720,margin:0.04,minScale:0.2,maxScale:2,
+  center:false,touch:false,scrollActivationWidth:null,hideInactiveCursor:false,
+  hash:true,transition:'fade',transitionSpeed:'slow',controls:true,progress:true,
+  controlsTutorial:false,slideNumber:false,
+});
+
+/* GSAP: springy entrance for keynote buttons when a slide with them opens */
+if(window.gsap){
+  function animKbtns(){var sec=Reveal.getCurrentSlide&&Reveal.getCurrentSlide();if(!sec)return;var btns=sec.querySelectorAll('.kbtn');if(btns.length)gsap.fromTo(btns,{opacity:0,y:12,scale:.9},{opacity:1,y:0,scale:1,duration:.5,stagger:.06,ease:'back.out(1.7)',overwrite:true});}
+  Reveal.on('slidechanged',animKbtns);Reveal.on('ready',animKbtns);
+}
+</script>
+</body>
+</html>
