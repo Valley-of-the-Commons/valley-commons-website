@@ -1,0 +1,28 @@
+/* shared tokens + cosmos for beat alternatives */
+:root{
+  --void:#07080f;--fg:#e8e9f0;--dim:#8a8fa3;
+  --warm:#ff6b35;--violet:#b14fff;--ice:#c9b3ff;--emerald:#34d399;
+  --line:rgba(255,255,255,.10);
+  --display:"Fraunces",Georgia,serif;--mono:"JetBrains Mono",ui-monospace,monospace;
+  --body:"Hanken Grotesk",system-ui,sans-serif;
+}
+*{margin:0;box-sizing:border-box;}
+html,body{height:100%;background:var(--void);color:var(--fg);font-family:var(--body);overflow:hidden;}
+.cosmos{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;
+  background:radial-gradient(60% 45% at 78% 12%,rgba(177,79,255,.12),transparent 60%),
+    radial-gradient(55% 50% at 15% 88%,rgba(255,107,53,.10),transparent 62%),
+    radial-gradient(120% 120% at 50% 40%,#0a0b14,#07080f 60%,#050609 100%);}
+.stars{position:absolute;inset:-40%;background-repeat:repeat;}
+.stars.far{background-image:radial-gradient(1px 1px at 40px 60px,rgba(255,255,255,.5),transparent),radial-gradient(1px 1px at 240px 120px,rgba(201,179,255,.5),transparent),radial-gradient(1px 1px at 320px 280px,rgba(255,255,255,.45),transparent);background-size:400px 400px;animation:drift 240s linear infinite,tw 7s ease-in-out infinite;}
+.stars.near{background-image:radial-gradient(2px 2px at 160px 90px,rgba(255,255,255,.85),transparent),radial-gradient(2px 2px at 60px 240px,rgba(52,211,153,.5),transparent);background-size:480px 480px;animation:drift 120s linear infinite;}
+@keyframes drift{from{transform:translate3d(0,0,0)}to{transform:translate3d(-160px,-120px,0)}}
+@keyframes tw{0%,100%{opacity:.6}50%{opacity:1}}
+.stage{position:relative;z-index:2;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:60px;}
+.eyebrow{font-family:var(--mono);font-size:15px;letter-spacing:.32em;text-transform:uppercase;color:var(--dim);}
+.eyebrow .dot{color:var(--warm);}
+h1{font-family:var(--display);font-weight:400;letter-spacing:-.02em;line-height:1.02;font-optical-sizing:auto;}
+.serif-em{font-family:var(--display);font-style:italic;}
+.fg-em{color:var(--emerald);}.fg-warm{color:var(--warm);}.fg-ice{color:var(--ice);}
+.sub{font-size:24px;color:rgba(232,233,240,.85);margin-top:26px;max-width:26em;}
+.tag{position:fixed;left:24px;bottom:20px;z-index:4;font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:rgba(138,143,163,.7);}
+.tag b{color:var(--warm);}

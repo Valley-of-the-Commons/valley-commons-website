@@ -1,0 +1,25 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Cover · alt A (interlocking rings)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..600&family=Hanken+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="_tokens.css"/>
+</head><body>
+<div class="cosmos"><div class="stars far"></div><div class="stars near"></div></div>
+<div class="stage">
+  <div style="width:340px;height:300px;margin-bottom:6px;"><svg id="emblem" width="340" height="300" viewBox="0 0 340 300"></svg></div>
+  <p class="eyebrow">Valley of the Commons <span class="dot">·</span> closing keynote</p>
+  <h1 style="font-size:82px;max-width:15em;margin-top:20px;">Game Theory of<br/>Our <span class="serif-em fg-em">Shared Purpose</span></h1>
+  <p class="sub">How to change a system: play two games at once.</p>
+</div>
+<div class="tag"><b>ALT A</b> &nbsp; cover · interlocking rings</div>
+<script>
+const NS="http://www.w3.org/2000/svg",s=document.getElementById('emblem');
+function el(t,a){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);return e;}
+const cx1=140,cx2=200,cy=150,R=86;
+[[cx1,'var(--warm)'],[cx2,'var(--emerald)']].forEach(([cx,col],gi)=>{
+  s.appendChild(el('circle',{cx,cy,r:R,fill:'none',stroke:col,'stroke-opacity':.5,'stroke-width':1.2}));
+  for(let i=0;i<7;i++){const a=(-Math.PI/2)+i*(2*Math.PI/7)+gi*0.24;const x=cx+R*Math.cos(a),y=cy+R*Math.sin(a);
+    const c=el('circle',{cx:x,cy:y,r:5,fill:col});c.style.filter=`drop-shadow(0 0 6px ${col})`;c.style.animation=`tw ${3+i*0.3}s ease-in-out infinite`;s.appendChild(c);}});
+const cm=el('circle',{cx:(cx1+cx2)/2,cy,r:7,fill:'var(--ice)'});cm.style.filter='drop-shadow(0 0 12px var(--ice))';s.appendChild(cm);
+</script></body></html>
