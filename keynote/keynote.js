@@ -473,7 +473,8 @@ function renderIndex() {
       <h1 class="index__title">Companions to the talks</h1>
       <p class="index__sub">Each talk's argument in beats, with the sources it draws on. Explore the ideas as a constellation, or by date.</p>
     </header>
-    ${aiCourseHtml()}
+    ${/* AI-course CTA hidden pending the VOTC mirror of /valley-ai (its own gated
+        app). AI_COURSE + aiCourseHtml() are kept intact for that follow-up. */ ''}
     <div class="vg-toggle" role="tablist" aria-label="View">
       <button role="tab" data-view="graph" class="vg-toggle__btn is-active"><span aria-hidden="true">&#10022;</span> Constellation</button>
       <button role="tab" data-view="timeline" class="vg-toggle__btn"><span aria-hidden="true">&#9636;</span> Timeline</button>

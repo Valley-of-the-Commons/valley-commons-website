@@ -395,6 +395,14 @@ const escAttr = (s) =>
 app.get(/^\/keynote(?:-[a-z0-9-]+)?$/, async (req, res) => {
   try {
     const slug = req.path === '/keynote' ? null : req.path.replace(/^\/keynote-/, '');
+    // w4-d1 (Deca, "Game Theory of Our Shared Purpose") has no companion room:
+    // it is a self-contained static reveal.js deck mirrored from LAL, served at
+    // /keynote-w4-d1 with its assets under /keynote-w4-d1/ (via express.static).
+    if (slug === 'w4-d1') {
+      const deck = fs.readFileSync(path.join(__dirname, 'keynote-w4-d1', 'index.html'), 'utf8');
+      res.status(200).setHeader('Content-Type', 'text/html; charset=utf-8');
+      return res.send(deck);
+    }
     let title = 'Keynote companions · Valley of the Commons';
     let desc = "Companions to the Valley of the Commons talks: each talk's argument in beats, with the sources it draws on.";
     let status = 200;

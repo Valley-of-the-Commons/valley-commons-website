@@ -1,0 +1,60 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Builders & Visionaries</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..600&family=Hanken+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="_tokens.css"/>
+<style>.stage{padding:0;}.cap{font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;}
+.gi{font-family:var(--display);font-style:italic;}</style></head><body>
+<div class="cosmos"><div class="stars far"></div></div>
+<div class="stage"><svg id="d" width="1200" height="640" viewBox="0 0 1200 640" style="z-index:2"></svg></div>
+<div class="tag"><b>DIAGRAM</b> &nbsp; builders &amp; visionaries · they need each other</div>
+<script>
+const NS="http://www.w3.org/2000/svg",s=document.getElementById('d');
+function el(t,a,txt){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(txt!=null)e.textContent=txt;return e;}
+function chip(x,y,label,col,anchor){s.appendChild(el('text',{x,y,'text-anchor':anchor||'start',class:'cap',fill:col},label));}
+function line(x,y,t,anchor){s.appendChild(el('text',{x,y,'text-anchor':anchor||'start','font-family':'var(--body)','font-size':'14',fill:'rgba(232,233,240,.72)'},t));}
+// ---- BUILDERS (left, warm): striker expanding the realm of feasibility ----
+const bx=330,by=360;
+s.appendChild(el('circle',{cx:bx,cy:by,r:120,fill:'none',stroke:'var(--warm)','stroke-opacity':.4,'stroke-width':1.4}));
+for(let i=0;i<8;i++){const a=i*Math.PI/4;const x1=bx+26*Math.cos(a),y1=by+26*Math.sin(a),x2=bx+112*Math.cos(a),y2=by+112*Math.sin(a);
+  const ln=el('line',{x1,y1,x2,y2,stroke:'var(--warm)','stroke-opacity':.55,'stroke-width':1.6});s.appendChild(ln);
+  const head=el('path',{d:`M${x2} ${y2} l ${-8*Math.cos(a-0.4)} ${-8*Math.sin(a-0.4)} M${x2} ${y2} l ${-8*Math.cos(a+0.4)} ${-8*Math.sin(a+0.4)}`,stroke:'var(--warm)','stroke-opacity':.55,'stroke-width':1.6,fill:'none'});s.appendChild(head);
+  const p=el('circle',{cx:x2,cy:y2,r:3,fill:'var(--warm)'});p.appendChild(el('animate',{attributeName:'r',values:'2;5;2',dur:(2+i*0.15)+'s',repeatCount:'indefinite'}));s.appendChild(p);}
+const bc=el('circle',{cx:bx,cy:by,r:13,fill:'var(--warm)','fill-opacity':.6});bc.style.filter='drop-shadow(0 0 12px var(--warm))';s.appendChild(bc);
+s.appendChild(el('text',{x:bx,y:by+150,'text-anchor':'middle',class:'cap',fill:'var(--warm)'},'US, NOW'));
+// builders label box
+s.appendChild(el('text',{x:120,y:96,class:'cap',fill:'var(--warm)'},'BUILDERS · the striker in the arena'));
+s.appendChild(el('text',{x:120,y:124,'font-family':'var(--body)','font-size':'16',fill:'rgba(232,233,240,.85)'},'flow, authentic exploration'));
+s.appendChild(el('text',{x:120,y:146,'font-family':'var(--body)','font-size':'16',fill:'rgba(232,233,240,.85)'},'expand the realm of feasibility'));
+// two builder flavours (left)
+chip(90,506,'SOLARPUNK BUILDERS · community','var(--emerald)','start');
+line(90,528,'Sam · Luna · Lorenzo · Felix','start');
+chip(90,562,'LUNARPUNK BUILDERS · infrastructure','var(--violet)','start');
+line(90,584,'Jeff · Marcel · Steph','start');
+// ---- meeting node ----
+const mx=620,my=360;
+const mn=el('rect',{x:mx-16,y:my-16,width:32,height:32,rx:7,fill:'rgba(201,179,255,.14)',stroke:'var(--ice)','stroke-width':1.6});
+mn.style.filter='drop-shadow(0 0 16px var(--ice))';s.appendChild(mn);
+s.appendChild(el('text',{x:mx,y:my+44,'text-anchor':'middle',class:'gi','font-size':'20',fill:'var(--ice)'},'they meet'));
+// builders reach the node
+s.appendChild(el('line',{x1:bx+112,y1:by,x2:mx-18,y2:my,stroke:'var(--warm)','stroke-opacity':.3,'stroke-width':1.4}));
+// ---- VISIONARIES (right, emerald): coach reverse-engineering from Protopia ----
+const px=1030,py=360;
+const proto=el('circle',{cx:px,cy:py,r:22,fill:'rgba(52,211,153,.12)',stroke:'var(--emerald)','stroke-width':1.6});proto.style.filter='drop-shadow(0 0 18px var(--emerald))';s.appendChild(proto);
+s.appendChild(el('circle',{cx:px,cy:py,r:7,fill:'var(--emerald)','fill-opacity':.7}));
+s.appendChild(el('text',{x:px,y:py+46,'text-anchor':'middle',class:'gi','font-size':'22',fill:'#bff3dd'},'Protopia'));
+// pull-back line from protopia to meeting node with travelling pulse
+const PB="M1008 360 C 880 360, 760 360, 638 360";
+s.appendChild(el('path',{d:PB,fill:'none',stroke:'var(--emerald)','stroke-opacity':.35,'stroke-width':1.6,'stroke-dasharray':'2 8'}));
+const pulse=el('circle',{r:5,fill:'var(--emerald)'});pulse.style.filter='drop-shadow(0 0 8px var(--emerald))';s.appendChild(pulse);
+pulse.appendChild(el('animateMotion',{dur:'3.2s',repeatCount:'indefinite',keyPoints:'1;0',keyTimes:'0;1',calcMode:'linear',path:PB}));
+s.appendChild(el('text',{x:1080,y:96,'text-anchor':'end',class:'cap',fill:'var(--emerald)'},'VISIONARIES · the coach in the arena'));
+s.appendChild(el('text',{x:1080,y:124,'text-anchor':'end','font-family':'var(--body)','font-size':'16',fill:'rgba(232,233,240,.85)'},'techno-shamanism, wisdom'));
+s.appendChild(el('text',{x:1080,y:146,'text-anchor':'end','font-family':'var(--body)','font-size':'16',fill:'rgba(232,233,240,.85)'},'reverse-engineer from the future, guide builders'));
+chip(1110,506,'THE WHY','var(--emerald)','end');
+line(1110,528,'Michel Bauwens · Daniel Schmachtenberger','end');
+// caption
+s.appendChild(el('text',{x:600,y:606,'text-anchor':'middle',class:'gi','font-size':'22',fill:'var(--ice)'},'"we need wisdom schools for builders"'));
+s.appendChild(el('text',{x:600,y:628,'text-anchor':'middle',class:'cap',fill:'var(--dim)'},'MICHEL BAUWENS'));
+</script></body></html>

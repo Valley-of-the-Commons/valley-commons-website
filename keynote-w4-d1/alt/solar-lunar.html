@@ -1,0 +1,40 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Solarpunk / Lunarpunk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..600&family=Hanken+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="_tokens.css"/>
+<style>.stage{padding:0;}.cap{font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;}
+.gi{font-family:var(--display);font-style:italic;}
+#yy{transform-origin:590px 330px;animation:spin 90s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}</style></head><body>
+<div class="cosmos"><div class="stars far"></div></div>
+<div class="stage"><svg id="d" width="1200" height="640" viewBox="0 0 1200 640" style="z-index:2"></svg></div>
+<div class="tag"><b>DIAGRAM</b> &nbsp; solarpunk / lunarpunk · the yin-yang of the commons</div>
+<script>
+const NS="http://www.w3.org/2000/svg",s=document.getElementById('d');
+function el(t,a,txt){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(txt!=null)e.textContent=txt;return e;}
+const cx=590,cy=330,R=200;
+const yy=el('g',{id:'yy'});s.appendChild(yy);
+// lunar base (violet full circle)
+const base=el('circle',{cx,cy,r:R,fill:'rgba(177,79,255,.12)',stroke:'var(--violet)','stroke-width':1.6});base.style.filter='drop-shadow(0 0 34px rgba(177,79,255,.35))';yy.appendChild(base);
+// solar half (emerald) via classic yin-yang path
+const solar=el('path',{d:`M ${cx} ${cy-R} A ${R} ${R} 0 0 1 ${cx} ${cy+R} A ${R/2} ${R/2} 0 0 1 ${cx} ${cy} A ${R/2} ${R/2} 0 0 0 ${cx} ${cy-R} Z`,fill:'rgba(52,211,153,.16)',stroke:'none'});yy.appendChild(solar);
+solar.style.filter='drop-shadow(0 0 20px rgba(52,211,153,.3))';
+// dividing curve highlight
+yy.appendChild(el('path',{d:`M ${cx} ${cy-R} A ${R/2} ${R/2} 0 0 0 ${cx} ${cy} A ${R/2} ${R/2} 0 0 1 ${cx} ${cy+R}`,fill:'none',stroke:'var(--ice)','stroke-opacity':.35,'stroke-width':1.2}));
+// seeds (each half carries a seed of the other)
+yy.appendChild(el('circle',{cx,cy:cy-R/2,r:16,fill:'rgba(177,79,255,.5)',stroke:'var(--violet)','stroke-width':1}));   // violet seed in solar lobe
+yy.appendChild(el('circle',{cx,cy:cy+R/2,r:16,fill:'rgba(52,211,153,.5)',stroke:'var(--emerald)','stroke-width':1})); // emerald seed in lunar lobe
+// traveller on the rim (counter-rotates visually)
+const trav=el('circle',{r:6,fill:'#fff'});trav.style.filter='drop-shadow(0 0 12px var(--ice))';yy.appendChild(trav);
+trav.appendChild(el('animateMotion',{dur:'14s',repeatCount:'indefinite',path:`M ${cx} ${cy-R} A ${R} ${R} 0 1 1 ${cx-0.1} ${cy-R} Z`}));
+// ---- labels (outside the spinning group so text stays upright) ----
+s.appendChild(el('text',{x:250,y:120,'text-anchor':'start',class:'cap',fill:'var(--emerald)'},'SOLARPUNK · the world I want'));
+['circular & regenerative supply chains','governance, commoning, living together','self-aligned, inside and out','protopian oases: society-prototype bubbles','(Edge City: "prototype society incubator")'].forEach((t,i)=>
+  s.appendChild(el('text',{x:250,y:150+i*24,'font-family':'var(--body)','font-size':'15',fill:'rgba(232,233,240,.82)'},'· '+t)));
+s.appendChild(el('text',{x:948,y:400,'text-anchor':'end',class:'cap',fill:'var(--violet)'},'LUNARPUNK · protecting the oases'));
+['permeable membranes around each oasis','cryptography, privacy, self-sovereignty','safe passage through the dark forest','the knights and the castle walls'].forEach((t,i)=>
+  s.appendChild(el('text',{x:948,y:430+i*24,'text-anchor':'end','font-family':'var(--body)','font-size':'15',fill:'rgba(232,233,240,.82)'},t+' ·')));
+s.appendChild(el('text',{x:cx,y:600,'text-anchor':'middle',class:'gi','font-size':'20',fill:'var(--ice)'},'oases of order in a hostile, chaotic world — and the membranes that keep them safe'));
+</script></body></html>

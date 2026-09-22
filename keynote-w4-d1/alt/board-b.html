@@ -1,0 +1,37 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Two-game board · alt B (landscape)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..600&family=Hanken+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="_tokens.css"/>
+<style>.stage{padding:0;justify-content:stretch;}</style></head><body>
+<div class="cosmos"><div class="stars far"></div></div>
+<div class="stage">
+  <svg width="1280" height="720" viewBox="0 0 1280 720" id="b" style="z-index:2"></svg>
+</div>
+<div class="tag"><b>ALT B</b> &nbsp; two-game board · burning grid to garden</div>
+<script>
+const NS="http://www.w3.org/2000/svg",S=document.getElementById('b');
+function el(t,a){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);return e;}
+// LEFT: burning collapsing grid (transition)
+const gl=el('g',{});S.appendChild(gl);
+for(let r=0;r<7;r++)for(let c=0;c<7;c++){const x=70+c*70,y=180+r*70;const jitter=(r+c)*2;
+  gl.appendChild(el('rect',{x:x+jitter,y:y+jitter,width:54,height:54,fill:'none',stroke:'var(--warm)','stroke-opacity':(0.05+r*0.03).toFixed(2),'stroke-width':1,transform:`rotate(${(r+c)*1.5} ${x} ${y})`}));}
+// heat glow low
+gl.appendChild(el('ellipse',{cx:300,cy:560,rx:260,ry:70,fill:'rgba(255,107,53,.12)'}));
+gl.appendChild(el('text',{x:300,y:130,'text-anchor':'middle','font-family':'var(--mono)','font-size':'13',fill:'var(--warm)','letter-spacing':'.2em'}));gl.lastChild.textContent='THE TRANSITION GAME';
+gl.appendChild(el('text',{x:300,y:172,'text-anchor':'middle','font-family':'var(--display)','font-style':'italic','font-size':'30',fill:'#ffd0bd'}));gl.lastChild.textContent='a burning grid';
+// RIGHT: ordered garden of hexagon cells (end-state)
+const gr=el('g',{});S.appendChild(gr);
+const hexes=[[880,300],[1000,300],[940,400],[820,400],[1060,400],[880,500],[1000,500]];
+function hex(cx,cy,R){let d='';for(let i=0;i<6;i++){const a=-Math.PI/2+i*Math.PI/3;d+=(i?'L':'M')+(cx+R*Math.cos(a))+' '+(cy+R*Math.sin(a))+' ';}return d+'Z';}
+hexes.forEach(([x,y],i)=>{hexes.forEach(([x2,y2],j)=>{if(j>i&&Math.hypot(x-x2,y-y2)<130)gr.appendChild(el('line',{x1:x,y1:y,x2:x2,y2:y2,stroke:'var(--emerald)','stroke-opacity':.25,'stroke-width':1}));});});
+hexes.forEach(([x,y])=>{const p=el('path',{d:hex(x,y,42),fill:'rgba(52,211,153,.06)',stroke:'var(--emerald)','stroke-width':1.3});p.style.filter='drop-shadow(0 0 8px var(--emerald))';gr.appendChild(p);gr.appendChild(el('circle',{cx:x,cy:y,r:6,fill:'var(--emerald)','fill-opacity':.6}));});
+gr.appendChild(el('text',{x:940,y:130,'text-anchor':'middle','font-family':'var(--mono)','font-size':'13',fill:'var(--emerald)','letter-spacing':'.2em'}));gr.lastChild.textContent='THE END GAME';
+gr.appendChild(el('text',{x:940,y:172,'text-anchor':'middle','font-family':'var(--display)','font-style':'italic','font-size':'30',fill:'#bff3dd'}));gr.lastChild.textContent='a garden of cells';
+// PATH between
+const path=el('path',{d:'M300 560 C 500 560, 560 460, 780 420',fill:'none',stroke:'var(--ice)','stroke-opacity':.5,'stroke-width':2,'stroke-dasharray':'2 10','stroke-linecap':'round'});S.appendChild(path);
+const walker=el('circle',{cx:0,cy:0,r:6,fill:'var(--ice)'});walker.style.filter='drop-shadow(0 0 10px var(--ice))';S.appendChild(walker);
+const anim=el('animateMotion',{dur:'7s',repeatCount:'indefinite',path:'M300 560 C 500 560, 560 460, 780 420'});walker.appendChild(anim);
+S.appendChild(el('text',{x:540,y:520,'text-anchor':'middle','font-family':'var(--mono)','font-size':'12',fill:'var(--ice)','letter-spacing':'.18em'}));S.lastChild.textContent='THE ROAD';
+</script></body></html>

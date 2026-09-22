@@ -1,0 +1,29 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Two-game board · alt A (funnel to lattice)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..600&family=Hanken+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="_tokens.css"/>
+<style>.stage{padding:0;}.flabel{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;}</style>
+</head><body>
+<div class="cosmos"><div class="stars far"></div></div>
+<div class="stage"><svg id="board" width="1180" height="600" viewBox="0 0 1180 600" style="z-index:2"></svg></div>
+<div class="tag"><b>ALT A</b> &nbsp; two-game board · funnel to lattice</div>
+<script>
+const NS="http://www.w3.org/2000/svg",s=document.getElementById('board');
+function el(t,a){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);return e;}
+const gl=el('g',{});s.appendChild(gl);
+gl.appendChild(el('text',{x:250,y:70,'text-anchor':'middle',class:'flabel',fill:'var(--warm)'}));gl.lastChild.textContent='THE TRANSITION GAME';
+gl.appendChild(el('text',{x:250,y:100,'text-anchor':'middle','font-family':'var(--display)',fill:'#ffd0bd','font-size':'26','font-style':'italic'}));gl.lastChild.textContent='escape Moloch';
+for(let i=0;i<9;i++){const x=90+i*40;gl.appendChild(el('path',{d:`M${x} 160 Q 250 300 250 460`,fill:'none',stroke:'var(--warm)','stroke-opacity':.28,'stroke-width':1.4}));}
+const pit=el('circle',{cx:250,cy:470,r:34,fill:'none',stroke:'var(--warm)','stroke-width':1.6});pit.style.filter='drop-shadow(0 0 16px var(--warm))';gl.appendChild(pit);
+gl.appendChild(el('circle',{cx:250,cy:470,r:14,fill:'var(--warm)','fill-opacity':.5}));
+const gr=el('g',{});s.appendChild(gr);
+gr.appendChild(el('text',{x:930,y:70,'text-anchor':'middle',class:'flabel',fill:'var(--emerald)'}));gr.lastChild.textContent='THE END GAME';
+gr.appendChild(el('text',{x:930,y:100,'text-anchor':'middle','font-family':'var(--display)',fill:'#bff3dd','font-size':'26','font-style':'italic'}));gr.lastChild.textContent='govern the commons';
+const cells=[[850,200],[1010,200],[770,320],[930,320],[1090,320],[850,440],[1010,440]];
+cells.forEach(([x,y],i)=>{cells.forEach(([x2,y2],j)=>{if(j>i&&Math.hypot(x-x2,y-y2)<190)gr.appendChild(el('line',{x1:x,y1:y,x2:x2,y2:y2,stroke:'var(--emerald)','stroke-opacity':.25,'stroke-width':1}));});});
+cells.forEach(([x,y])=>{const c=el('circle',{cx:x,cy:y,r:20,fill:'none',stroke:'var(--emerald)','stroke-width':1.4});c.style.filter='drop-shadow(0 0 8px var(--emerald))';gr.appendChild(c);gr.appendChild(el('circle',{cx:x,cy:y,r:6,fill:'var(--emerald)','fill-opacity':.6}));});
+s.appendChild(el('line',{x1:300,y1:470,x2:760,y2:320,stroke:'var(--ice)','stroke-opacity':.5,'stroke-width':2,'stroke-dasharray':'2 10','stroke-linecap':'round'}));
+s.appendChild(el('text',{x:530,y:400,'text-anchor':'middle',class:'flabel',fill:'var(--ice)'}));s.lastChild.textContent='THE BRIDGE';
+</script></body></html>
