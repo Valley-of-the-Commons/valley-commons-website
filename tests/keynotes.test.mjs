@@ -214,6 +214,14 @@ test('trust data: ranks, ring order and reference totals are consistent', () => 
   assert.equal(sum((r) => (r.game === 'pair' ? CD : per)), ref.lowest);
 });
 
+test('trust page: every section renderer called at boot is defined', () => {
+  const src = readFileSync(path.join(ROOT, 'trust', 'trust.js'), 'utf8');
+  const called = [...src.matchAll(/(\w+Html)\(d\)/g)].map((m) => m[1]);
+  for (const name of new Set(called)) {
+    assert.match(src, new RegExp(`function ${name}\\(`), `${name} is called but not defined`);
+  }
+});
+
 test('trust routes', { timeout: 30000 }, async () => {
   await withServer(async (base) => {
     let res = await fetch(`${base}/trust-tournament`);
