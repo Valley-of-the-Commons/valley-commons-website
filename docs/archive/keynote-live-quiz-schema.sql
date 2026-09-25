@@ -1,3 +1,7 @@
+-- ARCHIVED 2026-09-25: the live keynote quiz was retired (see
+-- docs/archive/keynote-live-quiz.md). Kept as the record of the schema; the
+-- last code that used it is on main at commit 2c6ae23.
+--
 -- Keynote live-quiz schema. Runs in a SEPARATE, isolated Supabase project (not
 -- the site's payments/admin Postgres), so the quiz never shares a database with
 -- sensitive data. Idempotent: safe to run more than once.

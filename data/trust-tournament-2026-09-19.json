@@ -1,0 +1,42 @@
+{
+  "event": "The Trust Tournament",
+  "playedOn": "2026-09-19",
+  "source": "The final projector screen (learn-ai.london/trust-tournament?view=projector), captured 2026-09-19 21:16 CEST at the end of round 7. The per-round choices, groups and votes were overwritten on 2026-09-22 when the live game was reopened for a demo, so only this final state survives.",
+  "rounds": [
+    { "round": 1, "game": "pair", "groupSize": 2, "plays": "blind", "banishment": null },
+    { "round": 2, "game": "pair", "groupSize": 2, "plays": "blind", "banishment": null },
+    { "round": 3, "game": "pair", "groupSize": 2, "plays": "blind", "banishment": null },
+    { "round": 4, "game": "commons", "groupSize": 3, "plays": "visible", "banishment": null },
+    { "round": 5, "game": "commons", "groupSize": 3, "plays": "visible", "banishment": "blind" },
+    { "round": 6, "game": "commons", "groupSize": 4, "plays": "visible", "banishment": "blind" },
+    { "round": 7, "game": "commons", "groupSize": 5, "plays": "visible", "banishment": "open" }
+  ],
+  "scoring": {
+    "pair": { "CC": 3, "CD": 0, "DC": 5, "DD": 1 },
+    "commons": { "perCooperatorToEveryone": 1, "defectorBonus": 2 }
+  },
+  "timing": { "talkSeconds": 60, "decideSeconds": 20, "reprieveSeconds": 60 },
+  "reference": {
+    "note": "Totals for one player who plays all 7 rounds at the target group sizes. Real groups could be one larger or smaller when the headcount did not divide evenly, and banished players stopped scoring, so these are guides, not exact bounds.",
+    "lowest": 4,
+    "everyoneDefects": 11,
+    "everyoneCooperates": 24,
+    "highest": 34
+  },
+  "players": [
+    { "rank": 1, "nickname": "Falafel", "score": 27, "status": "active" },
+    { "rank": 2, "nickname": "Jesse", "score": 24, "status": "active" },
+    { "rank": 3, "nickname": "Erin", "score": 24, "status": "banished" },
+    { "rank": 4, "nickname": "Anna", "score": 24, "status": "active" },
+    { "rank": 5, "nickname": "Sterlin", "score": 23, "status": "active" },
+    { "rank": 6, "nickname": "John I8@L1", "score": 23, "status": "active" },
+    { "rank": 7, "nickname": "daan", "score": 23, "status": "active" },
+    { "rank": 8, "nickname": "mike", "score": 22, "status": "active" },
+    { "rank": 9, "nickname": "Steph", "score": 22, "status": "active" },
+    { "rank": 10, "nickname": "Andrew", "score": 22, "status": "active" },
+    { "rank": 11, "nickname": "Asena", "score": 22, "status": "active" },
+    { "rank": 12, "nickname": "DeCadiillac", "score": 21, "status": "banished" },
+    { "rank": 13, "nickname": "Deca", "score": 19, "status": "active" }
+  ],
+  "ringOrder": ["Sterlin", "Deca", "mike", "Falafel", "Anna", "Steph", "daan", "Jesse", "Asena", "Andrew", "John I8@L1", "DeCadiillac", "Erin"]
+}

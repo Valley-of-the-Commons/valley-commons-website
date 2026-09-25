@@ -1,35 +1,32 @@
-# Keynote companions + live quiz
+# Keynote companions
 
-Per-talk "companion" pages for the Valley of the Commons keynotes, ported from
-learn-ai.london (where they were hosted temporarily). Each page is the talk's
-argument in numbered beats with a reading list and the speaker's links, and, for
-some talks, a live multi-phone quiz + survey run during the session.
+Per-talk "companion" pages for the Valley of the Commons keynotes: each page is
+the talk's argument in numbered beats with a reading list and the speaker's
+links. Some talks also carry the results of a live quiz + survey run during the
+session; that live session itself was retired 2026-09-25 once Valley finished,
+see `docs/archive/keynote-live-quiz.md`. This page is now a static archive.
 
-This page is the authoritative data model. Code follows this; update this page in
-the same change as the code.
-
-Backend (decided): the live quiz uses a **separate, isolated Supabase project**
-(Postgres + Realtime), kept entirely apart from the site's payments/admin
-Postgres. This mirrors the original design (least rewrite) and keeps the quiz's
-data away from sensitive tables. See `keynote-port-for-jeff.md` for the setup.
+This page is the authoritative data model. Code follows this; update this page
+in the same change as the code.
 
 ## Routes
 
-- `/keynote` — the index ("companions to the talks"), grouped by Valley week and
-  titled with each week's theme, linking every talk page.
-- `/keynote-w1-d1` ... `/keynote-w1-d5` — Week 1 (theme "Return of the Commons"),
-  companion-only (no live quiz).
-- `/keynote-w2-d1` ... `/keynote-w2-d5` — Week 2 (theme "Local Production and
-  Value Accounting"), with the live quiz + survey.
-- Optionally `/keynote-michel` (evergreen "Cosmo-Localism") and a `default`/Deca
-  page, if we carry those over.
-
-Slug scheme is `keynote-<week>-<day>`. On learn-ai.london these were `valley-*`;
-rename to `keynote-*` here.
+- `/keynotes`: the index ("companions to the talks"), grouped by Valley week
+  and titled with each week's theme, linking every talk page. `GET /keynote`
+  (no `s`) 301-redirects here, preserving any query string, so old links keep
+  working.
+- `/keynote-<slug>`: a talk companion, e.g. `/keynote-w2-d3`. Slugs are
+  `w<week>-d<day>` (`w1-d1` ... `w4-d5`), plus the evergreen `deca` and `michel`,
+  and `sterlin-parallel-mind` (Sterlin Lujan's second, standalone talk).
+- `/keynote-w4-d1` is a special case: Deca's closing-of-week deck has no
+  companion room. It is a self-contained static reveal.js page served from
+  `keynote-w4-d1/index.html`, with its own assets under `/keynote-w4-d1/`.
+- `/keynote-<slug>-gatherings`: an optional standalone long-form reading tied
+  to a talk (currently only `w2-d4`), rendered from that room's `readings`.
 
 ## Content model (per talk)
 
-Each talk is one object (call it a "room"), keyed by its slug:
+Each talk is one object (a "room"), keyed by its slug, in `keynote/content.mjs`:
 
 ```
 Room {
@@ -38,123 +35,75 @@ Room {
     eyebrow: string                  // the talk title (rendered as the h1)
     speaker: string                  // the speaker's name (the subtitle)
     socials: { label, url }[]        // 1-2 of the speaker's own links (X, site, etc.)
+    livestream?: string              // YouTube link, when the talk was recorded
     metaTitle: string                // <title> for <head>
     metaDescription: string          // meta description
   }
   beats: Beat[]                      // the talk in order
-  items: Item[]                      // quiz + survey; EMPTY [] for companion-only pages
-  cta: { label, url }                // call to action (points back to /keynote)
+  readings?: Reading[]               // optional: extra long-form material (see w2-d4)
+  cta: { label, url }                // call to action, always "/keynotes"
 }
 
 Beat { n: number, title: string, body: string, links: { label, url }[] }
+```
 
-Item {
-  type: "quiz" | "poll"              // quiz = scored; poll = unscored survey
-  prompt: string
-  options: string[]                  // 4 options, typically
+Rooms carry no `items` (quiz/poll questions): that content now lives only in
+`data/keynote-results.json`, described below. Companion-only rooms need nothing
+extra; they simply have no matching entry in that file.
+
+`WEEKS` groups rooms by week for the index timeline. Each week's `slugs` array
+holds either a room slug (a string) or, for a talk with no companion room (only
+Deca's `w4-d1` deck today), a plain link object `{ speaker, talk, url }`,
+rendered as a normal-looking card via `soonCardHtml`. `MORE` lists the evergreen
+companions shown below the weeks. `CATEGORIES` + `AXES` feed the 3D
+Constellation view (`keynote/graph.mjs`); every entry there needs a matching
+room (or, for w4-d1, its own special-cased route) for its `href` to resolve.
+
+No em dashes in any copy.
+
+## Static quiz + survey results
+
+`data/keynote-results.json`, served at `GET /data/keynote-results.json`
+(a dedicated route in `server.js`, since `json` is deliberately not in the
+static-file allowlist), is the sole source of quiz/survey content:
+
+```
+{
+  source: string,
+  sessions: {
+    [slug]: {
+      playedAt: string (ISO date),
+      playerCount: number,
+      standings: { nickname: string, score: number }[],
+      items: {
+        type: "quiz" | "poll",
+        prompt: string,
+        options: string[],
+        correct?: number,     // quiz only: index into options
+        counts: number[],     // one count per option, same length as options
+      }[],
+    },
+  },
 }
 ```
 
-Rules that must carry over:
-- **Correct answers are never in the client content.** The correct option index
-  per quiz item is stored server-side only, keyed by slug (a
-  `correctBySlug[slug][itemIndex] = optionIndex` map), and revealed to phones only
-  when the host fires the reveal action. The option order is deliberately mixed so
-  the correct answer is not always first.
-- **Companion-only pages** have `items: []`. They render just the beats and never
-  open a live session.
-- Companion reading links (in beats) are the speaker's own source material, never
-  social profiles. The speaker's `socials` (in `meta`) are the one place social
-  links belong.
-- No em dashes in any copy.
+`keynote/keynote.js` fetches this once at load. A companion page's "The quiz"
+tile appears only when that talk's slug has an entry with at least one `quiz`
+item; "The room" (survey) tile appears only when it has at least one `poll`
+item. Both panels read prompts, options, tallies and (for quiz) the correct
+answer straight from this file; a room with no entry here shows only the
+companion (and readings, where present) tiles. As of 2026-09-25 only `w2-d2`,
+`w2-d3` and `w2-d5` have session data.
 
-The 12 talks' content (beats, reading, speaker, socials) is finished and lives in
-the learn-ai.london repo under `src/lib/valley/rooms/*.ts` plus `rooms.ts`
-(content) and `answers.server.ts` (the correct-answer keys). Port that content
-verbatim; only the framework wrapper and styling change.
+## How to add a companion
 
-## Live session (Week 2 talks)
-
-A short, host-driven, multi-phone game over a realtime channel. Rooms are
-independent by a `slug` column on every table.
-
-### Tables
-
-```
-quiz_state    one row per slug, the state machine
-  slug                text primary key
-  phase               text   -- idle | lobby | question | reveal | leaderboard | ended
-  current_index       int    -- which item
-  question_started_at timestamptz  -- set slightly in the FUTURE for the pre-roll
-  revealed_answer     int    -- correct option, published only at reveal (null otherwise)
-  updated_at          timestamptz
-
-quiz_players  one row per joined phone, scoped by slug
-  id uuid pk, slug text, nickname text, score int default 0, joined_at timestamptz
-
-quiz_answers  one row per (player, item)
-  id uuid pk, slug text, player_id uuid, question_index int, choice int,
-  is_correct boolean, points int default 0, answered_at timestamptz,
-  unique (player_id, question_index)
-
-quiz_sessions durable archive of a finished session (so results survive a reset)
-  id uuid pk, slug text, results jsonb, ended_at timestamptz
-  -- results = { standings: [{nickname, score}], aggregates: number[][], playerCount }
-```
-
-Clients read `quiz_state` (and the live aggregates) in realtime; every write
-(state changes, scoring, answers) goes through server endpoints using a secret
-key, never from the browser.
-
-### Timing (single source, shared client + server)
-
-- pre-roll (get-ready before each question): **5s**
-- answer window per question (also the scoring window): **30s**
-- correct-answer reveal blink (quiz only): **3s**
-
-### State machine + host actions
-
-`idle` (companion showing) -> `open` -> `lobby` -> `next` -> `question`
-(pre-roll then timed) -> `reveal` (quiz only, 3s) -> `leaderboard` -> `next` ...
-past the last item -> `ended` -> `close` -> back to `idle`.
-
-Host actions (server endpoints): `open`, `next`, `reveal`, `leaderboard`,
-`finish`, `close`, `reset`.
-- `open` and `reset` archive the current session (if any) into `quiz_sessions`,
-  then clear `quiz_players` + `quiz_answers`, so results are never lost.
-- The host write should **upsert** `quiz_state` keyed on slug, so a room whose row
-  was never seeded self-heals on the first action (a hard-won fix: a plain UPDATE
-  matched zero rows and silently did nothing).
-- `close` returns to the companion WITHOUT deleting, so scores and poll splits
-  stay visible under the talk until the next `open` or `reset`.
-
-### Scoring
-
-Correct answer: 500 base points plus up to 500 time bonus (full at 0ms elapsed,
-0 at the limit). Wrong answer: 0. `elapsedMs` is measured server-side from
-`question_started_at` and clamped to the window; late submissions are rejected.
-
-### Host access
-
-Host controls are revealed by a client-side "easter egg" gesture (a fixed tap
-sequence on the companion), gated by a host secret the server re-checks on every
-action. Anyone with the gesture and secret can host; state is per-device so
-several co-hosts can run at once. (Deca to confirm whether to keep this exact
-mechanism on the VotC site.)
-
-## Wiring into the site
-
-- Add a link from each `#schedule` row in `index.html` to its
-  `/keynote-w<week>-d<day>` page.
-- `/keynote` is reachable from `valleyofthecommons.com/#schedule` and can also get
-  its own nav entry if wanted.
-- Companion-only Week 1 pages need no backend; they can ship first.
-
-## Open decisions (for the owner)
-
-1. Keep the easter-egg host mechanism, or gate hosting behind the existing admin
-   auth instead.
-2. Whether to carry over the evergreen `/keynote-michel` and Deca pages.
-
-(Backend is decided: a separate, isolated Supabase project. See
-`keynote-port-for-jeff.md`.)
+1. Write the room object (`meta`, `beats`, `cta: { url: "/keynotes" }`) and add
+   it to `ROOMS` in `keynote/content.mjs`.
+2. Add its slug to `WEEKS` (or `MORE`, for an evergreen companion outside the
+   four weeks) so it appears on the index.
+3. Add a `CATEGORIES` entry with `href: "/keynote-<slug>"` and its three axis
+   tags so it appears in the Constellation view.
+4. If the talk ran a live session and you have its results, add an entry to
+   `data/keynote-results.json` under the matching slug.
+5. Run `npm test` (`tests/keynotes.test.mjs` checks content consistency and the
+   live routes).

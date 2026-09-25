@@ -6,17 +6,16 @@ task needs them. Keep each page focused, factual, and DRY (one home per fact).
 
 ## Index
 
-- **style-guide.md** — the design system (color tokens, fonts, buttons, spacing)
+- **style-guide.md**: the design system (color tokens, fonts, buttons, spacing)
   and writing conventions. Read before building or restyling any UI, including the
   keynote companion pages.
-- **keynote-companions.md** — the keynote companion + live-quiz feature ported
-  from learn-ai.london: what it is, the routes (`/keynote`, `/keynote-wN-dN`), the
-  full data model (companion content + quiz/survey + the live-session tables), and
-  how it wires into the site's `#schedule`.
-- **keynote-port-for-jeff.md** — an executable handoff aimed at Jeff's Claude:
-  the exact manual steps to stand up the keynote backend (environment variables,
-  database, migrations, deploy), with a rule that sensitive operations
-  (migrations, payments, secrets) are only run by Jeff's own Claude on his machine.
+- **keynote-companions.md**: the keynote companion pages (a static archive
+  since the live quiz was retired 2026-09-25): the routes (`/keynotes`,
+  `/keynote-<slug>`), the content model, and the static quiz/survey results file.
+- **archive/**: retired features, kept for the record. `archive/keynote-live-quiz.md`
+  documents the retired live multi-phone quiz; `archive/keynote-port-for-jeff.md`
+  and `archive/keynote-live-quiz-schema.sql` are its superseded backend handoff
+  and schema.
 
 ## Conventions for these docs
 
