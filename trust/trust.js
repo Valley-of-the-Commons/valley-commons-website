@@ -29,6 +29,13 @@ function heroHtml(d) {
   return `<header class="tt-hero">
       <span class="eyebrow">Valley of the Commons &middot; ${esc(formatDate(d.playedOn))}</span>
       <h1 class="tt-hero__title">The Trust Tournament</h1>
+      <button type="button" class="tt-what" aria-expanded="false" aria-controls="tt-info">
+        <span class="tt-what__label">What is this?</span>
+        <span class="tt-what__icon" aria-hidden="true"></span>
+      </button>
+      <div class="tt-drawer" id="tt-info">
+        <div class="tt-drawer__inner">${infoHtml(d)}</div>
+      </div>
       <p class="tt-hero__sub">One room, played on phones. Seven rounds of cooperate or defect, from pairs to a shared commons, with the power to banish.</p>
       <div class="tt-hero__row">
         <div class="tt-winner">
@@ -279,7 +286,7 @@ function wireCommons(d) {
   update();
 }
 
-/* ----- Background: collapsible text, adapted from Agentic Axelrod ----- */
+/* ----- "What is this?": the background, adapted from Agentic Axelrod ----- */
 
 const HISTORY = [
   ['1968', 'Garrett Hardin publishes "The Tragedy of the Commons": shared resources, he argues, are overused by individuals acting in their own interest.', 'https://doi.org/10.1126/science.162.3859.1243'],
@@ -304,7 +311,7 @@ const VIDEOS = [
   ['YNMkADpvO4w', 'Simulating the Evolution of Aggression', 'Primer, on hawks, doves and evolutionary stability.'],
 ];
 
-function aboutHtml(d) {
+function infoHtml(d) {
   const t = d.timing;
   const sections = [
     [
@@ -344,16 +351,32 @@ function aboutHtml(d) {
       ).join('')}</div>`,
     ],
   ];
-  return `<section class="tt-about" aria-label="About the game">
+  return `<div class="tt-info">
       ${sections
-        .map(([h, body]) => `<details class="tt-acc"><summary>${h}</summary><div class="tt-acc__body">${body}</div></details>`)
+        .map(
+          ([h, body], i) => `<section class="tt-info__sec tt-info__sec--${i}">
+            <h2 class="tt-info__h"><span class="tt-info__n">${String(i + 1).padStart(2, '0')}</span>${h}</h2>
+            <div class="tt-info__body">${body}</div>
+          </section>`
+        )
         .join('')}
-    </section>`;
+    </div>`;
 }
 
 function sourceHtml(d) {
   return `<p class="tt-source">${esc(d.source)}</p>
     <a class="cta" href="/keynotes">All the talks</a>`;
+}
+
+// The one primary button under the title: opens and closes the background.
+function wireWhatIsThis() {
+  const btn = app.querySelector('.tt-what');
+  const drawer = app.querySelector('.tt-drawer');
+  btn.addEventListener('click', () => {
+    const open = btn.getAttribute('aria-expanded') !== 'true';
+    btn.setAttribute('aria-expanded', String(open));
+    drawer.classList.toggle('is-open', open);
+  });
 }
 
 /* ----- Boot ----- */
@@ -365,16 +388,10 @@ async function main() {
     const d = await res.json();
     app.insertAdjacentHTML(
       'beforeend',
-      heroHtml(d) + ringHtml(d) + stagesHtml(d) + standingsHtml(d) + gamesHtml(d) + aboutHtml(d) + sourceHtml(d)
+      heroHtml(d) + ringHtml(d) + stagesHtml(d) + standingsHtml(d) + gamesHtml(d) + sourceHtml(d)
     );
     wireCommons(d);
-    // Only one background section open at a time.
-    const accs = [...app.querySelectorAll('.tt-acc')];
-    accs.forEach((a) =>
-      a.addEventListener('toggle', () => {
-        if (a.open) accs.forEach((o) => o !== a && (o.open = false));
-      })
-    );
+    wireWhatIsThis();
     // Force a style flush so the reveal transitions run, without waiting on a
     // frame (a background tab never paints one and would stay blank).
     void app.offsetHeight;

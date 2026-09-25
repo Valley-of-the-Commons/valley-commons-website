@@ -24,7 +24,7 @@
 
 /* ----- Hero ----- */
 .tt-hero { text-align: center; margin: 0 auto 56px; max-width: 760px; }
-.tt-hero__title { font: 800 clamp(2.4rem, 7vw, 4.4rem)/1 var(--serif); letter-spacing: -.02em; color: var(--tt-strong); margin: 14px 0 14px; }
+.tt-hero__title { font: 800 clamp(2.4rem, 7vw, 4.4rem)/1 var(--serif); letter-spacing: -.02em; color: var(--tt-strong); margin: 14px 0 22px; }
 .tt-hero__sub { font: 500 1.1rem/1.55 var(--serif); color: var(--tt-dim); max-width: 50ch; margin: 0 auto 34px; }
 .tt-hero__row { display: flex; flex-wrap: wrap; justify-content: center; align-items: stretch; gap: 14px; }
 .tt-winner {
@@ -181,19 +181,53 @@
 .tt-calc__res { font: 500 .95rem/1.5 var(--sans); color: var(--tt-text); }
 .tt-calc__res b { font-family: var(--serif); font-size: 1.1em; color: var(--tt-strong); }
 
-/* ----- Background sections (secondary) ----- */
-.tt-about { max-width: 720px; margin: 0 auto 40px; padding-top: 28px; border-top: 1px solid rgba(255,255,255,.08); }
-.tt-acc { border-bottom: 1px solid rgba(255,255,255,.07); }
-.tt-acc summary {
-  list-style: none; cursor: pointer; padding: 16px 0; display: flex; align-items: center; gap: 10px;
-  font: 700 1.15rem/1.2 var(--serif); color: var(--tt-strong);
+/* ----- "What is this?": the one primary button + its drawer ----- */
+.tt-what {
+  display: inline-flex; align-items: center; gap: 12px; margin: 4px 0 26px; cursor: pointer;
+  padding: 13px 16px 13px 24px; border-radius: 999px; border: 1px solid rgba(240,169,120,.55);
+  background: linear-gradient(180deg, #d06c35, #b85a27); color: #fff7ee;
+  font: 700 13px/1 var(--sans); letter-spacing: .14em; text-transform: uppercase;
+  box-shadow: 0 1px 0 rgba(255,255,255,.25) inset, 0 16px 38px -16px rgba(196,98,45,.95);
+  transition: transform .25s cubic-bezier(.22,1,.36,1), box-shadow .25s ease, background .25s ease;
 }
-.tt-acc summary::-webkit-details-marker { display: none; }
-.tt-acc summary::after { content: "\25B8"; font-size: .8em; color: var(--tt-faint); transition: transform .25s ease, color .25s ease; }
-.tt-acc[open] summary::after { transform: rotate(90deg); color: var(--tt-defect); }
-.tt-acc summary:hover { color: var(--tt-defect); }
-.tt-acc__body { padding: 0 0 22px; font: 400 1rem/1.65 var(--serif); color: rgba(243,236,224,.8); }
-.tt-acc__body b { color: var(--tt-strong); }
+.tt-what:hover { transform: translateY(-2px); box-shadow: 0 1px 0 rgba(255,255,255,.25) inset, 0 22px 46px -16px rgba(196,98,45,1); }
+.tt-what:focus-visible { outline: 2px solid #f0a978; outline-offset: 3px; }
+.tt-what__icon {
+  position: relative; width: 26px; height: 26px; border-radius: 50%; flex: 0 0 auto;
+  background: rgba(255,247,238,.18); transition: transform .35s cubic-bezier(.22,1,.36,1), background .25s ease;
+}
+.tt-what__icon::before, .tt-what__icon::after {
+  content: ""; position: absolute; left: 50%; top: 50%; width: 11px; height: 2px; border-radius: 2px;
+  background: currentColor; transform: translate(-50%, -50%);
+}
+.tt-what__icon::after { transform: translate(-50%, -50%) rotate(90deg); }
+.tt-what[aria-expanded="true"] .tt-what__icon { transform: rotate(135deg); background: rgba(255,247,238,.28); }
+
+/* Height animates via the 0fr -> 1fr grid-row trick; no JS measuring. */
+.tt-drawer { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .55s cubic-bezier(.22,1,.36,1); }
+.tt-drawer.is-open { grid-template-rows: 1fr; }
+.tt-drawer__inner { overflow: hidden; min-height: 0; visibility: hidden; transition: visibility 0s linear .55s; }
+.tt-drawer.is-open .tt-drawer__inner { visibility: visible; transition-delay: 0s; }
+
+.tt-info {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 26px 34px; text-align: left;
+  margin: 0 0 34px; padding: clamp(22px, 4vw, 38px); border-radius: 24px;
+  background: linear-gradient(180deg, rgba(32,26,18,.78), rgba(19,15,10,.72));
+  border: 1px solid rgba(255,255,255,.12); border-top: 2px solid rgba(229,145,90,.6);
+  backdrop-filter: blur(22px) saturate(1.25); -webkit-backdrop-filter: blur(22px) saturate(1.25);
+  box-shadow: 0 30px 70px -36px rgba(0,0,0,.95);
+  opacity: 0; transform: translateY(-8px); transition: opacity .45s ease .1s, transform .55s cubic-bezier(.22,1,.36,1) .05s;
+}
+.tt-drawer.is-open .tt-info { opacity: 1; transform: none; }
+.tt-info__sec--2, .tt-info__sec--3, .tt-info__sec--4 { grid-column: 1 / -1; padding-top: 24px; border-top: 1px solid rgba(255,255,255,.08); }
+.tt-info__h { display: flex; align-items: baseline; gap: 12px; font: 800 1.3rem/1.2 var(--serif); color: var(--tt-strong); margin-bottom: 10px; }
+.tt-info__n { font: 700 12px/1 var(--sans); letter-spacing: .12em; color: var(--tt-defect); }
+.tt-info__body { font: 400 1rem/1.65 var(--serif); color: rgba(243,236,224,.82); }
+.tt-info__body b { color: var(--tt-strong); }
+@media (max-width: 720px) {
+  .tt-info { grid-template-columns: 1fr; }
+  .tt-info__sec--1 { padding-top: 24px; border-top: 1px solid rgba(255,255,255,.08); }
+}
 .tt-steps { margin: 10px 0 0 1.2em; display: grid; gap: 8px; list-style: decimal; }
 .tt-history { display: grid; gap: 10px; }
 .tt-history li { display: grid; grid-template-columns: 52px 1fr; gap: 12px; }
@@ -222,5 +256,5 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .tt > *, .tt-p, .tt-row__fill { transition: none; }
+  .tt > *, .tt-p, .tt-row__fill, .tt-drawer, .tt-info, .tt-what, .tt-what__icon { transition: none; }
 }
