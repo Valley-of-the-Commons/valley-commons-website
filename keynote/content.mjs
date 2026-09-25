@@ -1,4 +1,6 @@
-// Browser ES module - CLIENT-SAFE: no correct quiz answers.
+// Browser ES module. The talk companions: beats and reading, no quiz content.
+// The live multi-phone quiz was retired 2026-09-25 (see docs/archive/keynote-live-quiz.md);
+// each talk's quiz/survey results now live only in data/keynote-results.json.
 // All rooms ported from learn-ai.london origin/main, 2026-09-04.
 // Slug renames: default -> deca, valley-michel -> michel.
 
@@ -103,105 +105,7 @@ export const ROOMS = {
         ],
       },
     ],
-    items: [
-      {
-        type: "quiz",
-        prompt: "According to Michel Bauwens, the three pillars of civilisation are?",
-        options: [
-          "Faith, Trade and War",
-          "The Market, the State and the Commons",
-          "Land, Labour and Capital",
-          "The Individual, the Family and the Nation",
-        ],
-      },
-      {
-        type: "quiz",
-        prompt: "When in history did monasteries arise and thrive?",
-        options: [
-          "When the Market was booming",
-          "When empires were at their peak",
-          "When the Market and the State were failing",
-          "When democracy spread",
-        ],
-      },
-      {
-        type: "quiz",
-        prompt: "Solarpunk and lunarpunk evolved from which movement?",
-        options: [
-          "The Cyberpunks",
-          "The Steampunks",
-          "The Cypherpunks",
-          "The Hacktivists",
-        ],
-      },
-      {
-        type: "quiz",
-        prompt: "In Yanis Varoufakis's 'Technofeudalism', what has replaced capitalism?",
-        options: [
-          "A post-scarcity economy where automation has largely ended material want",
-          "Cloud fiefs that collect rent from us like digital serfs, not a market of firms",
-          "A decentralised web3 economy that has cut out the middlemen",
-          "A gig economy of free-agent micro-entrepreneurs",
-        ],
-      },
-      {
-        type: "quiz",
-        prompt: "Cory Doctorow coined 'enshittification' for one specific way platforms decay. Which?",
-        options: [
-          "They scale so fast that reliability and support buckle under the load",
-          "Rivals copy their best features until they lose their edge and fade",
-          "They win users over, then squeeze users, then squeeze the platform's businesses, until it dies",
-          "Regulators step in and break them up before they mature",
-        ],
-      },
-      {
-        type: "quiz",
-        prompt: "Why does the talk call the 'doomers' the real optimists?",
-        options: [
-          "They trust technology and markets to fix it on their own",
-          "They've made peace with collapse, so they've stopped fearing it",
-          "They expect the worst, so any good news feels like a win",
-          "They face the crisis squarely, yet still believe we can solve it",
-        ],
-      },
-      {
-        type: "poll",
-        prompt: "When you look at the future, you feel...",
-        options: ["mostly hope", "mostly dread", "both, intensely", "numb"],
-      },
-      {
-        type: "poll",
-        prompt: "Solarpunk or lunarpunk - which pulls you more?",
-        options: [
-          "Solarpunk (build the world I want)",
-          "Lunarpunk (protect it)",
-          "Both",
-          "Still deciding",
-        ],
-      },
-      {
-        type: "poll",
-        prompt: "What are you most hungry for right now?",
-        options: [
-          "community",
-          "meaning",
-          "sovereignty & agency",
-          "superpowers (AI & tech)",
-          "contact with nature",
-        ],
-      },
-      {
-        type: "poll",
-        prompt: "Where are you on this journey right now?",
-        options: [
-          "just discovered this tonight",
-          "curious, circling the edges",
-          "one foot in (part of a space or two)",
-          "all in, it's my life",
-        ],
-      },
-    ],
-    cta: { label: "Valley of the Commons", url: "/keynote" },
+    cta: { label: "Valley of the Commons", url: "/keynotes" },
   },
 
   // --- w1-d1: Felix Fritsch - Opening Day ---
@@ -219,7 +123,6 @@ export const ROOMS = {
       metaDescription:
         "Felix Fritsch opens Valley of the Commons: the Commons Hub story, the commons wager, cosmo-local production, and the four-week arc. Plus the reading.",
     },
-    items: [],
     beats: [
       {
         n: 1,
@@ -275,7 +178,7 @@ export const ROOMS = {
         ],
       },
     ],
-    cta: { label: "Valley of the Commons", url: "/keynote" },
+    cta: { label: "Valley of the Commons", url: "/keynotes" },
   },
 
   // --- w1-d2: Michel Bauwens - The Return of the Commons ---
@@ -293,7 +196,6 @@ export const ROOMS = {
       metaDescription:
         "Bauwens on the commons through history, Karatani's modes of exchange, the pulsation of the commons, and the cosmo-local transition. With primary reading.",
     },
-    items: [],
     beats: [
       {
         n: 1,
@@ -357,7 +259,7 @@ export const ROOMS = {
         ],
       },
     ],
-    cta: { label: "Valley of the Commons", url: "/keynote" },
+    cta: { label: "Valley of the Commons", url: "/keynotes" },
   },
 
   // --- w1-d3: Adam Arvidsson - Industrious Modernity ---
@@ -373,7 +275,6 @@ export const ROOMS = {
       metaDescription:
         "A grounded reconstruction of Adam Arvidsson's Industrious Modernity keynote at Valley of the Commons Week 1, built from his books and papers.",
     },
-    items: [],
     beats: [
       {
         n: 1,
@@ -425,7 +326,7 @@ export const ROOMS = {
         ],
       },
     ],
-    cta: { label: "Valley of the Commons", url: "/keynote" },
+    cta: { label: "Valley of the Commons", url: "/keynotes" },
   },
 
   // --- w1-d4: Amber Case - Introduction to Calm Technology ---
@@ -443,7 +344,6 @@ export const ROOMS = {
       metaDescription:
         "Amber Case on calm technology at Valley of the Commons: designing for attention, its Xerox PARC lineage, and a calm-tech certification standard.",
     },
-    items: [],
     beats: [
       {
         n: 1,
@@ -504,7 +404,7 @@ export const ROOMS = {
         ],
       },
     ],
-    cta: { label: "Valley of the Commons", url: "/keynote" },
+    cta: { label: "Valley of the Commons", url: "/keynotes" },
   },
 
   // --- w1-d5: Jeff Emmett - From P2P to P4P ---
@@ -522,7 +422,6 @@ export const ROOMS = {
       metaDescription:
         "Jeff Emmett on the shift from peer-to-peer to peer-for-peer: recording contribution, self-infrastructuring tools, and funding the commons. With reading.",
     },
-    items: [],
     beats: [
       {
         n: 1,
@@ -584,7 +483,7 @@ export const ROOMS = {
         ],
       },
     ],
-    cta: { label: "Valley of the Commons", url: "/keynote" },
+    cta: { label: "Valley of the Commons", url: "/keynotes" },
   },
 
   // --- w2-d1: Roberto Valenti - A socio-techno-legal stack for a regenerative commons ---
@@ -602,93 +501,6 @@ export const ROOMS = {
       metaDescription:
         "Companion to Roberto Valenti's talk at Valley of the Commons: economy as household management, translocal empowerment, the 8 forms of capital, community, Holons, and Regenerativa / Liminal Village, in beats with sources, plus the live session.",
     },
-    items: [
-      {
-        type: "quiz",
-        prompt: "The talk traces 'economy' to two Greek roots. What do they mean?",
-        options: [
-          "Money and power",
-          "House and manage: 'household management'",
-          "Trade and city",
-          "Land and labour",
-        ],
-      },
-      {
-        type: "quiz",
-        prompt: "The '8 forms of capital' widen wealth beyond money. Which is NOT one of the eight?",
-        options: ["Social", "Spiritual", "Political", "Cultural"],
-      },
-      {
-        type: "quiz",
-        prompt: "In Holons, what happens to value (money or tokens) sent to a holon's address?",
-        options: [
-          "It is locked in a treasury vote",
-          "It is automatically split across its members by a dynamic weight",
-          "It becomes a single governance token",
-          "It is burned to reduce supply",
-        ],
-      },
-      {
-        type: "quiz",
-        prompt: "What is 'stigmergy', the coordination principle the talk borrows from ants?",
-        options: [
-          "A top-down chain of command",
-          "Coordination through signals left in a shared environment, with no central boss",
-          "Voting on every decision",
-          "A blockchain consensus algorithm",
-        ],
-      },
-      {
-        type: "quiz",
-        prompt: "The 'Integral Human' frame invites you to act at three scales. Which three?",
-        options: [
-          "Mind, Body, Spirit",
-          "Personal, Local, Global",
-          "Past, Present, Future",
-          "Self, Family, Nation",
-        ],
-      },
-      {
-        type: "poll",
-        prompt: "Economy as 'household management': how much does your economic life feel like caring for a shared home?",
-        options: ["Not at all", "A little", "Fairly well", "It's my whole approach"],
-      },
-      {
-        type: "poll",
-        prompt: "Of the 8 forms of capital, which feels most scarce in your life right now?",
-        options: [
-          "Financial",
-          "Social",
-          "Natural / living",
-          "Spiritual / experiential",
-        ],
-      },
-      {
-        type: "poll",
-        prompt: "When you picture regeneration, where are you most called to act?",
-        options: [
-          "Personal (heal yourself)",
-          "Local (your place)",
-          "Global (the planet)",
-          "All three at once",
-        ],
-      },
-      {
-        type: "poll",
-        prompt: "Do temporary communities (pop-up villages that gather, then part) work for you?",
-        options: [
-          "Yes, they're my lifeblood",
-          "Good in doses",
-          "I prefer permanence",
-          "Haven't tried one",
-        ],
-      },
-      {
-        type: "poll",
-        prompt: "Would you trust software (like Holons) to coordinate a community's tasks and money?",
-        options: ["Yes, fully", "With humans in the loop", "Skeptical", "No"],
-      },
-    ],
     beats: [
       {
         n: 1,
@@ -764,7 +576,7 @@ export const ROOMS = {
         ],
       },
     ],
-    cta: { label: "Valley of the Commons", url: "/keynote" },
+    cta: { label: "Valley of the Commons", url: "/keynotes" },
   },
 
   // --- w2-d2: Kilian Joerg - Reclaiming the Commons ---
@@ -782,107 +594,6 @@ export const ROOMS = {
       metaDescription:
         "Companion to Kilian Jörg's talk, Reclaiming the Commons, at Valley of the Commons: the argument in beats, a reading list from his own work, and the live session.",
     },
-    items: [
-      {
-        type: "quiz",
-        prompt: "In Ecological Reasonings (2024), what is Jörg's central move for salvaging reason?",
-        options: [
-          "Return to classical Enlightenment rationality",
-          "Pluralise 'reason' into many situated 'reasonings'",
-          "Abolish reason entirely as a colonial tool",
-          "Replace reason with pure emotion",
-        ],
-      },
-      {
-        type: "quiz",
-        prompt: "In the Toxic Temple project, how are plastic, cement and nuclear waste framed?",
-        options: [
-          "As problems to be fully recycled away",
-          "As economically valuable raw materials",
-          "As sacred artifacts, 'messages to the afterlife' that outlive humanity",
-          "As proof that technology will save us",
-        ],
-      },
-      {
-        type: "quiz",
-        prompt: "What does Jörg use the automobile as, in Das Auto und die ökologische Katastrophe?",
-        options: [
-          "A neutral piece of transport technology",
-          "A metaphor for our toxic entanglement with modern life",
-          "The single solution to urban ecology",
-          "A symbol of successful green transition",
-        ],
-      },
-      {
-        type: "quiz",
-        prompt: "Toxic Temple rejects which stance in favour of engaging with toxicity?",
-        options: [
-          "Naive, purity-based conservation environmentalism",
-          "Degrowth economics",
-          "Renewable-energy investment",
-          "Indigenous land rights",
-        ],
-      },
-      {
-        type: "quiz",
-        prompt: "Which collective did Jörg found for 'performative philosophy'?",
-        options: [
-          "Toxic Temple",
-          "philosophy unbound",
-          "Critical Hedonism",
-          "Newspeak House",
-        ],
-      },
-      {
-        type: "poll",
-        prompt: "When you hear 'ecological crisis', what feels closest to true?",
-        options: [
-          "A technical problem we can engineer our way out of",
-          "A political-economic problem of power and ownership",
-          "A crisis of how we think and perceive",
-          "A spiritual or existential rupture",
-        ],
-      },
-      {
-        type: "poll",
-        prompt: "'Reclaiming the commons' means, to you, mostly:",
-        options: [
-          "Taking back shared resources from private owners",
-          "Rebuilding collective ways of living and deciding",
-          "Restoring damaged land and ecosystems",
-          "Something else",
-        ],
-      },
-      {
-        type: "poll",
-        prompt: "How do you relate to your own toxic entanglements (car, plastic, energy)?",
-        options: [
-          "I try to stay as clean as possible",
-          "I accept I'm implicated and work from there",
-          "I mostly feel guilt",
-          "I hadn't thought about it this way",
-        ],
-      },
-      {
-        type: "poll",
-        prompt: "One universal reason, or many situated reasonings?",
-        options: [
-          "One universal reason",
-          "Many plural reasonings",
-          "Unsure",
-        ],
-      },
-      {
-        type: "poll",
-        prompt: "A car-free version of your own neighbourhood feels:",
-        options: [
-          "Liberating",
-          "Impractical",
-          "Frightening",
-          "I've never let myself imagine it",
-        ],
-      },
-    ],
     beats: [
       {
         n: 1,
@@ -950,7 +661,7 @@ export const ROOMS = {
         links: [],
       },
     ],
-    cta: { label: "Valley of the Commons", url: "/keynote" },
+    cta: { label: "Valley of the Commons", url: "/keynotes" },
   },
 
   // --- w2-d3: Lorenzo Patuzzo - Monasteries of the 21st Century ---
@@ -968,108 +679,6 @@ export const ROOMS = {
       metaDescription:
         "Companion to Lorenzo Patuzzo's talk, Monasteries of the 21st Century, at Valley of the Commons: the long arc of human cooperation, collective consciousness, and hubs as the monasteries of our era, in beats with sources, plus the live session.",
     },
-    items: [
-      {
-        type: "quiz",
-        prompt: "More than fire or tools, what let humans cooperate in huge numbers?",
-        options: [
-          "Sheer physical strength",
-          "Shared stories and beliefs",
-          "Bigger brains, on their own",
-          "Farming",
-        ],
-      },
-      {
-        type: "quiz",
-        prompt: "The agricultural revolution, some 12,000 years ago, set off which chain?",
-        options: [
-          "Surplus, specialisation, and the first cities",
-          "The printing press and mass literacy",
-          "Global trade and money",
-          "The internet",
-        ],
-      },
-      {
-        type: "quiz",
-        prompt: "Why does the talk look back to the medieval monasteries?",
-        options: [
-          "They ran the markets of their day",
-          "They conquered and held territory",
-          "They preserved the books, the seeds, and the craft through the collapse after Rome",
-          "They invented writing",
-        ],
-      },
-      {
-        type: "quiz",
-        prompt: "Which is one of the seven properties of a 21st-century monastery in the talk?",
-        options: [
-          "Total secrecy and isolation",
-          "Maximising profit",
-          "A semi-permeable membrane: open enough to teach and host, closed enough to protect its culture",
-          "A single charismatic leader",
-        ],
-      },
-      {
-        type: "quiz",
-        prompt: "AKASHA Hub Barcelona, the talk's living example, is...",
-        options: [
-          "A venture-funded startup",
-          "A government innovation agency",
-          "A university research lab",
-          "A self-funded, community-run hub, the first node of the network",
-        ],
-      },
-      {
-        type: "poll",
-        prompt: "Which 'monastery' property matters most to a community you'd join?",
-        options: [
-          "Shared values and devotion",
-          "Clear rules and discipline",
-          "Knowledge and teaching",
-          "A semi-permeable membrane (open yet protected)",
-        ],
-      },
-      {
-        type: "poll",
-        prompt: "Where do you sit on the local-versus-global tension?",
-        options: [
-          "Root deeply in one place",
-          "A node in a global federation",
-          "Fully nomadic",
-          "Somewhere in between",
-        ],
-      },
-      {
-        type: "poll",
-        prompt: "How much shared life would you want in such a hub?",
-        options: [
-          "Live there full-time",
-          "A regular in-person rhythm",
-          "Occasional visits",
-          "Purely digital participation",
-        ],
-      },
-      {
-        type: "poll",
-        prompt: "What most needs preserving through the years ahead?",
-        options: [
-          "Open technologies and code",
-          "Seeds, soil, and food knowledge",
-          "Crafts and making skills",
-          "Social trust and governance",
-        ],
-      },
-      {
-        type: "poll",
-        prompt: "Right now, are you more a builder or a pilgrim?",
-        options: [
-          "Building a node of my own",
-          "A pilgrim, visiting the nodes",
-          "Just curious tonight",
-          "A bit of everything",
-        ],
-      },
-    ],
     beats: [
       {
         n: 1,
@@ -1168,7 +777,7 @@ export const ROOMS = {
         ],
       },
     ],
-    cta: { label: "Valley of the Commons", url: "/keynote" },
+    cta: { label: "Valley of the Commons", url: "/keynotes" },
   },
 
   // --- w2-d4: Stefan Schutz - Working alternatives in regional money and production ---
@@ -1184,108 +793,6 @@ export const ROOMS = {
       metaDescription:
         "Companion to Stefan Schütz's talk at Valley of the Commons: the Chiemgauer regional currency and its climate bonus, and open-source distributed local production at the Impulsraum Neubeuern, in beats with sources, plus the live session.",
     },
-    items: [
-      {
-        type: "quiz",
-        prompt: "The Chiemgauer is pegged 1:1 to the euro, but with one unusual feature. Which?",
-        options: [
-          "It earns interest the longer you hold it",
-          "It floats freely against the euro",
-          "It loses value if hoarded, so it keeps circulating",
-          "It can only be spent online",
-        ],
-      },
-      {
-        type: "quiz",
-        prompt: "When a business changes Chiemgauer back into euros, part of the fee goes where?",
-        options: [
-          "To the government as tax",
-          "To the currency's founders",
-          "Nowhere: converting is free",
-          "To a nonprofit that the user chooses",
-        ],
-      },
-      {
-        type: "quiz",
-        prompt: "'Money that loses value if hoarded' was famously tested in 1932 in which town?",
-        options: [
-          "Zurich, Switzerland",
-          "Wörgl, Austria",
-          "Detroit, USA",
-          "Lake Chiemsee, Germany",
-        ],
-      },
-      {
-        type: "quiz",
-        prompt: "Frithjof Bergmann's 'New Work' is built around which question?",
-        options: [
-          "What do you really, really want?",
-          "What pays the most?",
-          "What would a machine do instead?",
-          "What does the market need?",
-        ],
-      },
-      {
-        type: "quiz",
-        prompt: "The Fab City / cosmo-local principle behind the maker space is best summed up as?",
-        options: [
-          "Mass-produce centrally, then ship everywhere",
-          "Keep every design secret and patented",
-          "Global knowledge, local production",
-          "Import finished goods, export the waste",
-        ],
-      },
-      {
-        type: "poll",
-        prompt: "Would you use a local currency that gently loses value if you hoard it?",
-        options: [
-          "Yes, I love the idea",
-          "Maybe, depends where I can spend it",
-          "No, I want my money to hold value",
-          "Not sure",
-        ],
-      },
-      {
-        type: "poll",
-        prompt: "What would most get you to spend in a regional currency?",
-        options: [
-          "Supporting local businesses",
-          "Funding local nonprofits",
-          "Climate rewards",
-          "Convenience (card and app)",
-        ],
-      },
-      {
-        type: "poll",
-        prompt: "Which climate-friendly choice would you most want rewarded?",
-        options: [
-          "Home insulation",
-          "Balcony solar panels",
-          "Carsharing",
-          "A local veg box (Solawi)",
-        ],
-      },
-      {
-        type: "poll",
-        prompt: "If your neighbourhood had a maker space, what would you do first?",
-        options: [
-          "Build furniture",
-          "Repair or upcycle something broken",
-          "Make electronics or a tool",
-          "Come to learn more than to make",
-        ],
-      },
-      {
-        type: "poll",
-        prompt: "When the system feels stuck, you are more likely to...",
-        options: [
-          "Light a candle (build an alternative)",
-          "Name what is broken",
-          "Wait for someone else to fix it",
-          "A bit of both",
-        ],
-      },
-    ],
     beats: [
       {
         n: 1,
@@ -1429,7 +936,7 @@ export const ROOMS = {
         ],
       },
     ],
-    cta: { label: "Valley of the Commons", url: "/keynote" },
+    cta: { label: "Valley of the Commons", url: "/keynotes" },
   },
 
   // --- w2-d5: Silvia Brandi - International FabLab Networks ---
@@ -1447,18 +954,6 @@ export const ROOMS = {
       metaDescription:
         "Companion to Silvia Brandi's talk at Valley of the Commons: FarmLab, a fab lab on a working farm in rural Styria, the networks that connect it, and a year of situated, seasonal making.",
     },
-    items: [
-      { type: "quiz", prompt: "What is FarmLab, the project at the heart of Silvia's talk?", options: ["A tech startup in Vienna", "A university research lab", "A creative lab on a working farm in rural Styria", "A government agency"] },
-      { type: "quiz", prompt: "What is a 'fab lab', the kind of workshop FarmLab is?", options: ["A factory for mass production", "A node in a worldwide digital-fabrication network, sharing a common inventory", "A private members' club", "A recycling plant"] },
-      { type: "quiz", prompt: "At FarmLab, the making follows what?", options: ["The stock market", "A fixed factory shift", "Global shipping schedules", "The seasons, a yearly rhythm of making"] },
-      { type: "quiz", prompt: "In Silvia's framing, what is 'agency'?", options: ["The capacity to act: the tools, knowledge, relationships and confidence to do something", "A marketing agency", "A government department", "A type of 3D printer"] },
-      { type: "quiz", prompt: "Her closing principle on situated resources and shared knowledge is:", options: ["Everything should be centralised in cities", "Nothing should be shared openly", "Knowledge can travel, but materials stay local and situated", "Only global mass production can scale"] },
-      { type: "poll", prompt: "Which season of making pulls you most?", options: ["Winter: slow making, baskets and wood", "Spring: the wool cycle, shearing to felting", "Summer: colours, dyes and ceramics", "Autumn: foraging and biomaterials"] },
-      { type: "poll", prompt: "Would you rather learn a traditional craft or a digital tool?", options: ["A traditional craft", "A digital tool (3D print, laser, CNC)", "Both together, the FarmLab way", "Neither right now"] },
-      { type: "poll", prompt: "For your own place, what is most missing?", options: ["Tools and a workshop", "Shared knowledge and teachers", "A community to make with", "The confidence to start"] },
-      { type: "poll", prompt: "A maker future feels more real to you as:", options: ["Rural and regenerative", "Urban and dense", "Both, connected", "Not sure yet"] },
-      { type: "poll", prompt: "What would most draw you to a place like FarmLab?", options: ["A hands-on workshop", "An artist residency", "The farm and the food", "The network of people"] },
-    ],
     beats: [
       { n: 1, title: "Twenty years before FarmLab", body: "Silvia opens with the path that led here: two decades in Barcelona at the frontier of digital fabrication, at IAAC and Fab Lab Barcelona, robotic construction, and directing the Fixing the Future festival. The turning question was simple: why not start applying these ideas in real life?", links: [{ label: "Silvia Brandi: optimism as activism (shemakes)", url: "https://shemakes.eu/blog/silvia-brandi" }] },
       { n: 2, title: "FarmLab: a lab on a farm", body: "FarmLab is a creative living lab in rural Styria, Austria, at the intersection of traditional craft, digital fabrication, and sustainable agriculture. It is four things at once: a fab lab (a node of the global Fab Lab Network), a semi-self-sufficient small farm with a heritage orchard and a flock of sheep, a rural creative hub open to local and international communities, and a living testbed for how we make, produce and live together.", links: [{ label: "FarmLab", url: "https://www.farmlab.at/" }, { label: "FarmLab in the Fab Lab directory", url: "https://www.fablabs.io/labs/farmlab" }] },
@@ -1468,7 +963,7 @@ export const ROOMS = {
       { n: 6, title: "Building local agency", body: "Agency is the capacity to act: not only access to resources, but to the tools, knowledge, relationships and confidence needed to do something with them. It is the question that drives the whole project: how can a rural community today build the agency to make, learn and act, in a sustainable way?", links: [] },
       { n: 7, title: "A year of situated making", body: "The talk closes on 'one year at the FarmLab', where making follows the seasons: winter is slow making (baskets, wood, forge), spring brings the shearers and the wool cycle from spinning to felting, summer is colours and ceramics with natural dyes, raku and 3D-printed clay, and autumn readies for the cold. The principle underneath: knowledge can travel, materials remain situated, and shared knowledge increases the capacity of situated communities to act.", links: [{ label: "FarmLab", url: "https://www.farmlab.at/" }] },
     ],
-    cta: { label: "Valley of the Commons", url: "/keynote" },
+    cta: { label: "Valley of the Commons", url: "/keynotes" },
   },
 
   // --- michel (evergreen, slug was valley-michel): Michel Bauwens - Cosmo-Localism ---
@@ -1486,109 +981,6 @@ export const ROOMS = {
       metaDescription:
         "Companion to Michel Bauwens's talk on Cosmo-Localism at Valley of the Commons: the argument in beats, a reading list from his own work, and the live session.",
     },
-    items: [
-      {
-        type: "quiz",
-        prompt: "What is the core principle of cosmo-localism?",
-        options: [
-          "All production should be fully localised and self-sufficient",
-          "What is heavy should be local, and what is light should be global and shared",
-          "Knowledge and matter should both be globalised",
-          "What is light should be local; what is heavy should be global",
-        ],
-      },
-      {
-        type: "quiz",
-        prompt: "What does 'DGML' stand for?",
-        options: [
-          "Distributed Governance, Manufacture Locally",
-          "Design Global, Manufacture Local",
-          "Digital Goods, Material Logistics",
-          "Design Growth, Manage Locally",
-        ],
-      },
-      {
-        type: "quiz",
-        prompt: "The deck calls the extractive system thermodynamically wasteful: it uses how much more matter and energy moving things than making them?",
-        options: [
-          "The same amount",
-          "Twice as much",
-          "Three times as much",
-          "Ten times as much",
-        ],
-      },
-      {
-        type: "quiz",
-        prompt: "Which of Kojin Karatani's four modes does Bauwens frame as the goal of the transition?",
-        options: [
-          "Mode A: gift and reciprocity",
-          "Mode B: submission and protection (the state)",
-          "Mode C: commodity exchange (capitalism)",
-          "Mode D: associationism, reciprocity regained at higher complexity",
-        ],
-      },
-      {
-        type: "quiz",
-        prompt: "What double error does the dominant economy make about resources?",
-        options: [
-          "It treats both knowledge and matter as scarce",
-          "It treats abundant knowledge as scarce, and scarce materials as abundant",
-          "It treats both knowledge and matter as abundant",
-          "It treats scarce knowledge as abundant, and abundant matter as scarce",
-        ],
-      },
-      {
-        type: "poll",
-        prompt: "Where should most of the physical things you use be made?",
-        options: [
-          "Entirely local / bioregional",
-          "Mostly local",
-          "A mix",
-          "Mostly global supply chains",
-        ],
-      },
-      {
-        type: "poll",
-        prompt: "How should designs, software and know-how be governed?",
-        options: [
-          "A fully open commons",
-          "Mostly open, with some protection",
-          "A balance of open and private",
-          "Mostly private / proprietary",
-        ],
-      },
-      {
-        type: "poll",
-        prompt: "Your view on material throughput?",
-        options: [
-          "We must degrow it",
-          "Steady-state / circular",
-          "Selective green growth",
-          "Keep growing, technology will fix it",
-        ],
-      },
-      {
-        type: "poll",
-        prompt: "Between local self-reliance and trans-local coordination, where do you sit?",
-        options: [
-          "Radically autonomous communities",
-          "Autonomous but networked",
-          "A coordinated federation",
-          "Strong central coordination",
-        ],
-      },
-      {
-        type: "poll",
-        prompt: "Which best describes your role in the transition?",
-        options: [
-          "Regenerative village / bioregional",
-          "Open-source technologist",
-          "Web3 / regenerative finance",
-          "Researcher / policymaker",
-          "Here to learn",
-        ],
-      },
-    ],
     beats: [
       {
         n: 1,
@@ -1653,7 +1045,7 @@ export const ROOMS = {
         ],
       },
     ],
-    cta: { label: "Valley of the Commons", url: "/keynote" },
+    cta: { label: "Valley of the Commons", url: "/keynotes" },
   },
 
   // --- w3-d1: Una Wang - As Above, So Below (infrastructure as a precondition for the commons) ---
@@ -1670,108 +1062,6 @@ export const ROOMS = {
       metaDescription:
         "Companion to Una Wang's talk at Valley of the Commons: physical infrastructure as the hidden precondition for institutions, political power, settlement and place, how centralised infrastructure enclosed the commons, and how a self-owning house (no1s1) points to re-commoning it from below. In beats with sources, plus the live session.",
     },
-    items: [
-      {
-        type: "quiz",
-        prompt: "Infrastructure comes from the Latin infra. What does infra mean?",
-        options: [
-          "Around, surrounding",
-          "Above and over",
-          "Below, beneath, under",
-          "Beside, alongside",
-        ],
-      },
-      {
-        type: "quiz",
-        prompt: "In Timothy Mitchell's Carbon Democracy, what won mass democracy for workers between roughly 1880 and 1940?",
-        options: [
-          "A widely shared political doctrine",
-          "Coal's narrow chokepoints, where a few workers could halt the flow",
-          "Oil tankers that crossed the oceans",
-          "Universal access to electricity",
-        ],
-      },
-      {
-        type: "quiz",
-        prompt: "Wang argues the shift from coal to oil was also a shift in what?",
-        options: [
-          "The price of bread",
-          "The size of the largest cities",
-          "The number of political parties",
-          "Who could interrupt the energy flow",
-        ],
-      },
-      {
-        type: "quiz",
-        prompt: "Which two Swiss institutions does the talk trace to the same 19th-century railway push, via Alfred Escher?",
-        options: [
-          "ETH Zurich and Credit Suisse (Schweizerische Kreditanstalt)",
-          "The United Nations and the Red Cross",
-          "CERN and Nestle",
-          "The Swiss Federal Railways and UBS",
-        ],
-      },
-      {
-        type: "quiz",
-        prompt: "In Wang's ETH case study, what is no1s1?",
-        options: [
-          "A cryptocurrency token",
-          "A city-planning software suite",
-          "A small cabin that owns and governs itself through a blockchain treasury",
-          "A map of the internet's backbone",
-        ],
-      },
-      {
-        type: "poll",
-        prompt: "Which of infrastructure's hidden effects surprised you most?",
-        options: [
-          "That it builds our institutions",
-          "That it shapes political power",
-          "That it sets our settlement patterns",
-          "That it makes our sense of place",
-        ],
-      },
-      {
-        type: "poll",
-        prompt: "Who should hold core infrastructure, energy, water, connectivity?",
-        options: [
-          "A commons, locally held",
-          "The state, centrally run",
-          "Private operators, by market",
-          "A hybrid of all three",
-        ],
-      },
-      {
-        type: "poll",
-        prompt: "Could you trust a building that owns and governs itself?",
-        options: [
-          "Yes, enthusiastically",
-          "Maybe, with human oversight",
-          "No, ownership needs a person",
-          "I would need to see it first",
-        ],
-      },
-      {
-        type: "poll",
-        prompt: "Is ownership a natural fact or an engineerable construct?",
-        options: [
-          "A natural, almost sacred fact",
-          "A social construct we inherited",
-          "A programmable bundle of rights",
-          "I am not sure",
-        ],
-      },
-      {
-        type: "poll",
-        prompt: "Where should a new commons start building first?",
-        options: [
-          "The physical layer: land, energy, water",
-          "The digital layer: data, protocols",
-          "The governance layer: rules, institutions",
-          "All of it at once",
-        ],
-      },
-    ],
     beats: [
       {
         n: 1,
@@ -1864,7 +1154,7 @@ export const ROOMS = {
         ],
       },
     ],
-    cta: { label: "Valley of the Commons", url: "/keynote" },
+    cta: { label: "Valley of the Commons", url: "/keynotes" },
   },
 
   // --- w3-d2: Matthias Fersterer - Klein Jasedow: A Commoning Community. Practices & Principles ---
@@ -1881,108 +1171,6 @@ export const ROOMS = {
       metaDescription:
         "Companion to Matthias Fersterer's talk at Valley of the Commons: how Klein Jasedow, Germany's longest-standing intentional community, sustains itself through commoning, care & subsistence, and conviviality, with an oral tradition inside and a layered legal shell outside. In beats with sources, plus the live session.",
     },
-    items: [
-      {
-        type: "quiz",
-        prompt: "Klein Jasedow is Germany's longest-standing intentional community. In what year did it first sprout, and where?",
-        options: [
-          "1968, in a West Berlin commune",
-          "1976/77, by four musicians in Upper Bavaria",
-          "1990, just after reunification, in Western Pomerania",
-          "1997, when it moved to Klein Jasedow",
-        ],
-      },
-      {
-        type: "quiz",
-        prompt: "When the community arrived in 1997, what was Klein Jasedow like?",
-        options: [
-          "A thriving arts town they joined",
-          "A half-deserted village in a structurally weak area, with ~80% unemployment",
-          "An empty greenfield site with no buildings",
-          "A protected heritage site they were invited to restore",
-        ],
-      },
-      {
-        type: "quiz",
-        prompt: "Fersterer says the community's inner life comes down to two questions. Which pair?",
-        options: [
-          "What do I own, and what do I owe?",
-          "Who decides, and who pays?",
-          "What can I do to make community work, and what can I refrain from doing that upsets you?",
-          "What are the rules, and who enforces them?",
-        ],
-      },
-      {
-        type: "quiz",
-        prompt: "How are the community's inner principles held and passed on?",
-        options: [
-          "A written constitution every member signs",
-          "An oral tradition passed on by storytelling, with no written set of rules",
-          "An app that tracks contributions and sanctions",
-          "A rota drawn up by an elected council",
-        ],
-      },
-      {
-        type: "quiz",
-        prompt: "The talk's 'essence: two by three' places three spheres inside a spectrum defined by two poles. What are the three spheres?",
-        options: [
-          "Land, labour and capital",
-          "Family, work and worship",
-          "Commoning, care & subsistence, and conviviality",
-          "Production, distribution and consumption",
-        ],
-      },
-      {
-        type: "poll",
-        prompt: "Klein Jasedow's founders still live together after ~50 years. What do you think holds a community together longest?",
-        options: [
-          "Shared ownership and money",
-          "Shared work and daily practice",
-          "Shared story and culture",
-          "Shared place and land",
-        ],
-      },
-      {
-        type: "poll",
-        prompt: "'No written set of rules', principles passed on by storytelling. How does that land for you?",
-        options: [
-          "Freeing, rules calcify",
-          "Risky, it needs written agreements",
-          "Depends on the size of the group",
-          "Only works with deep trust",
-        ],
-      },
-      {
-        type: "poll",
-        prompt: "The community wraps its essence in legal shells (e.V., eG, Stiftung, GmbH). 'Give to Caesar what is Caesar's.' Your instinct?",
-        options: [
-          "Wise, use the forms, keep the essence",
-          "Dangerous, the cover becomes the essence",
-          "Necessary but always a compromise",
-          "I would avoid legal forms entirely",
-        ],
-      },
-      {
-        type: "poll",
-        prompt: "Which of the three spheres pulls at you most right now?",
-        options: [
-          "Commoning, holding things in common",
-          "Care & subsistence, meeting real needs",
-          "Conviviality, freedom in interdependence",
-          "All three, they only work together",
-        ],
-      },
-      {
-        type: "poll",
-        prompt: "Conviviality here is 'individual freedom realised in personal interdependence', and it extends to the more-than-human. Could you live that?",
-        options: [
-          "Yes, that is the point of community",
-          "Yes, but the human part is hard enough",
-          "The more-than-human part is a stretch",
-          "I would need to see it lived first",
-        ],
-      },
-    ],
     beats: [
       {
         n: 1,
@@ -2080,7 +1268,7 @@ export const ROOMS = {
         ],
       },
     ],
-    cta: { label: "Valley of the Commons", url: "/keynote" },
+    cta: { label: "Valley of the Commons", url: "/keynotes" },
   },
 
   "w3-d3": {
@@ -2097,108 +1285,6 @@ export const ROOMS = {
       metaDescription:
         "Companion to Luna and Sam Delesque's talk at Valley of the Commons: how Traditional Dream Factory restores degraded land in the Alentejo, holds it in a Swiss commons trust, and governs a 60-citizen village through a token weighted by presence and sweat. In beats with sources, plus the live session.",
     },
-    items: [
-      {
-        type: "quiz",
-        prompt: "What does one Traditional Dream Factory token entitle the holder to?",
-        options: [
-          "One night's stay per year, for life",
-          "A permanent house on the land",
-          "One share of the village's annual profits",
-          "A vote proportional only to money spent",
-        ],
-      },
-      {
-        type: "quiz",
-        prompt: "Where is Traditional Dream Factory?",
-        options: [
-          "Findhorn, Scotland",
-          "Abela, in the Alentejo region of Portugal",
-          "Sintra, near Lisbon",
-          "Tamera, in the south of Portugal",
-        ],
-      },
-      {
-        type: "quiz",
-        prompt: "What is the role of OASA, the Swiss non-profit?",
-        options: [
-          "It runs the day-to-day bookings and events",
-          "It markets the token to new buyers",
-          "It holds the land and buildings under a regeneration constitution",
-          "It is the blockchain that hosts the token",
-        ],
-      },
-      {
-        type: "quiz",
-        prompt: "Besides buying tokens, which two mechanisms add voting weight at TDF?",
-        options: [
-          "Proof of Stake and Proof of Work",
-          "Proof of Presence and Proof of Sweat",
-          "Proof of Payment and Proof of Residence",
-          "Proof of Vouching and Proof of Age",
-        ],
-      },
-      {
-        type: "quiz",
-        prompt: "Under OASA's rules, how much of TDF's land may be developed (built on)?",
-        options: [
-          "5%",
-          "25%",
-          "45%",
-          "50%",
-        ],
-      },
-      {
-        type: "poll",
-        prompt: "Which part of building a village would you personally find hardest?",
-        options: [
-          "Restoring the degraded land",
-          "Raising the money",
-          "Holding the community together",
-          "Building the technology",
-        ],
-      },
-      {
-        type: "poll",
-        prompt: "Would you buy into a community with a token giving you one night a year for life?",
-        options: [
-          "Yes, gladly",
-          "Only after visiting in person",
-          "Only if I could resell it",
-          "No, not for me",
-        ],
-      },
-      {
-        type: "poll",
-        prompt: "Where should voting power in a community mostly come from?",
-        options: [
-          "Money contributed",
-          "Work put in (sweat)",
-          "Time physically present",
-          "One person, one vote",
-        ],
-      },
-      {
-        type: "poll",
-        prompt: "What matters most in an intentional community?",
-        options: [
-          "Regenerating the land",
-          "Financial viability",
-          "Strong social rituals and agreements",
-          "Good governance software",
-        ],
-      },
-      {
-        type: "poll",
-        prompt: "Would you rather steward land in common or own property outright?",
-        options: [
-          "Steward it in common",
-          "Own it outright",
-          "A mix of both",
-          "I am not sure",
-        ],
-      },
-    ],
     beats: [
       {
         n: 1,
@@ -2269,7 +1355,7 @@ export const ROOMS = {
         ],
       },
     ],
-    cta: { label: "Valley of the Commons", url: "/keynote" },
+    cta: { label: "Valley of the Commons", url: "/keynotes" },
   },
   "w3-d4": {
     slug: "w3-d4",
@@ -2285,108 +1371,6 @@ export const ROOMS = {
       metaDescription:
         "Companion to Clara Gromaches's talk at Valley of the Commons: the legal, historical and material foundations of holding housing and land in common, from stewarded-property law and the Mietshauser Syndikat to Red Vienna and earth construction. In beats with sources, plus the live session.",
     },
-    items: [
-      {
-        type: "quiz",
-        prompt: "In the David Graeber line Clara opens with, property is fundamentally what?",
-        options: [
-          "A relation between a person and a thing",
-          "An agreement between people",
-          "A right granted by the state",
-          "A gift from nature",
-        ],
-      },
-      {
-        type: "quiz",
-        prompt: "In the Mietshauser Syndikat model, who can veto selling a house back into the speculative market?",
-        options: [
-          "The local municipality",
-          "The individual resident who bought in",
-          "The syndicate/network, alongside the resident community",
-          "The bank holding the mortgage",
-        ],
-      },
-      {
-        type: "quiz",
-        prompt: "Which three characteristics define 'stewarded property' in Clara's framing?",
-        options: [
-          "Ownership, profit, inheritance",
-          "Possession, custom, inalienability",
-          "Rent, lease, sale",
-          "Land, labour, capital",
-        ],
-      },
-      {
-        type: "quiz",
-        prompt: "Which city did Clara repeatedly cite as a global reference for social and affordable housing?",
-        options: [
-          "Barcelona",
-          "Freiburg",
-          "Vienna",
-          "Zurich",
-        ],
-      },
-      {
-        type: "quiz",
-        prompt: "Why does Clara say earth construction performs well in earthquake areas?",
-        options: [
-          "It is heavier than concrete",
-          "It vibrates with the ground at a similar frequency, making it more resistant",
-          "It is reinforced with steel",
-          "It cannot crack",
-        ],
-      },
-      {
-        type: "poll",
-        prompt: "For a Valley dwelling, how much of daily life would you want to share?",
-        options: [
-          "Almost everything (shared kitchen, meals, spaces)",
-          "A lot, but I keep a private bedroom",
-          "A private flat plus a shared common house",
-          "My own house, occasionally using shared facilities",
-        ],
-      },
-      {
-        type: "poll",
-        prompt: "Which legal vehicle for holding housing out of the market appeals to you most?",
-        options: [
-          "Foundation model (assets cannot be sold, only transferred)",
-          "Mietshauser Syndikat network veto",
-          "Right-of-use cooperative",
-          "Community land trust (land and building split)",
-        ],
-      },
-      {
-        type: "poll",
-        prompt: "If you could build here with one local material, which?",
-        options: [
-          "Earth / clay",
-          "Straw",
-          "Timber",
-          "Stone",
-        ],
-      },
-      {
-        type: "poll",
-        prompt: "What matters most when starting a community from zero?",
-        options: [
-          "A clear, specific shared mission",
-          "The right site and climate",
-          "Legal protection against dispossession",
-          "The economic and funding model",
-        ],
-      },
-      {
-        type: "poll",
-        prompt: "How should invisible care work (cooking, cleaning, childcare) be handled?",
-        options: [
-          "An obligatory shared service, like seva, for everyone",
-          "Paid, professionalised roles",
-          "A rotating volunteer roster",
-          "Left to individual households",
-        ],
-      },
-    ],
     beats: [
       {
         n: 1,
@@ -2457,7 +1441,7 @@ export const ROOMS = {
         ],
       },
     ],
-    cta: { label: "Valley of the Commons", url: "/keynote" },
+    cta: { label: "Valley of the Commons", url: "/keynotes" },
   },
   "w3-d5": {
     slug: "w3-d5",
@@ -2473,108 +1457,6 @@ export const ROOMS = {
       metaDescription:
         "Companion to Charlie Fischer's talk at Valley of the Commons: mapping land ownership as a design method for collaborative housing, why enclosure and the price of land shape what is possible, and why a place's prior enabling conditions decide what communities can ever build. In beats with sources, plus the live session.",
     },
-    items: [
-      {
-        type: "quiz",
-        prompt: "In 2014, roughly what share of land ownership did Fischer's group map across Oxfordshire, mostly by hand?",
-        options: [
-          "About 25%",
-          "About 50%",
-          "About 77%",
-          "About 95%",
-        ],
-      },
-      {
-        type: "quiz",
-        prompt: "What does Fischer say most predicts whether a collaborative-housing project succeeds?",
-        options: [
-          "The skills and capital of the individuals running it",
-          "The local enabling conditions, what had been done in that place before",
-          "The size of the initial grant",
-          "Whether a famous architect designed it",
-        ],
-      },
-      {
-        type: "quiz",
-        prompt: "What happened to the roughly 15-million-pound site north of Oxford his consortium bid on in 2016?",
-        options: [
-          "His consortium won and built the affordable homes as planned",
-          "The price was pushed past 22 million, his group lost, and the winner later dropped the affordable housing",
-          "The council bought it and built a health centre",
-          "It was left undeveloped as green belt",
-        ],
-      },
-      {
-        type: "quiz",
-        prompt: "In Fischer's data, roughly how many collaborative-housing organisations had actually built even one home?",
-        options: [
-          "About one in five",
-          "About half",
-          "About four in five",
-          "Nearly all of them",
-        ],
-      },
-      {
-        type: "quiz",
-        prompt: "What mistake did the Bristol self-build on the old builder's yard make?",
-        options: [
-          "They used the wrong building materials",
-          "They failed to get planning permission",
-          "They forgot to put a land trust underneath it, so the homes became valuable and inaccessible",
-          "They ran out of money before completion",
-        ],
-      },
-      {
-        type: "poll",
-        prompt: "Where should communities put most of their energy to make housing possible?",
-        options: [
-          "Buying land now",
-          "Shaping local policy and finance conditions",
-          "Building relationships and trust",
-          "Raising capital",
-        ],
-      },
-      {
-        type: "poll",
-        prompt: "Is it acceptable for community groups to play the same financial and political game as private developers?",
-        options: [
-          "Yes, on the same terms as everyone",
-          "Only if their integrity is preserved",
-          "No, it corrupts the mission",
-          "It depends on the stakes",
-        ],
-      },
-      {
-        type: "poll",
-        prompt: "Which time horizon feels most useful for planning land and housing?",
-        options: [
-          "5 to 10 years",
-          "A working lifetime (25 to 30 years)",
-          "100 years",
-          "Perpetual, a thousand-year view",
-        ],
-      },
-      {
-        type: "poll",
-        prompt: "New build or renovation for the housing we need?",
-        options: [
-          "Mostly new build",
-          "Mostly renovation and retrofit",
-          "A balanced mix",
-          "Whatever the carbon budget allows",
-        ],
-      },
-      {
-        type: "poll",
-        prompt: "Why do cooperative and community groups so often fail to cooperate with each other?",
-        options: [
-          "They cast each other as different",
-          "They compete for the same scarce funding",
-          "No one leads with a strong first act of cooperation",
-          "The wider culture rarely models cooperation",
-        ],
-      },
-    ],
     beats: [
       {
         n: 1,
@@ -2638,7 +1520,7 @@ export const ROOMS = {
         ],
       },
     ],
-    cta: { label: "Valley of the Commons", url: "/keynote" },
+    cta: { label: "Valley of the Commons", url: "/keynotes" },
   },
   "w4-d2": {
     slug: "w4-d2",
@@ -2654,108 +1536,6 @@ export const ROOMS = {
       metaDescription:
         "Companion to Sterlin Lujan's talk at Valley of the Commons: why the systems are failing, the case for exit over reform, the parallel polis of communist Czechoslovakia as a model, the Logos technology stack, and Logos Circles as a grassroots activism model. In beats with sources, plus the live session.",
     },
-    items: [
-      {
-        type: "quiz",
-        prompt: "Who does Lujan credit with popularising the term 'the meaning crisis'?",
-        options: [
-          "Robert Putnam",
-          "John Vervaeke",
-          "Shoshana Zuboff",
-          "Albert Hirschman",
-        ],
-      },
-      {
-        type: "quiz",
-        prompt: "Which historical movement does Lujan present as the primary model Logos is imitating?",
-        options: [
-          "The parallel polis in communist Czechoslovakia",
-          "The French Revolution",
-          "The American frontier settlements",
-          "The Paris Commune",
-        ],
-      },
-      {
-        type: "quiz",
-        prompt: "What are the three main layers of the Logos stack (Basecamp)?",
-        options: [
-          "Wallet, exchange, marketplace",
-          "Identity, reputation, voting",
-          "Storage, messaging, blockchain",
-          "Compute, bandwidth, hosting",
-        ],
-      },
-      {
-        type: "quiz",
-        prompt: "Whose book does Lujan credit for the idea of a 'winnable issue'?",
-        options: [
-          "Saul Alinsky's Rules for Radicals",
-          "Karl Marx's Das Kapital",
-          "Vaclav Havel's The Power of the Powerless",
-          "Balaji Srinivasan's The Network State",
-        ],
-      },
-      {
-        type: "quiz",
-        prompt: "Which Logos Circle win involved Raspberry Pis for a school?",
-        options: [
-          "A circle in Lisbon securing a community centre",
-          "A circle in Zanzibar, Tanzania",
-          "A circle in Nigeria funding medical treatment",
-          "A cleanup at the Liberland border",
-        ],
-      },
-      {
-        type: "poll",
-        prompt: "Which framing resonates more with you for building alternatives?",
-        options: [
-          "Exit",
-          "Voice / reform",
-          "Capacity building",
-          "Something else",
-        ],
-      },
-      {
-        type: "poll",
-        prompt: "Where do you see the most leverage for a small group to make change?",
-        options: [
-          "Local community projects",
-          "Technology and protocols",
-          "National politics",
-          "Culture and storytelling",
-        ],
-      },
-      {
-        type: "poll",
-        prompt: "What is the biggest risk of the 'exit' approach?",
-        options: [
-          "Loss of legal protections",
-          "Excluding people who cannot afford to leave",
-          "Fragmentation and isolation",
-          "It never scales",
-        ],
-      },
-      {
-        type: "poll",
-        prompt: "If you started a Logos Circle here, which 'winnable issue' would you pick?",
-        options: [
-          "Public / green space",
-          "Local food production",
-          "Transport and access",
-          "Reopening trails and paths",
-        ],
-      },
-      {
-        type: "poll",
-        prompt: "How do you read the 'end of politics' idea raised in the talk?",
-        options: [
-          "Genuinely possible and desirable",
-          "Just new political forms, not the end",
-          "Mostly a semantic dispute",
-          "A dangerous illusion",
-        ],
-      },
-    ],
     beats: [
       {
         n: 1,
@@ -2828,9 +1608,378 @@ export const ROOMS = {
         ],
       },
     ],
-    cta: { label: "Valley of the Commons", url: "/keynote" },
+    cta: { label: "Valley of the Commons", url: "/keynotes" },
   },
 
+  "w4-d3": {
+    slug: "w4-d3",
+    meta: {
+      eyebrow: "Startup cities, network states and prediction markets are not new: they are old political theories wearing new tech",
+      speaker: "Daniela Gandorfer",
+      socials: [
+        { label: "Daniela Gandorfer on X", url: "https://x.com/FelizzyS" },
+        { label: "Daniela Gandorfer on LinkedIn", url: "https://www.linkedin.com/in/danielagandorfer/" },
+      ],
+      livestream: "https://www.youtube.com/watch?v=7g_QQQelCaY",
+      metaTitle: "Legal System in Transformation \xb7 Daniela Gandorfer",
+      metaDescription:
+        "Companion to Daniela Gandorfer's talk at Valley of the Commons: social contract theory behind today's governance debates, startup cities and law as a service, the Prospera v. Honduras case, network states and empire, market-based governance, and collective governance as a fourth path. In beats with sources.",
+    },
+    beats: [
+      {
+        n: 1,
+        title: "Three exits from the state of nature",
+        body: "Gandorfer opens with social contract theory, the Enlightenment debate about whether and why we need government, as the shared root under today's governance arguments about exit, community and sovereignty. In the 'state of nature' thought experiment, Hobbes saw a war of all against all, life 'solitary, poor, nasty, brutish, short', so people surrender all rights to one sovereign who stands above the law, a logic she hears in strongman politics today. Locke starts from a milder nature and grounds government in protecting pre-existing natural rights, above all property, before life, the individualist model behind US and European constitutions, with a right to overthrow a government that fails to protect life, liberty and property. Rousseau's nature is peaceful, but people leave it for the common good, trading individual will for a collective 'general will'. She stresses these are not semantic variants of one idea: they are three fundamentally different theories of freedom and government, and exit, network states and market-based governance each draw on a different one.",
+        links: [
+          { label: "State of nature (overview)", url: "https://en.wikipedia.org/wiki/State_of_nature" },
+          { label: "Social contract (overview)", url: "https://en.wikipedia.org/wiki/Social_contract" },
+        ],
+      },
+      {
+        n: 2,
+        title: "Sovereignty tied to land, until now",
+        body: "Before centralized law, Europe had near-constant war between princes and landlords. The Peace of Westphalia (1648), which ended the Thirty Years' War, tied sovereignty to territory for the first time: rule and law bound to a fixed border, and crossing it meant war. Everything downstream, the nation state, international law, the public/private divide, rests on that link between power and land. Gandorfer's claim is that we are living through the biggest change to that order since 1648: digital tools finally let power and law detach from territory, and every actor, states, China, universities and 'tech bros', is scrambling to work out what replaces it. She cites Klaus Schwab's 2016 observation that power is shifting from states to non-state actors and from established institutions to loose networks, but warns against celebrating that reflexively: the biggest non-state actors are large companies, and a state's alternative to losing power is often deeper surveillance and authoritarian control.",
+        links: [
+          { label: "Peace of Westphalia (overview)", url: "https://en.wikipedia.org/wiki/Peace_of_Westphalia" },
+          { label: "The Fourth Industrial Revolution (Schwab, 2016)", url: "https://en.wikipedia.org/wiki/Fourth_Industrial_Revolution" },
+        ],
+      },
+      {
+        n: 3,
+        title: "A new governance frontier, and its cost",
+        body: "She maps the vocabulary now filling the gap: futarchy and prediction markets, law as a service, startup cities, network states, parallel societies, competitive governance. She traces 'frontier' back to the US westward movement and its 'manifest destiny' mythology, and warns the word carries the same charge here: frontier dynamics dissolve existing social orders, property systems, jurisdictions and rights that real people depend on, even while they open real possibility. Her point is not to kill the excitement, she is building in this space herself, but to hold it for a moment: international law is already failing (the US asserting it stands above international law, with Greenland and Gaza as live examples), leaving a vacuum that private actors, not only idealistic communities, are moving fast to fill.",
+        links: [
+          { label: "Frontier Thesis (Turner, the concept she is reacting to)", url: "https://en.wikipedia.org/wiki/Frontier_Thesis" },
+        ],
+      },
+      {
+        n: 4,
+        title: "Startup cities: privatizing law itself",
+        body: "Startup cities (she references Prospera and others) are privately built jurisdictions that negotiate their own legal systems and courts, which she calls the biggest sovereignty innovation since the end of the Middle Ages, because sovereignty used to be something only states could hold. Since someone still has to fund the legal system, they run as businesses, offering law as a product you opt into, the way a company already chooses arbitration under Swiss or Dubai law. She traces the idea to David Friedman's 'law as a private good': rival private rights-enforcement agencies compete for customers and pre-negotiate shared arbitration courts, so law ends up sold like books or cars, exactly as Friedman argued in 1973 and still explains in talks today. Melanie Swan's 2015 blockchain work extends this into smart contracts, law as granular and personalized as a Starbucks order. Gandorfer flags the same gap in both: no one has a real answer for criminal law, 'we deal with that later', because letting a buyer's ability to pay decide a criminal verdict, or a death penalty, is where the market logic breaks down in the open.",
+        links: [
+          { label: "Law as a Private Good (David Friedman)", url: "http://www.daviddfriedman.com/Academic/Law_as_a_private_good/Law_as_a_private_good.html" },
+          { label: "David Friedman on private rights-enforcement agencies (talk video)", url: "https://www.youtube.com/watch?v=-PnkC7CNvyI" },
+          { label: "Blockchain: Blueprint for a New Economy (Swan, 2015)", url: "https://archive.org/details/blockchainbluepr0000swan" },
+        ],
+      },
+      {
+        n: 5,
+        title: "When a company sues a country: Prospera v. Honduras",
+        body: "Her case study of what 'law as a service' produces in practice. Honduras created ZEDE special jurisdictions and sold sovereign-like status to the company Prospera; a change in government later revoked that law, and Prospera responded by suing Honduras in international investment arbitration for roughly $10.7 to $10.8 billion, close to a third of the country's GDP by Gandorfer's estimate. Either outcome is grim for Honduras: settle and absorb a huge loss, or lose the case outright, since reversing the constitutional change is read as breaching the legal stability investors were promised. Her larger point: this is not a hypothetical about some future network state. A private company already has real legal standing to sue a state and its people, and the same tool is available to any company, hers included as an example, Palantir or a Chinese state company.",
+        links: [
+          { label: "Prospera v. Honduras: charter city to arbitration fight", url: "https://legalclarity.org/prospera-honduras-from-charter-city-to-arbitration-fight/" },
+          { label: "Key takeaways from Honduras Prospera Inc. v. Honduras (Kluwer Arbitration Blog)", url: "https://legalblogs.wolterskluwer.com/arbitration-blog/a-local-remedies-pitfall-avoided-for-now-key-takeaways-from-honduras-prospera-inc-v-honduras/" },
+        ],
+      },
+      {
+        n: 6,
+        title: "Network states: exit without competition, empire not state",
+        body: "Balaji Srinivasan's 'network state', an aligned online community that crowdfunds scattered territory and eventually petitions existing states for recognition, grew out of the same investor circles as the startup-city movement but inverts its logic. Startup-city advocates believe rival legal providers make everyone better off through competition; Peter Thiel-aligned network-state builders hold, in Thiel's own words, that 'competition is for losers' and monopoly is the goal, competitive on the outside, hierarchical within, run essentially as a firm with a founder-CEO and no vote. Gandorfer cites Praxis founder Dryden Brown's language of empire, 'a state operates within rules, an empire writes them', as evidence of how far this stretches, and traces the same appetite for un-owned territory into the Trump administration's interest in Greenland and in real-estate plans she says she has seen floated for Gaza, both places where a 'new sovereign' first requires stripping an existing population of its claim to the land.",
+        links: [
+          { label: "The Network State (Balaji Srinivasan)", url: "https://thenetworkstate.com/" },
+          { label: "The Network State and Topological Fetishism in Greenland (Data & Society, on Praxis)", url: "https://datasociety.net/points/the-network-state-and-topological-fetishism-in-greenland/" },
+          { label: "Competition Is for Losers (Thiel, Wall Street Journal, 2014)", url: "https://www.csun.edu/~vcact00f/497CapStone/Peter%20Thiel_%20Competition%20Is%20for%20Losers%20-%20WSJ.pdf" },
+        ],
+      },
+      {
+        n: 7,
+        title: "Markets as governance, and why they wobble",
+        body: "The fourth model she surveys is market-as-decision: futarchy (Robin Hanson) and prediction markets used to set policy, 'vote on values, bet on beliefs'. Her example: put a phone-theft policy to a prediction market, let traders bet on the theft rate under each rule, and adopt whichever the market prices as producing less theft. In the Q&A, she and the room press the model's weak joints: who funds the market when there is no single company with a stake in the answer; a market that is not genuinely liquid can be gamed or gives a distorted signal; and a 'second-order' problem where people are incentivized to bet on the socially popular answer rather than their honest belief, since the payout depends on matching consensus. Her verdict: markets are real information tools, useful for finding facts people have no incentive to share, but treating price as truth, and therefore as the thing that governs, quietly hands the outcome to whoever can move the largest position.",
+        links: [
+          { label: "Shall We Vote on Values, But Bet on Beliefs? (Hanson)", url: "https://mason.gmu.edu/~rhanson/futarchy.pdf" },
+          { label: "Futarchy (overview)", url: "https://en.wikipedia.org/wiki/Futarchy" },
+        ],
+      },
+      {
+        n: 8,
+        title: "A fourth path, and building it with, not against",
+        body: "Gandorfer's own preference is collective governance, where value is 'decided, not priced', but she is candid it is also the least developed of the four, decades of unresolved experiments (DAOs, decentralized physical infrastructure, ReFi) rather than working models, often undone by the same lack of a business model that funds the other three so easily. Her own project is one attempt at it: what began as a Princeton- and Harvard-backed non-profit push for a 'decentralized right to breathe' reframed a London pollution charge, imposed with too few air sensors to back it up, as data a community could hold and act on itself, and grew into a for-profit arm building mobile air-quality sensors and biometric wearables so residents, not a platform, keep a stake in their own pollution data. Her closing argument is not to fight the state, market or corporation head-on but to take what works from each, a firm's capacity to execute, a market's price signal, a state's protections, a community's legitimacy, and test it small, since every one of the other three models has centuries of history behind it and none of them, hers included, has fully worked yet.",
+        links: [
+          { label: "Logische Phantasie Lab: Decentralized Right to Breathe", url: "https://www.lo-ph.agency/dertb" },
+          { label: "Legal System in Transformation (talk video)", url: "https://www.youtube.com/watch?v=7g_QQQelCaY" },
+        ],
+      },
+    ],
+    cta: { label: "Valley of the Commons", url: "/keynotes" },
+  },
+
+  "w4-d4": {
+    slug: "w4-d4",
+    meta: {
+      eyebrow: "How a Prague hacker space borrowed against crypto instead of selling it, and what it takes to do the same with a building",
+      speaker: "Simon Kozak",
+      socials: [
+        { label: "Simon Kozak on LinkedIn", url: "https://www.linkedin.com/in/simon-kozak/" },
+        { label: "Simon Kozak on X", url: "https://x.com/microHoffman" },
+      ],
+      livestream: "https://www.youtube.com/watch?v=MBWJUw9w48A",
+      metaTitle: "Funding Community Needs \xb7 Simon Kozak",
+      metaDescription:
+        "Companion to Simon Kozak's talk at Valley of the Commons: why banks and communities are a poor fit, the Bordel hackerspace onchain mortgage in Prague, how a peer-to-pool crypto-collateral loan actually works, moving toward tokenized real estate as collateral, DAO treasuries, and the open question of undercollateralized, reputation-based lending. In beats with sources.",
+    },
+    beats: [
+      {
+        n: 1,
+        title: "Why financing communities is a poor fit for banks",
+        body: "Simon Kozak works on OWN (formerly called PWN), which builds onchain mortgages: peer-to-peer and peer-to-pool loans settled entirely in smart contracts. His starting problem: regenerative communities constantly need financing (land, a property, renovation, infrastructure) but each community needs different terms, and banks generally will not lend against crypto holdings or accept the repayment schedules communities actually need. The usual choices are a poor fit: take whatever a bank offers, or sell the asset you wanted to keep. Kozak frames OWN's work as sitting at the crossroads of cypherpunk and solarpunk: using trustless, crypto-native infrastructure in service of physical, community-owned space.",
+        links: [
+          { label: "OWN: onchain mortgages", url: "https://own.casa/" },
+        ],
+      },
+      {
+        n: 2,
+        title: "The Bordel case: a hacker space needs a new home",
+        body: "The concrete case is Bordel, a Prague hacker and makerspace for hackers, makers and artists that grew out of the city's Parallel Polis crypto scene and needed to buy a new building. Because Bordel's community is deeply crypto-native, going to a bank was not realistic, and members did not want to sell their crypto to fund the purchase, only to use it. An onchain mortgage let them borrow against ETH-based collateral instead, while also turning the loan into what Kozak calls an alternative to a donation: supporters lend at a below-market rate (as low as 5%) because they want the project to exist.",
+        links: [
+          { label: "Bordel Hackerspace", url: "https://bordel.wtf/" },
+          { label: "Fund a Hackerspace: the Bordel onchain mortgage", url: "https://loan.bordel.wtf/" },
+        ],
+      },
+      {
+        n: 3,
+        title: "How the onchain mortgage actually works",
+        body: "The borrower proposes terms (collateral asset, loan-to-value, interest, repayment schedule, credit asset); lenders then pool stablecoins into a lending vault (an ERC-4626 vault, the standard for tokenized share-of-a-pool contracts) until the target is reached. Once funded, the credit asset (typically USDC) goes to the borrower and the collateral is locked in a smart-contract escrow. For Bordel: weETH (ether.fi's liquid-restaked ETH) as collateral, 75% loan-to-value, a 5-year term, roughly $3,000 monthly installments and a 5% minimum fixed rate. There is no price-based liquidation, only time-based: if repayments are missed, lenders reclaim collateral proportional to what they funded. In the live Q&A, Jeff Emmett pressed on the risk of collateralising a volatile asset (ETH) against a slow, non-volatile one (real estate) over a long duration, a mismatch Kozak agreed is one of the model's open risks.",
+        links: [
+          { label: "ERC-4626: Tokenized Vault Standard", url: "https://eips.ethereum.org/EIPS/eip-4626" },
+          { label: "ether.fi: what is weETH", url: "https://help.ether.fi/en/articles/595737-weeth" },
+        ],
+      },
+      {
+        n: 4,
+        title: "Who ends up owning Bordel",
+        body: "Bordel is structured as a joint-stock company; whoever supplies collateral (not whoever lends the stablecoins, who is simply repaid their loan) receives proportional shares in that company, contributed through a shared multisig wallet that acts as the borrower. Repayments come from ordinary operations (membership fees, space revenue), and members who help repay can receive newly issued shares in return. Kozak is explicit that the mortgage is a means, not the end: the actual goal is a rent-free, mortgage-free hacker space where all revenue goes back into the space rather than debt service.",
+        links: [
+          { label: "Fund a Hackerspace: loan terms and rewards", url: "https://loan.bordel.wtf/" },
+        ],
+      },
+      {
+        n: 5,
+        title: "From crypto collateral to tokenized real estate",
+        body: "Bordel's ETH-as-collateral structure is, in Kozak's words, a workaround: no legal work was needed because nothing about the mortgage touches the property directly. The harder, more interesting frontier is using the real estate itself as collateral. One approach he describes: an SPV (a special-purpose company) holds the property, issues shares, those shares are tokenized, and the tokenized shares (not the property title) serve as collateral. This is highly jurisdiction-dependent: he cites Switzerland and the Czech Republic as places where the legal link between tokenized shares and company shares is workable today, and flags that the same structure will not work in every country.",
+        links: [
+          { label: "Switzerland's DLT Act: ledger-based securities", url: "https://pestalozzilaw.com/en/insights/news/legal-insights/ledger-based-securities-introduction-dlt-shares-switzerland/" },
+          { label: "CMTA standard for tokenizing shares of Swiss corporations", url: "https://cmta.ch/standards/standard-for-the-tokenization-of-shares-of-swiss-corporations-using-the-distributed-ledger-technology" },
+        ],
+      },
+      {
+        n: 6,
+        title: "DAO treasuries and community tokens as collateral",
+        body: "Kozak also describes a purely digital use case: a DAO holding stablecoins in its treasury can structure a loan against that treasury to generate stable income while giving its token holders liquidity, rather than letting the treasury sit idle. He names Gnosis as a DAO OWN is in discussion with for this. In the Q&A, the conversation extends this to Traditional Dream Factory's TDF token (each token a right to one night per year at the Alentejo village, in perpetuity): TDF could in principle tokenize the property into TDF-like tokens and use those as collateral for further building, though he notes the token's illiquidity (not yet openly tradable) remains the key obstacle to using it as reliable collateral.",
+        links: [
+          { label: "GnosisDAO", url: "https://docs.gnosis.io/docs/What-is-GnosisDAO" },
+          { label: "Traditional Dream Factory: the $TDF token", url: "https://www.traditionaldreamfactory.com/token" },
+        ],
+      },
+      {
+        n: 7,
+        title: "The open frontier: undercollateralized, reputation-based lending",
+        body: "Kozak closes his prepared remarks by naming what he sees as the most interesting unsolved case: undercollateralized lending, where a community with real reputation and personal trust between members (say, 60k in collateral against a 100k need) could borrow without full collateral the way most DeFi protocols require. He frames this as replacing missing loan-to-value with reputation and relationships, an idea with real-world precedent (undercollateralized DeFi credit protocols already exist for institutional borrowers) but, in his words, still very experimental for communities.",
+        links: [
+          { label: "Maple Finance: onchain credit without full collateral", url: "https://maple.finance/" },
+        ],
+      },
+      {
+        n: 8,
+        title: "Q&A: paying lenders in something other than money",
+        body: "The Q&A's most generative thread is about non-financial incentives for lenders who are already ideologically aligned but still need a nudge: Bordel offered perks (memberships, private events) instead of high APR; another attendee described a project that repaid lenders in a redeemable local currency (interest paid in vouchers usable onsite) rather than cash, so a below-market cash rate becomes an attractive real rate once you count what you would have paid for the same stay or service anyway. Kozak connects this directly back to TDF's model of selling a token for a fixed number of nights per year, at a price that gives the lender a good effective rate while costing the community only its marginal cost of hosting.",
+        links: [
+          { label: "Traditional Dream Factory: the $TDF token", url: "https://www.traditionaldreamfactory.com/token" },
+          { label: "Simon Kozak, \"Funding Community Needs\" (talk video)", url: "https://www.youtube.com/watch?v=MBWJUw9w48A" },
+        ],
+      },
+    ],
+    cta: { label: "Valley of the Commons", url: "/keynotes" },
+  },
+
+  "w4-d5": {
+    slug: "w4-d5",
+    meta: {
+      eyebrow: "Token voting has failed as decentralized governance, and DAOs must build legitimacy before they vote on anything",
+      speaker: "Rashmi Abbigeri",
+      socials: [
+        { label: "Rashmi Abbigeri on X", url: "https://x.com/rashmivabbigeri" },
+        { label: "RWX Labs (her research/build studio)", url: "https://www.rwxlabs.com/" },
+      ],
+      livestream: "https://www.youtube.com/watch?v=EnSJZ_2VuVs",
+      metaTitle: "State of Governance and Funding Models \xb7 Rashmi Abbigeri",
+      metaDescription:
+        "Companion to Rashmi Abbigeri's talk at Valley of the Commons: Metagov's research on DAO governance, from Lessig's four modalities and ownership rights through token-voting's failure modes, conviction voting and bicameral houses, DAO constitutions and the 'Farewell to DAOs' thesis, to the ENS DAO retrospective and how DAOs fund themselves. In beats with sources.",
+    },
+    beats: [
+      {
+        n: 1,
+        title: "Metagov, DAOstar, and governing many worlds",
+        body: "Rashmi Abbigeri is a research engineer at Metagov, an interdisciplinary nonprofit research collective (founded 2019) that builds standards and infrastructure for digital self-governance. Her main project is DAOstar, the DAO standards body, where she co-authored EIP-4824 (daoURI), a standard JSON schema for publishing a DAO's membership and governance metadata on chain, now adopted by DAOs including the Optimism Collective, Arbitrum Foundation and ENS DAO. She frames the talk through Metagov founder Joshua Tan and Michael Zargham's course 'Governing Many Worlds': the prehistory of the DAO concept, and Lawrence Lessig's four modalities of regulation from Code and Other Laws of Cyberspace, law, norms, markets and code/architecture, and the premise behind 'code is law': that a platform's terms of service can constrain behaviour at societal scale the way law does.",
+        links: [
+          { label: "ERC-4824: Common Interfaces for DAOs", url: "https://eips.ethereum.org/EIPS/eip-4824" },
+          { label: "DAOstar (Metagov)", url: "https://metagov.org/projects/daostar" },
+          { label: "Lessig, Code and Other Laws of Cyberspace", url: "https://en.wikipedia.org/wiki/Code_and_Other_Laws_of_Cyberspace" },
+        ],
+      },
+      {
+        n: 2,
+        title: "Ownership rights, soulbound identity, and pricing the commons",
+        body: "She works through the ownership questions a DAO has to answer for any shared resource: the right to use it, the right to alter or destroy it, and the right to profit or claim yield from it, and how unclear it often is who holds each right, or how anyone verifies it. She covers 'Decentralized Society' (DeSoc), the 2022 proposal for non-transferable 'soulbound' tokens encoding reputation and affiliation, framed as a reaction against web3's hyper-financialization, where governance rights are simply purchased tokens. She also raises Harberger taxes (self-assessed property value plus a right for anyone to force a sale at that price) as a way to price scarce commons resources, but is skeptical it suits a single room or amenity rather than an ecosystem-level commons.",
+        links: [
+          { label: "Weyl, Ohlhaver, Buterin: Decentralized Society (2022)", url: "https://www.radicalxchange.org/updates/papers/desoc.pdf" },
+          { label: "Harberger Tax", url: "https://en.wikipedia.org/wiki/Harberger_Tax" },
+        ],
+      },
+      {
+        n: 3,
+        title: "The governance spectrum: financialized, reputation, market",
+        body: "Abbigeri lays out a spectrum of DAO governance models. At one end, financialized, token-weighted governance (Compound, Uniswap), where voting power is purchased along with the token, and implementing it in a smart contract is simple. In the middle, reputation-based governance, exemplified by Optimism's non-transferable badgeholders, where a participant's history in the ecosystem, not just token holdings, earns them a role such as core contributor or delegate. At the other end, market and algorithmic mechanisms, citing DAOstack's Holographic Consensus, where members stake GEN tokens predicting which proposals will pass; predicted winners get 'boosted' to a lower quorum, letting a DAO process many proposals without every token holder reviewing each one.",
+        links: [
+          { label: "DAOstack: Holographic Consensus", url: "https://gitcoin.co/mechanisms/holographic-consensus" },
+        ],
+      },
+      {
+        n: 4,
+        title: "Web2 'monarchies' and the limits of platform democracy",
+        body: "She compares how users relate to Apple, Meta or Netflix to living under a monarchy: terms of service nobody reads or can alter, arbitrary rule changes to ranking or moderation, and a 'holdup problem' where switching costs (family on WhatsApp, web3 on Telegram) trap people even once they dislike the service. She connects this to Balaji Srinivasan's 'network state' framing of community as a subscription people can supposedly just exit, arguing real exit gets harder the more integrated someone becomes. Her cautionary case is Facebook's February 2009 referendum on its terms of service: only about 0.3% of users (600,000 of roughly 175 million) voted, illustrating the 'unpaid labor' and cognitive load of platform voting; she notes web3 DAO turnout runs only somewhat better, at roughly 1 to 10%.",
+        links: [
+          { label: "Facebook: opening governance of service and policy to users (2009)", url: "https://about.fb.com/news/2009/02/facebook-opens-governance-of-service-and-policy-process-to-users/" },
+          { label: "Balaji Srinivasan, The Network State", url: "https://thenetworkstate.com/" },
+        ],
+      },
+      {
+        n: 5,
+        title: "Why token voting fails: concentration, attacks, legal wrappers",
+        body: "Metagov's retrospective research (detailed later on ENS) found that power concentration is set at a DAO's token launch and barely shifts afterward, even as delegation is encouraged; delegates become 'politicians' representing a protocol without agreeing on implementation. She invokes, without naming it, the Condorcet Jury Theorem: crowds only make better decisions than individuals if each voter is right more than half the time, a condition plutocratic, low-turnout DAO voting rarely meets. She covers governance attacks (passing a proposal to drain a treasury one controls) and vote-buying, and traces DAOs' early preference for Delaware or Wyoming legal wrappers, Wyoming passed the first US DAO LLC law in 2021, to avoiding personal liability during crypto's regulatory uncertainty, rather than any governance ideal.",
+        links: [
+          { label: "Condorcet's jury theorem", url: "https://en.wikipedia.org/wiki/Condorcet%27s_jury_theorem" },
+          { label: "Wyoming DAO LLC law explained", url: "https://www.legalnodes.com/article/wyoming-dao-llc" },
+        ],
+      },
+      {
+        n: 6,
+        title: "Beyond one-token-one-vote: conviction, quadratic, bicameral",
+        body: "She surveys mechanisms built to fix simple token voting. Conviction voting, live-explained in the room by Jeff Emmett, arose from early Aragon DAO votes where a large holder ('whale') would swing the outcome in the final minutes; conviction instead accrues to a choice over time and decays slowly if you change your mind, turning a single snapshot vote into a continuous signal (built by Aragon, 1Hive, BlockScience and Commons Stack). Quadratic voting, from Weyl and Buterin's work, prices extra votes at the square of their number so voters reveal how strongly, not just which way, they feel. And bicameral structures such as Optimism's Token House (token-weighted) paired with its Citizens' House (one-person-one-vote via non-transferable badges, allocating retroactive public-goods funding) split which decisions each body should make.",
+        links: [
+          { label: "A Brief History of Conviction Voting", url: "https://blog.block.science/a-brief-history-of-conviction-voting/" },
+          { label: "Vitalik Buterin, Quadratic Payments: A Primer", url: "https://vitalik.eth.limo/general/2019/12/07/quadratic.html" },
+          { label: "Optimism: Introducing the Citizens' House", url: "https://optimism.io/blog/introducing-the-citizens-house-10m-op-to-public-goods" },
+        ],
+      },
+      {
+        n: 7,
+        title: "Constitutions, gov/acc, and 'Farewell to DAOs'",
+        body: "Metagov's constitutions research, tracing a lineage back to Usenet's early declared norms, analyzed dozens of DAO constitutions for their goals, values, rights and enforcement (a mix of forum discussion, off-chain 'temperature check' snapshot votes, on-chain execution and smart contracts), publishing a template for 'computational constitutionalism'. Its gov/acc (Governance Acceleration) initiative, led by a Metagov research director, ran 52-plus structured interviews (via the open-source AI facilitation tool Harmonica) mapping 11 governance problems, 41 proposed solutions and 59 actors; 'token voting failure' was the top-cited problem. This research feeds Govbase, Metagov's open database of governance projects, and the 'Farewell to DAOs' thesis aired at Stanford's July 2026 SBC DAO Workshop: first-generation, token-holder-governed DAOs failed to deliver reliability and legitimacy, and any second generation must build legitimacy infrastructure, and legible, possibly AI-assisted coordination, before it optimizes voting mechanics.",
+        links: [
+          { label: "Constitutions of Web3 (Metagov)", url: "https://constitutions.metagov.org/article" },
+          { label: "gov/acc: governance acceleration (Metagov)", url: "https://gov-acc.metagov.org/" },
+          { label: "Govbase: open governance database", url: "https://govbase.metagov.org/" },
+          { label: "SBC DAO Workshop 2026, “Farewell to DAOs”", url: "https://luma.com/28l6e18l" },
+        ],
+      },
+      {
+        n: 8,
+        title: "DAOs of the world, the ENS retrospective, and funding models",
+        body: "Metagov's 'State of DAOs' series compares DAOs by country: Japan treats DAOs as an upgrade to existing institutions, with a DAO law recognizing NFT holders as members; Korea's most active DAO is an off-chain K-pop fan club; Taiwan's DAOs resemble civic-tech nonprofits. Metagov's ENS DAO retrospective (built on public forum, snapshot and on-chain data) found power concentration frozen since token launch, low turnout driven by cognitive and time cost, and delegates clustering into nine informal voting blocs. She also runs through DAO mergers gone wrong (Gnosis's contested xDai token-swap merger, and Fei Protocol and Rari Capital's Tribe DAO, which unwound after an $80M hack and a reversed reimbursement vote) and how DAOs fund themselves, token launches, VC, investment DAOs like MetaCartel, grants, NFTs, versus how they fund others, via Gitcoin's direct grants, quadratic funding and retroactive public-goods funding mechanisms.",
+        links: [
+          { label: "DAOstar: announcing the State of DAOs in Asia series", url: "https://daostar.substack.com/p/announcing-the-state-of-daos-in-asia" },
+          { label: "ENS DAO: Final ENS Retro Report", url: "https://discuss.ens.domains/t/final-ens-retro-report/22096" },
+          { label: "xDai's contested Gnosis merger (CoinDesk)", url: "https://www.coindesk.com/tech/2021/11/12/xdai-wants-a-gnosis-merger-to-stay-relevant-but-some-tokenholders-are-crying-foul" },
+          { label: "Gitcoin funding mechanisms", url: "https://gitcoin.co/mechanisms" },
+          { label: "State of Governance and Funding Models (talk video)", url: "https://www.youtube.com/watch?v=EnSJZ_2VuVs" },
+        ],
+      },
+    ],
+    cta: { label: "Valley of the Commons", url: "/keynotes" },
+  },
+
+  "sterlin-parallel-mind": {
+    slug: "sterlin-parallel-mind",
+    meta: {
+      eyebrow: "Why building parallel societies is how a species can purposely architect a planetary mind",
+      speaker: "Sterlin Lujan",
+      socials: [
+        { label: "Sterlin Lujan on X", url: "https://x.com/sterlinlujan" },
+        { label: "Logos Network", url: "https://logos.co" },
+      ],
+      livestream: "https://www.youtube.com/watch?v=iDuYa1QnaK0",
+      metaTitle: "The Parallel Mind \xb7 Sterlin Lujan",
+      metaDescription:
+        "Companion to Sterlin Lujan's talk at Valley of the Commons: the poly-crisis as a Molochian trap, Teilhard de Chardin's noosphere and Omega Point, Michael Levin's bioelectric evidence for collective intelligence in cells, and parallel communities as a deliberate blueprint for a planetary mind. In beats with sources.",
+    },
+    beats: [
+      {
+        n: 1,
+        title: "Not on behalf of an institution",
+        body: "Lujan opens by framing what the talk is not: most speakers who come to Valley of the Commons speak for an institution or a particular incentive. He wants instead to address one question that has bothered him for years: everything being built here, call it the parallel society space, the network state space, the eco-village space, what does it actually mean? What are we doing as a species?",
+        links: [],
+      },
+      {
+        n: 2,
+        title: "Acapulco, 2018: two futurists, one attractor",
+        body: "He traces the talk's origin to a 2018 experience at the Anarchapulco conference: on MDA, watching sand on a beach undulate into fractal patterns, then machines, then mandalas that felt like a language. Trying to make sense of it, he connected it to two thinkers he had studied for years: Terence McKenna's notion of a 'transcendental object at the end of time' pulling history forward, and Ray Kurzweil's The Singularity Is Near, where accelerating technology culminates in an 'age of spiritual machines' (asked in an interview if he believes God exists, Kurzweil answered 'not yet'). Despite coming from opposite worlds, psychedelic storyteller and technologist, Lujan reads both as describing the same pull toward a culmination point, which he names 'the parallel mind': the idea that humanity already has a blueprint to deliberately engineer a 'salvation device' rather than wait for one.",
+        links: [
+          { label: "Terence McKenna, The Transcendental Object at the End of Time", url: "https://archive.org/details/terence-mckenna-the-transcendental-object-at-the-end-of-time-2014" },
+          { label: "Ray Kurzweil, The Singularity Is Near", url: "https://www.singularity.com/aboutthebook.html" },
+        ],
+      },
+      {
+        n: 3,
+        title: "The poly-crisis as hyperobject, the planet as wounded",
+        body: "Lujan describes humanity as being in an emergency scenario, beset by what many thinkers call the poly-crisis or meta-crisis: not a list of separate problems but a multivariate situation with cascade dynamics between crises that no individual can fully grasp. He borrows eco-philosopher Timothy Morton's term for this, a 'hyperobject', something so vast in time and space it defeats ordinary understanding. He pairs this with what he calls the 'wounded planet thesis': the planet as a living organism (the Lovelockian Gaia hypothesis), where humanity's own traumas, disenchantment and institutional failures have become feedback loops that damage the biosphere directly.",
+        links: [
+          { label: "Timothy Morton, Hyperobjects", url: "https://www.upress.umn.edu/9780816689231/hyperobjects/" },
+          { label: "Gaia hypothesis", url: "https://en.wikipedia.org/wiki/Gaia_hypothesis" },
+        ],
+      },
+      {
+        n: 4,
+        title: "The Molochian trap",
+        body: "The mechanism behind the poly-crisis, in Lujan's telling, is what Daniel Schmachtenberger calls a Molochian dynamic (a term Schmachtenberger traces to Scott Alexander's essay 'Meditations on Moloch'): Moloch, the Canaanite deity to whom tribes sacrificed their children to win the war or guarantee good weather, stands for any competitive system that forces short-term sacrifices that hollow out the whole in the long run. Institutions racing to maximise profit or accelerate technology, Lujan argues, are running this same engine of self-destruction. He is explicit that this is not a case against building fast per se but against accelerationism without circumspection, and frames exit and parallel-society building as the alternative to being ground through the sacrifice.",
+        links: [
+          { label: "Scott Alexander, Meditations on Moloch", url: "https://slatestarcodex.com/2014/07/30/meditations-on-moloch/" },
+          { label: "The Consilience Project (Daniel Schmachtenberger)", url: "https://consilienceproject.org/about-the-project/" },
+          { label: "Moloch", url: "https://en.wikipedia.org/wiki/Moloch" },
+        ],
+      },
+      {
+        n: 5,
+        title: "Teilhard de Chardin: noosphere, Omega point, and a choice instead of an automatism",
+        body: "Lujan's central intellectual anchor is Pierre Teilhard de Chardin, a Jesuit priest and paleontologist whose posthumously published The Phenomenon of Man (written 1938 to 1940) describes matter evolving toward higher complexity and consciousness, converging on a 'noosphere', a planet-enveloping layer of collective mind, and ultimately an 'Omega point' where the universe 'harmonizes around love'. Where Chardin, McKenna and Kurzweil all treat this convergence as effectively automatic, built into the nature of the universe, Lujan explicitly departs from them: he argues it is not automatic, but an engineering blueprint, an architecture a species has to choose and build, using consciousness's gift for spotting and shaping emergent properties (McKenna's 'strange attractor': mostly hidden, like an iceberg, but visible enough at the edges to be worked with).",
+        links: [
+          { label: "The Phenomenon of Man", url: "https://en.wikipedia.org/wiki/The_Phenomenon_of_Man" },
+        ],
+      },
+      {
+        n: 6,
+        title: "Michael Levin: cells already run on collective intelligence",
+        body: "To ground the abstraction, Lujan turns to Michael Levin's bioelectricity research at Tufts University. Levin's lab has shown that injecting cells with bioelectric-signaling compounds (which Lujan calls 'morphoceuticals') can instruct a Xenopus tadpole to grow a functioning eye on its tail instead of its head, and can rearrange frog faces, because the electrical pattern among cells is itself a kind of communication channel that specifies anatomy. Lujan cites Levin's language of a 'platonic space' of patterns that organisms tap into, and a case where turning on a tumor-causing oncogene depolarizes a cell from the collective, but restoring its bioelectric connection to neighboring cells suppresses the tumor even though the oncogene is still present. His takeaway, which he says struck him the day of the talk: cancer is a coordination problem, a cell that has gone rogue from the collective and treats the rest of the body as an open environment to exploit.",
+        links: [
+          { label: "Blackiston & Levin, Ectopic eyes outside the head in Xenopus tadpoles (2013)", url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC3587383/" },
+          { label: "Chernet & Levin, Transmembrane voltage potential controls oncogene-mediated tumorigenesis (2014)", url: "https://ncbi.nlm.nih.gov/pmc/articles/PMC4102810/" },
+          { label: "Michael Levin, a Platonic Space background for questions in consciousness", url: "https://mlevin77.substack.com/p/a-platonic-space-background-for-questions" },
+        ],
+      },
+      {
+        n: 7,
+        title: "The parallel-mind blueprint: communities as subroutines",
+        body: "Lujan's proposed architecture borrows from massively parallel computing: distributed subsystems that each focus on one problem still produce system-wide fault tolerance and emergent, superlinear gains, the same way the brain is decentralized rather than centrally controlled. He argues that purposely built parallel communities, each an accurately-communicating node, are the necessary and sufficient conditions for a new kind of planetary mind, because legacy institutions optimize for their own local conditions at the expense of collective flourishing and cannot solve problems (like oceanic microplastics) that outrun '19th-century governance technology'. His example is Prospera, the Honduras charter city he says is focused specifically on longevity tech, regenerative medicine and biotech; in his framing, other communities focusing on other problems and talking to each other constitute the coordination layer, comparable in the Q&A to Reticulum, a self-routing mesh network with no central address tree, as a concrete technical analogue for how nodes could coordinate without centralization. Lujan's own main companion, on Logos Circles, sketches the on-the-ground, single-issue version of exactly this kind of node.",
+        links: [
+          { label: "Prospera", url: "https://prospera.hn/" },
+          { label: "Reticulum Network Stack", url: "https://reticulum.network/manual/whatis.html" },
+          { label: "Logos Circles: Activism for Parallel Societies (Lujan's main companion)", url: "/keynote-w4-d2" },
+        ],
+      },
+      {
+        n: 8,
+        title: "Not power, but love: process philosophy and the closing note",
+        body: "Lujan closes by naming the philosophical tradition behind his claim that this convergence must be chosen rather than automatic: process philosophy, associated above all with Alfred North Whitehead (who also co-authored Principia Mathematica with Bertrand Russell), and, he notes, contested by thinkers like Alexander Bard, whose Process and Event (2023) argues the 'Event called God' is something humans create out of need. Lujan's own formulation: 'the problem of nature is not one that can be solved by power, it can only be solved by love,' which is why he thinks politics and left-right conflict are beside the point when communities can instead build enclaves around shared values. In the Q&A an audience member linked his 2018 experience to Bill Plotkin's concept of 'ecological awakening' (the shift from egocentric to ecocentric), and another quoted Charles Eisenstein's line that 'the more beautiful world our hearts know is possible is inevitable' while still requiring everything we can do to bring it about, both of which Lujan took as reinforcing his own case for treating this as deliberate, chosen work rather than a foregone conclusion.",
+        links: [
+          { label: "Alfred North Whitehead, Process and Reality", url: "https://en.wikipedia.org/wiki/Process_and_Reality" },
+          { label: "Alexander Bard & Jan Soderqvist, Process and Event", url: "https://syntheism.com/" },
+          { label: "Bill Plotkin, on eco-awakening", url: "https://www.animas.org/the-realm-of-purpose-least-realized/" },
+          { label: "Charles Eisenstein, The More Beautiful World Our Hearts Know Is Possible", url: "https://charleseisenstein.org/books/the-more-beautiful-world-our-hearts-know-is-possible/" },
+          { label: "The Parallel Mind (talk video)", url: "https://www.youtube.com/watch?v=iDuYa1QnaK0" },
+        ],
+      },
+    ],
+    cta: { label: "Valley of the Commons", url: "/keynotes" },
+  },
 };
 
 export const WEEKS = [
@@ -2849,9 +1998,24 @@ export const WEEKS = [
     theme: "Future Living in Community",
     slugs: ["w3-d1", "w3-d2", "w3-d3", "w3-d4", "w3-d5"],
   },
+  {
+    label: "Week 4 \xb7 14 - 18 Sep",
+    theme: "Governance & Funding Models",
+    // The first entry is Deca's closing-of-week deck, a self-contained reveal.js
+    // page at /keynote-w4-d1 with no companion room, so it is a link object
+    // (speaker, talk, url) rather than a room slug; it renders first via
+    // soonCardHtml, ahead of the room slugs.
+    slugs: [
+      { speaker: "Deca", talk: "Game Theory of Our Shared Purpose", url: "/keynote-w4-d1" },
+      "w4-d2",
+      "w4-d3",
+      "w4-d4",
+      "w4-d5",
+    ],
+  },
 ];
 
-export const MORE = ["michel", "deca"];
+export const MORE = ["michel", "deca", "sterlin-parallel-mind"];
 
 // The one non-talk destination, mirroring learn-ai.london/valley: learn to build
 // your own agentic system. On LAL this is the /valley-ai page; from this site we
@@ -2865,25 +2029,6 @@ export const AI_COURSE = {
   // the VOTC /valley-ai mirror, or it reintroduces a live learn-ai.london link.
   url: "https://learn-ai.london/valley-ai",
 };
-
-// Announced but not yet published (no companion pages). Rendered on the index as
-// normal-looking cards that show "Coming soon" on click instead of navigating.
-// Confirmed Week 4 running order (Deca, 2026-09). Monday is Deca's closing-of-week
-// deck, live at learn-ai.london/valley-w4-d5. Tue/Wed/Thu titles are not yet
-// confirmed by the speakers (TBC); Friday is the team's closing keynote.
-export const COMING = [
-  {
-    label: "Week 4 · 14 - 18 Sep",
-    theme: "Governance & Funding Models",
-    talks: [
-      { speaker: "Deca", talk: "Game Theory of Our Shared Purpose", url: "/keynote-w4-d1" },
-      { speaker: "Sterlin Lujan · Logos", talk: "Logos Circles: Activism for Parallel Societies", url: "/keynote-w4-d2" },
-      { speaker: "Daniela Gandorfer", talk: "Legal System in Transformation" },
-      { speaker: "Simon", talk: "Talk title TBC" },
-      { speaker: "Rashmi Abbigeri · Metagov", talk: "Talk title TBC, then VotC Team closing ceremony" },
-    ],
-  },
-];
 
 // Category tags for the 3D Constellation view (keynote-graph.mjs). Each talk
 // carries three tags, one per axis couple: solar/lunar (X), global/local (Y),
@@ -2915,7 +2060,10 @@ export const CATEGORIES = [
   { id: "w3-d5", speaker: "Charlie Fischer", talk: "Knowing at the Boundaries", href: "/keynote-w3-d5", spine: "#d97757", tags: ["solar", "local", "impl"] },
   { id: "w4-d1", speaker: "Deca", talk: "Game Theory of Our Shared Purpose", href: "/keynote-w4-d1", spine: "#ff6b35", tags: ["solar", "global", "vision"] },
   { id: "w4-d2", speaker: "Sterlin Lujan · Logos", talk: "Logos Circles", href: "/keynote-w4-d2", spine: "#b14fff", tags: ["lunar", "global", "vision"] },
-  { id: "w4-d3", speaker: "Daniela Gandorfer", talk: "Legal System in Transformation", href: null, spine: "#c9b3ff", tags: ["lunar", "global", "vision"] },
+  { id: "w4-d3", speaker: "Daniela Gandorfer", talk: "Legal System in Transformation", href: "/keynote-w4-d3", spine: "#c9b3ff", tags: ["lunar", "global", "vision"] },
+  { id: "w4-d4", speaker: "Simon Kozak", talk: "Funding Community Needs", href: "/keynote-w4-d4", spine: "#34d399", tags: ["lunar", "local", "impl"] },
+  { id: "w4-d5", speaker: "Rashmi Abbigeri · Metagov", talk: "The State of Governance & Funding Models", href: "/keynote-w4-d5", spine: "#d97757", tags: ["solar", "global", "impl"] },
+  { id: "sterlin-parallel-mind", speaker: "Sterlin Lujan", talk: "The Parallel Mind", href: "/keynote-sterlin-parallel-mind", spine: "#b14fff", tags: ["solar", "global", "vision"] },
   { id: "michel", speaker: "Michel Bauwens", talk: "Cosmo-Localism", href: "/keynote-michel", spine: "#b14fff", tags: ["solar", "global", "vision"] },
   { id: "deca", speaker: "Deca", talk: "The Market, the State and the Commons", href: "/keynote-deca", spine: "#c9b3ff", tags: ["lunar", "global", "vision"] },
 ];

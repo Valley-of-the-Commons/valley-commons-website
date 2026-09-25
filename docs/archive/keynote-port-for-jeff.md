@@ -1,3 +1,6 @@
+**Superseded 2026-09-25: the live quiz was retired.** See
+`docs/archive/keynote-live-quiz.md`. Kept for the record; do not act on it.
+
 # Keynote backend: handoff for Jeff
 
 Audience: Jeff, and Jeff's Claude running on Jeff's machine. Jeff owns the

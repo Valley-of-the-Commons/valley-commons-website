@@ -1,0 +1,650 @@
+{
+  "source": "learn-ai.london Supabase quiz_sessions archive, exported 2026-09-25",
+  "sessions": {
+    "w2-d2": {
+      "playedAt": "2026-09-01T10:55:20.059391+00:00",
+      "playerCount": 12,
+      "standings": [
+        {
+          "score": 2853,
+          "nickname": "Erin"
+        },
+        {
+          "score": 2650,
+          "nickname": "Simon"
+        },
+        {
+          "score": 2535,
+          "nickname": "Nena"
+        },
+        {
+          "score": 1757,
+          "nickname": "bubbles"
+        },
+        {
+          "score": 1531,
+          "nickname": "civil"
+        },
+        {
+          "score": 1437,
+          "nickname": "Joe A."
+        },
+        {
+          "score": 1343,
+          "nickname": "Deca"
+        },
+        {
+          "score": 633,
+          "nickname": "Anonymous"
+        },
+        {
+          "score": 617,
+          "nickname": "Anon77"
+        },
+        {
+          "score": 612,
+          "nickname": "Stefan"
+        },
+        {
+          "score": 579,
+          "nickname": "Xavier"
+        },
+        {
+          "score": 0,
+          "nickname": "malkavia"
+        }
+      ],
+      "items": [
+        {
+          "type": "quiz",
+          "prompt": "In Ecological Reasonings (2024), what is Jörg's central move for salvaging reason?",
+          "options": [
+            "Return to classical Enlightenment rationality",
+            "Pluralise 'reason' into many situated 'reasonings'",
+            "Abolish reason entirely as a colonial tool",
+            "Replace reason with pure emotion"
+          ],
+          "correct": 1,
+          "counts": [
+            1,
+            4,
+            0,
+            0
+          ]
+        },
+        {
+          "type": "quiz",
+          "prompt": "In the Toxic Temple project, how are plastic, cement and nuclear waste framed?",
+          "options": [
+            "As problems to be fully recycled away",
+            "As economically valuable raw materials",
+            "As sacred artifacts, 'messages to the afterlife' that outlive humanity",
+            "As proof that technology will save us"
+          ],
+          "correct": 2,
+          "counts": [
+            4,
+            4,
+            3,
+            1
+          ]
+        },
+        {
+          "type": "quiz",
+          "prompt": "What does Jörg use the automobile as, in Das Auto und die ökologische Katastrophe?",
+          "options": [
+            "A neutral piece of transport technology",
+            "A metaphor for our toxic entanglement with modern life",
+            "The single solution to urban ecology",
+            "A symbol of successful green transition"
+          ],
+          "correct": 1,
+          "counts": [
+            1,
+            8,
+            0,
+            1
+          ]
+        },
+        {
+          "type": "quiz",
+          "prompt": "Toxic Temple rejects which stance in favour of engaging with toxicity?",
+          "options": [
+            "Naive, purity-based conservation environmentalism",
+            "Degrowth economics",
+            "Renewable-energy investment",
+            "Indigenous land rights"
+          ],
+          "correct": 0,
+          "counts": [
+            8,
+            1,
+            0,
+            3
+          ]
+        },
+        {
+          "type": "quiz",
+          "prompt": "Which collective did Jörg found for 'performative philosophy'?",
+          "options": [
+            "Toxic Temple",
+            "philosophy unbound",
+            "Critical Hedonism",
+            "Newspeak House"
+          ],
+          "correct": 1,
+          "counts": [
+            6,
+            3,
+            1,
+            0
+          ]
+        },
+        {
+          "type": "poll",
+          "prompt": "When you hear 'ecological crisis', what feels closest to true?",
+          "options": [
+            "A technical problem we can engineer our way out of",
+            "A political-economic problem of power and ownership",
+            "A crisis of how we think and perceive",
+            "A spiritual or existential rupture"
+          ],
+          "counts": [
+            0,
+            4,
+            4,
+            2
+          ]
+        },
+        {
+          "type": "poll",
+          "prompt": "'Reclaiming the commons' means, to you, mostly:",
+          "options": [
+            "Taking back shared resources from private owners",
+            "Rebuilding collective ways of living and deciding",
+            "Restoring damaged land and ecosystems",
+            "Something else"
+          ],
+          "counts": [
+            2,
+            6,
+            0,
+            1
+          ]
+        },
+        {
+          "type": "poll",
+          "prompt": "How do you relate to your own toxic entanglements (car, plastic, energy)?",
+          "options": [
+            "I try to stay as clean as possible",
+            "I accept I'm implicated and work from there",
+            "I mostly feel guilt",
+            "I hadn't thought about it this way"
+          ],
+          "counts": [
+            4,
+            5,
+            0,
+            0
+          ]
+        },
+        {
+          "type": "poll",
+          "prompt": "One universal reason, or many situated reasonings?",
+          "options": [
+            "One universal reason",
+            "Many plural reasonings",
+            "Unsure"
+          ],
+          "counts": [
+            0,
+            7,
+            3
+          ]
+        },
+        {
+          "type": "poll",
+          "prompt": "A car-free version of your own neighbourhood feels:",
+          "options": [
+            "Liberating",
+            "Impractical",
+            "Frightening",
+            "I've never let myself imagine it"
+          ],
+          "counts": [
+            7,
+            3,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    "w2-d3": {
+      "playedAt": "2026-09-02T10:42:43.270766+00:00",
+      "playerCount": 10,
+      "standings": [
+        {
+          "score": 4324,
+          "nickname": "Simon"
+        },
+        {
+          "score": 4293,
+          "nickname": "Jesse"
+        },
+        {
+          "score": 4250,
+          "nickname": "Deca"
+        },
+        {
+          "score": 3930,
+          "nickname": "Stefan"
+        },
+        {
+          "score": 3326,
+          "nickname": "Xavier"
+        },
+        {
+          "score": 3232,
+          "nickname": "Lorenzo"
+        },
+        {
+          "score": 2912,
+          "nickname": "Emilia"
+        },
+        {
+          "score": 2634,
+          "nickname": "zaks"
+        },
+        {
+          "score": 0,
+          "nickname": "civil"
+        },
+        {
+          "score": 0,
+          "nickname": "swat"
+        }
+      ],
+      "items": [
+        {
+          "type": "quiz",
+          "prompt": "More than fire or tools, what let humans cooperate in huge numbers?",
+          "options": [
+            "Sheer physical strength",
+            "Shared stories and beliefs",
+            "Bigger brains, on their own",
+            "Farming"
+          ],
+          "correct": 1,
+          "counts": [
+            1,
+            5,
+            1,
+            1
+          ]
+        },
+        {
+          "type": "quiz",
+          "prompt": "The agricultural revolution, some 12,000 years ago, set off which chain?",
+          "options": [
+            "Surplus, specialisation, and the first cities",
+            "The printing press and mass literacy",
+            "Global trade and money",
+            "The internet"
+          ],
+          "correct": 0,
+          "counts": [
+            8,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "type": "quiz",
+          "prompt": "Why does the talk look back to the medieval monasteries?",
+          "options": [
+            "They ran the markets of their day",
+            "They conquered and held territory",
+            "They preserved the books, the seeds, and the craft through the collapse after Rome",
+            "They invented writing"
+          ],
+          "correct": 2,
+          "counts": [
+            1,
+            0,
+            7,
+            0
+          ]
+        },
+        {
+          "type": "quiz",
+          "prompt": "Which is one of the seven properties of a 21st-century monastery in the talk?",
+          "options": [
+            "Total secrecy and isolation",
+            "Maximising profit",
+            "A semi-permeable membrane: open enough to teach and host, closed enough to protect its culture",
+            "A single charismatic leader"
+          ],
+          "correct": 2,
+          "counts": [
+            0,
+            0,
+            8,
+            0
+          ]
+        },
+        {
+          "type": "quiz",
+          "prompt": "AKASHA Hub Barcelona, the talk's living example, is...",
+          "options": [
+            "A venture-funded startup",
+            "A government innovation agency",
+            "A university research lab",
+            "A self-funded, community-run hub, the first node of the network"
+          ],
+          "correct": 3,
+          "counts": [
+            0,
+            0,
+            0,
+            8
+          ]
+        },
+        {
+          "type": "poll",
+          "prompt": "Which 'monastery' property matters most to a community you'd join?",
+          "options": [
+            "Shared values and devotion",
+            "Clear rules and discipline",
+            "Knowledge and teaching",
+            "A semi-permeable membrane (open yet protected)"
+          ],
+          "counts": [
+            3,
+            1,
+            0,
+            4
+          ]
+        },
+        {
+          "type": "poll",
+          "prompt": "Where do you sit on the local-versus-global tension?",
+          "options": [
+            "Root deeply in one place",
+            "A node in a global federation",
+            "Fully nomadic",
+            "Somewhere in between"
+          ],
+          "counts": [
+            1,
+            4,
+            1,
+            3
+          ]
+        },
+        {
+          "type": "poll",
+          "prompt": "How much shared life would you want in such a hub?",
+          "options": [
+            "Live there full-time",
+            "A regular in-person rhythm",
+            "Occasional visits",
+            "Purely digital participation"
+          ],
+          "counts": [
+            2,
+            6,
+            1,
+            0
+          ]
+        },
+        {
+          "type": "poll",
+          "prompt": "What most needs preserving through the years ahead?",
+          "options": [
+            "Open technologies and code",
+            "Seeds, soil, and food knowledge",
+            "Crafts and making skills",
+            "Social trust and governance"
+          ],
+          "counts": [
+            1,
+            3,
+            0,
+            3
+          ]
+        },
+        {
+          "type": "poll",
+          "prompt": "Right now, are you more a builder or a pilgrim?",
+          "options": [
+            "Building a node of my own",
+            "A pilgrim, visiting the nodes",
+            "Just curious tonight",
+            "A bit of everything"
+          ],
+          "counts": [
+            2,
+            2,
+            0,
+            5
+          ]
+        }
+      ]
+    },
+    "w2-d5": {
+      "playedAt": "2026-09-04T10:36:13.71089+00:00",
+      "playerCount": 10,
+      "standings": [
+        {
+          "score": 4654,
+          "nickname": "Jesse"
+        },
+        {
+          "score": 4635,
+          "nickname": "Simon"
+        },
+        {
+          "score": 4562,
+          "nickname": "Falafel"
+        },
+        {
+          "score": 4470,
+          "nickname": "Stefan"
+        },
+        {
+          "score": 4431,
+          "nickname": "Erin"
+        },
+        {
+          "score": 4418,
+          "nickname": "Lorenzo"
+        },
+        {
+          "score": 4276,
+          "nickname": "ruzgar"
+        },
+        {
+          "score": 4075,
+          "nickname": "Silvia"
+        },
+        {
+          "score": 3986,
+          "nickname": "Deca"
+        },
+        {
+          "score": 3057,
+          "nickname": "Civil"
+        }
+      ],
+      "items": [
+        {
+          "type": "quiz",
+          "prompt": "What is FarmLab, the project at the heart of Silvia's talk?",
+          "options": [
+            "A tech startup in Vienna",
+            "A university research lab",
+            "A creative lab on a working farm in rural Styria",
+            "A government agency"
+          ],
+          "correct": 2,
+          "counts": [
+            0,
+            0,
+            10,
+            0
+          ]
+        },
+        {
+          "type": "quiz",
+          "prompt": "What is a 'fab lab', the kind of workshop FarmLab is?",
+          "options": [
+            "A factory for mass production",
+            "A node in a worldwide digital-fabrication network, sharing a common inventory",
+            "A private members' club",
+            "A recycling plant"
+          ],
+          "correct": 1,
+          "counts": [
+            0,
+            10,
+            0,
+            0
+          ]
+        },
+        {
+          "type": "quiz",
+          "prompt": "At FarmLab, the making follows what?",
+          "options": [
+            "The stock market",
+            "A fixed factory shift",
+            "Global shipping schedules",
+            "The seasons, a yearly rhythm of making"
+          ],
+          "correct": 3,
+          "counts": [
+            0,
+            0,
+            0,
+            10
+          ]
+        },
+        {
+          "type": "quiz",
+          "prompt": "In Silvia's framing, what is 'agency'?",
+          "options": [
+            "The capacity to act: the tools, knowledge, relationships and confidence to do something",
+            "A marketing agency",
+            "A government department",
+            "A type of 3D printer"
+          ],
+          "correct": 0,
+          "counts": [
+            10,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "type": "quiz",
+          "prompt": "Her closing principle on situated resources and shared knowledge is:",
+          "options": [
+            "Everything should be centralised in cities",
+            "Nothing should be shared openly",
+            "Knowledge can travel, but materials stay local and situated",
+            "Only global mass production can scale"
+          ],
+          "correct": 2,
+          "counts": [
+            0,
+            0,
+            10,
+            0
+          ]
+        },
+        {
+          "type": "poll",
+          "prompt": "Which season of making pulls you most?",
+          "options": [
+            "Winter: slow making, baskets and wood",
+            "Spring: the wool cycle, shearing to felting",
+            "Summer: colours, dyes and ceramics",
+            "Autumn: foraging and biomaterials"
+          ],
+          "counts": [
+            1,
+            2,
+            2,
+            4
+          ]
+        },
+        {
+          "type": "poll",
+          "prompt": "Would you rather learn a traditional craft or a digital tool?",
+          "options": [
+            "A traditional craft",
+            "A digital tool (3D print, laser, CNC)",
+            "Both together, the FarmLab way",
+            "Neither right now"
+          ],
+          "counts": [
+            2,
+            1,
+            6,
+            0
+          ]
+        },
+        {
+          "type": "poll",
+          "prompt": "For your own place, what is most missing?",
+          "options": [
+            "Tools and a workshop",
+            "Shared knowledge and teachers",
+            "A community to make with",
+            "The confidence to start"
+          ],
+          "counts": [
+            1,
+            1,
+            5,
+            2
+          ]
+        },
+        {
+          "type": "poll",
+          "prompt": "A maker future feels more real to you as:",
+          "options": [
+            "Rural and regenerative",
+            "Urban and dense",
+            "Both, connected",
+            "Not sure yet"
+          ],
+          "counts": [
+            1,
+            0,
+            7,
+            1
+          ]
+        },
+        {
+          "type": "poll",
+          "prompt": "What would most draw you to a place like FarmLab?",
+          "options": [
+            "A hands-on workshop",
+            "An artist residency",
+            "The farm and the food",
+            "The network of people"
+          ],
+          "counts": [
+            3,
+            0,
+            3,
+            3
+          ]
+        }
+      ]
+    }
+  }
+}

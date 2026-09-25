@@ -1,9 +1,16 @@
 // Keynote companion + index renderer. One template (keynote.html) serves both
-// /keynote (index) and /keynote-<slug> (a talk companion); this module picks
-// based on the path. Content comes from content.mjs (client-safe, no answers).
-// The live quiz is layered on separately and only activates when a host opens a
-// session; the companion below is the durable artifact and always renders.
-import { ROOMS, WEEKS, MORE, COMING, AI_COURSE, CATEGORIES, AXES } from './content.mjs';
+// /keynotes (index) and /keynote-<slug> (a talk companion); this module picks
+// based on the path. Content comes from content.mjs. The live quiz was retired
+// 2026-09-25 (see docs/archive/keynote-live-quiz.md); the quiz and survey tiles
+// below now read from the static archive at data/keynote-results.json.
+import { ROOMS, WEEKS, MORE, AI_COURSE, CATEGORIES, AXES } from './content.mjs';
+
+// The static archive of every talk that ran a live session, fetched once. Best
+// effort: on any failure a talk simply shows no quiz/survey tile.
+const RESULTS = await fetch('/data/keynote-results.json')
+  .then((r) => r.json())
+  .then((d) => (d && d.sessions) || {})
+  .catch(() => ({}));
 
 const app = document.getElementById('app');
 
@@ -75,8 +82,10 @@ function iconSvg(name) {
 
 // Which sections a room offers, in display order. Each becomes one glass tile.
 function sectionsFor(room) {
-  const quiz = (room.items || []).filter((i) => i.type === 'quiz');
-  const polls = (room.items || []).filter((i) => i.type === 'poll');
+  const session = RESULTS[room.slug];
+  const items = (session && session.items) || [];
+  const quiz = items.filter((i) => i.type === 'quiz');
+  const polls = items.filter((i) => i.type === 'poll');
   const out = [
     {
       key: 'companion',
@@ -96,7 +105,7 @@ function sectionsFor(room) {
       label: 'The quiz',
       hint: 'How the room did on the night',
       meta: `${quiz.length} questions`,
-      build: () => questionsPanel(room, 'quiz'),
+      build: () => questionsPanel(room, session, 'quiz'),
     });
   if (polls.length)
     out.push({
@@ -106,7 +115,7 @@ function sectionsFor(room) {
       label: 'The room',
       hint: 'What everyone thought, live',
       meta: `${polls.length} polls`,
-      build: () => questionsPanel(room, 'survey'),
+      build: () => questionsPanel(room, session, 'survey'),
     });
   if (room.readings && room.readings.length)
     out.push({
@@ -145,19 +154,18 @@ function beatsPanel(room) {
     </div>`;
 }
 
-// The latest archived session's results for the current talk (standings +
-// per-item aggregates), fetched once in renderCompanion. Null until it resolves,
-// or when a talk has never run a session / Supabase is offline.
-let latestResults = null;
-
 function pct(n, total) {
   return total > 0 ? Math.round((n / total) * 100) : 0;
+}
+
+function dateLabel(iso) {
+  if (!iso) return '';
+  return new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
 }
 
 function standingsHtml(standings) {
   if (!standings || !standings.length) return '';
   const rows = standings
-    .slice(0, 8)
     .map(
       (s, i) =>
         `<li class="kn-stand"><span class="kn-stand__r">${i + 1}</span><span class="kn-stand__n">${esc(s.nickname)}</span><span class="kn-stand__s">${esc(String(s.score))}</span></li>`
@@ -166,34 +174,31 @@ function standingsHtml(standings) {
   return `<div class="kn-standwrap"><p class="kn-standcap">Final standings</p><ol class="kn-stands">${rows}</ol></div>`;
 }
 
-// Quiz / survey results. When a live session has been archived, the option bars
-// fill with the real tallies and the quiz shows final standings; otherwise the
-// questions list with empty bars and a note that results appear after a session.
-function questionsPanel(room, kind) {
+// Quiz / survey results, read from the static archive at data/keynote-results.json
+// (the live multi-phone session was retired 2026-09-25; see
+// docs/archive/keynote-live-quiz.md). A room only reaches this panel when its
+// session has items of the given kind (see sectionsFor), so `session` is always set.
+function questionsPanel(room, session, kind) {
   const eyebrow = kind === 'quiz' ? 'The quiz' : 'The room';
   const title = kind === 'quiz' ? 'How the room did' : 'What everyone thought';
   const itemType = kind === 'quiz' ? 'quiz' : 'poll';
-  const results = latestResults;
-  const hasData = !!(results && Array.isArray(results.aggregates) && results.aggregates.length);
-  const note = hasData
-    ? `From the live session${results.playerCount ? `, ${results.playerCount} ${kind === 'quiz' ? 'playing' : 'voting'}` : ''}.`
-    : kind === 'quiz'
-      ? 'Each question the room played on the night. Live standings and results appear here once a session has run.'
-      : 'The pulse of the room. Live tallies fill these bars once a session has run.';
+  const verb = kind === 'quiz' ? 'playing' : 'voting';
+  const note = `From the live session on ${dateLabel(session.playedAt)}${session.playerCount ? `, ${session.playerCount} ${verb}` : ''}.`;
   let n = 0;
-  const q = room.items
-    .map((it, i) => {
+  const q = session.items
+    .map((it) => {
       if (it.type !== itemType) return '';
       n += 1;
-      const agg = hasData ? results.aggregates[i] || [] : null;
-      const total = agg ? agg.reduce((a, b) => a + (b || 0), 0) : 0;
+      const counts = it.counts || [];
+      const total = counts.reduce((a, b) => a + (b || 0), 0);
       const opts = it.options
         .map((o, oi) => {
-          const p = total ? pct(agg[oi] || 0, total) : 0;
+          const p = total ? pct(counts[oi] || 0, total) : 0;
+          const isCorrect = kind === 'quiz' && it.correct === oi;
           const label = total
             ? `${esc(o)} <span class="kn-opt__pct">${p}%</span>`
             : esc(o);
-          return `<li class="kn-opt"><span class="kn-opt__label">${label}</span><span class="kn-opt__track"><span class="kn-opt__fill" style="width:${p}%"></span></span></li>`;
+          return `<li class="kn-opt${isCorrect ? ' kn-opt--correct' : ''}"><span class="kn-opt__label">${label}</span><span class="kn-opt__track"><span class="kn-opt__fill" style="width:${p}%"></span></span></li>`;
         })
         .join('');
       return `<div class="kn-qcard">
@@ -202,7 +207,7 @@ function questionsPanel(room, kind) {
         </div>`;
     })
     .join('');
-  const stands = kind === 'quiz' && hasData ? standingsHtml(results.standings) : '';
+  const stands = kind === 'quiz' ? standingsHtml(session.standings) : '';
   return `<div class="kn-panel">
       <p class="kn-panel__eyebrow">${eyebrow}</p>
       <h2 class="kn-panel__title">${title}</h2>
@@ -330,7 +335,7 @@ function renderCompanion(room) {
   const sections = sectionsFor(room);
   app.innerHTML = `
     <div class="kn-backdrop" aria-hidden="true"></div>
-    <a class="back" href="/keynote">&larr; All the talks</a>
+    <a class="back" href="/keynotes">&larr; All the talks</a>
     <div class="companion kn-hubwrap">
       <header class="companion__head">
         <span class="eyebrow">A companion</span>
@@ -341,8 +346,7 @@ function renderCompanion(room) {
       </header>
       <div class="kn-hub">${sections.map(tileHtml).join('')}</div>
       <a class="cta" href="${esc(room.cta.url)}">${esc(room.cta.label)}</a>
-    </div>
-    <div id="session" class="session" style="display:none"></div>`;
+    </div>`;
 
   app.querySelectorAll('.kn-tile').forEach((tile) => {
     tile.addEventListener('click', () => {
@@ -350,26 +354,6 @@ function renderCompanion(room) {
       if (s) openSheet(tile, s.accent, s.build());
     });
   });
-
-  // Talks with items (Week 2 + evergreen) get the live quiz layer; it stays
-  // dormant (companion shown) until a host opens a session. Week 1 is
-  // companion-only (items: []), so this never loads there.
-  if (room.items && room.items.length) {
-    // Pull the latest archived session's results so the quiz / survey tiles show
-    // real tallies. Best-effort: on any failure the tiles fall back to the empty
-    // state. Usually resolves before a tile is opened.
-    fetch(`/api/keynote/results?slug=${encodeURIComponent(room.slug)}`)
-      .then((r) => r.json())
-      .then((d) => {
-        latestResults = d && Array.isArray(d.aggregates) && d.aggregates.length ? d : null;
-      })
-      .catch(() => {});
-    const companionEl = app.querySelector('.companion');
-    const sessionEl = document.getElementById('session');
-    import('./session.mjs')
-      .then((mod) => mod.initSession(room, { companion: companionEl, session: sessionEl }))
-      .catch(() => {});
-  }
 }
 
 function cardHtml(slug, idx) {
@@ -386,28 +370,20 @@ function cardHtml(slug, idx) {
     </a>`;
 }
 
-// An announced-but-unpublished talk: looks like a normal card (speaker, talk,
-// arrow) but has no page. It is a button that shows "Coming soon" on click.
-// A talk that carries a `url` (e.g. a companion already live elsewhere) instead
-// renders as a real link that navigates there.
+// A talk with no companion room, e.g. Deca's self-contained /keynote-w4-d1 deck:
+// a link card (speaker, talk, url) rendered the same as a room card.
 function soonCardHtml(t, idx) {
   const spine = SPINES[idx % SPINES.length];
   const inner = `<div>
         <div class="card__speaker">${esc(t.speaker)}</div>
         ${t.talk ? `<div class="card__talk">${esc(t.talk)}</div>` : ''}
       </div>`;
-  if (t.url) {
-    const external = /^https?:/i.test(t.url);
-    const attrs = external ? ' target="_blank" rel="noopener noreferrer"' : '';
-    return `<a class="card" style="--spine:${spine}" href="${esc(t.url)}"${attrs}>
+  const external = /^https?:/i.test(t.url);
+  const attrs = external ? ' target="_blank" rel="noopener noreferrer"' : '';
+  return `<a class="card" style="--spine:${spine}" href="${esc(t.url)}"${attrs}>
       ${inner}
       <span class="card__arrow" aria-hidden="true">&rarr;</span>
     </a>`;
-  }
-  return `<button type="button" class="card card--soon" style="--spine:${spine}">
-      ${inner}
-      <span class="card__arrow" data-soon-arrow aria-hidden="true">&rarr;</span>
-    </button>`;
 }
 
 // The AI-course CTA, mirroring learn-ai.london/valley: one non-talk destination
@@ -433,24 +409,12 @@ function renderIndex() {
   let idx = 0;
   const weeks = (WEEKS || [])
     .map((w) => {
+      // A week's slugs are usually room slugs (a string), but can carry a plain
+      // link card (speaker, talk, url) for a talk with no companion room, e.g.
+      // Deca's self-contained /keynote-w4-d1 deck.
       const cards = w.slugs
-        .map((slug) => cardHtml(slug, idx++))
+        .map((entry) => (typeof entry === 'string' ? cardHtml(entry, idx++) : soonCardHtml(entry, idx++)))
         .join('');
-      // A week can mix published talks (linked cards) with announced-but-unpublished
-      // ones (coming-soon cards) under the same header.
-      const soon = (w.coming || [])
-        .map((t) => soonCardHtml(t, idx++))
-        .join('');
-      return `<section class="week">
-        <div class="week__label">${esc(w.label)}</div>
-        <h2 class="week__theme">${esc(w.theme)}</h2>
-        <div class="grid">${cards}${soon}</div>
-      </section>`;
-    })
-    .join('');
-  const coming = (COMING || [])
-    .map((w) => {
-      const cards = w.talks.map((t) => soonCardHtml(t, idx++)).join('');
       return `<section class="week">
         <div class="week__label">${esc(w.label)}</div>
         <h2 class="week__theme">${esc(w.theme)}</h2>
@@ -472,6 +436,7 @@ function renderIndex() {
       <span class="eyebrow">Valley of the Commons</span>
       <h1 class="index__title">Companions to the talks</h1>
       <p class="index__sub">Each talk's argument in beats, with the sources it draws on. Explore the ideas as a constellation, or by date.</p>
+      <a class="cta index__primary" href="/trust-tournament">The Trust Tournament results <span aria-hidden="true">&rarr;</span></a>
     </header>
     ${/* AI-course CTA hidden pending the VOTC mirror of /valley-ai (its own gated
         app). AI_COURSE + aiCourseHtml() are kept intact for that follow-up. */ ''}
@@ -480,7 +445,7 @@ function renderIndex() {
       <button role="tab" data-view="timeline" class="vg-toggle__btn"><span aria-hidden="true">&#9636;</span> Timeline</button>
     </div>
     <div class="vg-wrap" id="kn-graph"><p class="vg-hint">Drag to orbit &middot; scroll to zoom &middot; tap a star</p></div>
-    <div class="kn-timeline" hidden>${weeks}${coming}${more}</div>`;
+    <div class="kn-timeline" hidden>${weeks}${more}</div>`;
 
   // View toggle: the 3D Constellation (default) or the chronological Timeline.
   // The graph mounts lazily on first reveal and stays mounted after.
@@ -508,31 +473,13 @@ function renderIndex() {
     });
   });
   mountGraphOnce();
-
-  // Coming-soon cards: no page, so a click briefly swaps the arrow for a small
-  // "Coming soon" message instead of navigating.
-  app.querySelectorAll('.card--soon').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      if (btn.dataset.busy) return;
-      const arrow = btn.querySelector('[data-soon-arrow]');
-      if (!arrow) return;
-      btn.dataset.busy = '1';
-      arrow.textContent = 'Coming soon';
-      arrow.classList.add('card__soonmsg');
-      setTimeout(() => {
-        arrow.innerHTML = '&rarr;';
-        arrow.classList.remove('card__soonmsg');
-        delete btn.dataset.busy;
-      }, 1800);
-    });
-  });
 }
 
 function renderNotFound() {
   document.title = 'Not found \xb7 Valley of the Commons';
-  app.innerHTML = `<a class="back" href="/keynote">&larr; All the talks</a>
+  app.innerHTML = `<a class="back" href="/keynotes">&larr; All the talks</a>
     <div class="companion"><h1 class="companion__title">Talk not found</h1>
-    <p class="companion__speaker">That companion does not exist yet. <a href="/keynote" style="color:var(--orange)">See all the talks</a>.</p></div>`;
+    <p class="companion__speaker">That companion does not exist yet. <a href="/keynotes" style="color:var(--orange)">See all the talks</a>.</p></div>`;
 }
 
 // A standalone reading (additional thoughts / literature) tied to a talk, at
@@ -546,11 +493,11 @@ function renderReading(room, base) {
     <div class="kn-backdrop" aria-hidden="true"></div>
     <a class="back" href="/keynote-${esc(base)}">&larr; Back to the talk</a>
     <div class="companion kn-reading">${readingsPanel(room.readings)}</div>
-    <a class="cta" href="/keynote">Valley of the Commons</a>`;
+    <a class="cta" href="/keynotes">Valley of the Commons</a>`;
 }
 
-const path = location.pathname.replace(/\/+$/, '') || '/keynote';
-if (path === '/keynote') {
+const path = location.pathname.replace(/\/+$/, '') || '/keynotes';
+if (path === '/keynotes') {
   renderIndex();
 } else {
   const slug = path.replace(/^\/keynote-/, '');

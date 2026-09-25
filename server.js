@@ -82,13 +82,6 @@ app.post('/api/mollie/webhook', vercelToExpress(handleWebhook));
 app.all('/api/mollie/status', vercelToExpress(getPaymentStatus));
 app.get('/api/mollie/resume', vercelToExpress(resumePayment));
 
-// Keynote live-quiz API (talks to the SEPARATE, isolated Supabase project).
-app.get('/api/keynote/config', vercelToExpress(require('./api/keynote/config')));
-app.get('/api/keynote/results', vercelToExpress(require('./api/keynote/results')));
-app.post('/api/keynote/join', vercelToExpress(require('./api/keynote/join')));
-app.post('/api/keynote/submit', vercelToExpress(require('./api/keynote/submit')));
-app.post('/api/keynote/host/:action', vercelToExpress(require('./api/keynote/host')));
-
 // ---------------------------------------------------------------------------
 // Transactional mail queue.
 //
@@ -335,7 +328,13 @@ const PRIVATE_FILES = new Set(['/server.js', '/Dockerfile']);
 const PRIVATE_PATTERNS = [/^\/test-[^/]*\.js$/];
 
 // Shipped on purpose: the game master's LLM context is fetched by the client.
-const PUBLIC_EXCEPTIONS = new Set(['/internal_thought.md']);
+// The public data files are served by their own explicit route below (json is
+// deliberately not in SERVE_EXTENSIONS), so they need the same guard bypass.
+const PUBLIC_DATA_FILES = new Set(['keynote-results.json', 'trust-tournament-2026-09-19.json']);
+const PUBLIC_EXCEPTIONS = new Set([
+  '/internal_thought.md',
+  ...[...PUBLIC_DATA_FILES].map((f) => `/data/${f}`),
+]);
 
 app.use((req, res, next) => {
   // Decode first, so /api%2Fmollie.js cannot walk around the prefix test.
@@ -374,12 +373,16 @@ app.use((req, res, next) => {
   next();
 });
 
-// Keynote companion pages. One template (keynote/keynote.html) serves /keynote
+// Keynote companion pages. One template (keynote/keynote.html) serves /keynotes
 // (the index) and every /keynote-<slug> (a talk companion); the client renderer
 // (keynote/keynote.js) fills it from keynote/content.mjs. Here we inject the
 // per-page <title>/description from the same content module (dynamic-imported,
 // cached) so link previews and SEO are correct. Must sit before express.static
 // and the SPA fallback so the slug routes are not swallowed by index.html.
+//
+// The index used to live at /keynote; it moved to /keynotes (this route is now
+// the "companions", talk pages stay at /keynote-<slug>). /keynote redirects
+// below, so old links keep working.
 let _keynoteRooms = null;
 async function keynoteRooms() {
   if (!_keynoteRooms) {
@@ -392,9 +395,15 @@ const escAttr = (s) =>
   String(s == null ? '' : s).replace(/[&<>"]/g, (c) =>
     ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])
   );
-app.get(/^\/keynote(?:-[a-z0-9-]+)?$/, async (req, res) => {
+
+app.get('/keynote', (req, res) => {
+  const qs = req.url.includes('?') ? req.url.slice(req.url.indexOf('?')) : '';
+  res.redirect(301, '/keynotes' + qs);
+});
+
+app.get(/^\/(?:keynotes|keynote-[a-z0-9-]+)$/, async (req, res) => {
   try {
-    const slug = req.path === '/keynote' ? null : req.path.replace(/^\/keynote-/, '');
+    const slug = req.path === '/keynotes' ? null : req.path.replace(/^\/keynote-/, '');
     // w4-d1 (Deca, "Game Theory of Our Shared Purpose") has no companion room:
     // it is a self-contained static reveal.js deck mirrored from LAL, served at
     // /keynote-w4-d1 with its assets under /keynote-w4-d1/ (via express.static).
@@ -439,6 +448,25 @@ app.get(/^\/keynote(?:-[a-z0-9-]+)?$/, async (req, res) => {
     console.error('[keynote] route error:', error);
     return res.status(500).send('Keynote page temporarily unavailable.');
   }
+});
+
+// Static archives of past live-room results: the keynote quiz/survey results
+// (the live session was retired 2026-09-25; see docs/archive/keynote-live-quiz.md)
+// and the 19 Sep 2026 Trust Tournament. json is deliberately not in
+// SERVE_EXTENSIONS (it would expose package.json etc. too), so only the files
+// named in PUBLIC_DATA_FILES are served, through this one route.
+app.get('/data/:file', (req, res, next) => {
+  if (!PUBLIC_DATA_FILES.has(req.params.file)) return next();
+  res.setHeader('Content-Type', 'application/json; charset=utf-8');
+  res.setHeader('Cache-Control', 'public, max-age=300');
+  res.sendFile(path.join(__dirname, 'data', req.params.file), (error) => {
+    if (error && !res.headersSent) res.status(404).json({ error: 'Not found' });
+  });
+});
+
+// The Trust Tournament results page (static; renders from its data file above).
+app.get('/trust-tournament', (req, res) => {
+  res.sendFile(path.join(__dirname, 'trust', 'index.html'));
 });
 
 // Static files

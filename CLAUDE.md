@@ -1,9 +1,10 @@
 # CLAUDE.md — Valley of the Commons website
 
 The public site for Valley of the Commons: landing page, membership + sponsorship
-applications (Mollie payments), an AI "game terminal", an admin area, and (being
-added) per-talk **keynote companion** pages with a live quiz. Plain vanilla JS +
-Express, static HTML/CSS/JS, raw Postgres (`pg`), deployed on Vercel.
+applications (Mollie payments), an AI "game terminal", an admin area, and
+per-talk **keynote companion** pages (a static archive since the live quiz was
+retired 2026-09-25). Plain vanilla JS + Express, static HTML/CSS/JS, raw
+Postgres (`pg`), deployed on Vercel.
 
 This file is deliberately lean. It holds only what should fire on **every** task
 in this repo. Everything deeper lives in `docs/`, loaded when you need it (see the
@@ -19,7 +20,8 @@ dilute attention on every task.
   `admin_users`/`admin_sessions`, the `SPONSOR_ACCESS_CODE`, the `GITHUB_TOKEN`
   (repo write), production secrets, and any **database migration** are Jeff's to
   run. If you are not Jeff's Claude on Jeff's machine, propose the change and stop;
-  do not execute it. See `docs/keynote-port-for-jeff.md` for the gating pattern.
+  do not execute it. See `docs/archive/keynote-port-for-jeff.md` for the gating
+  pattern (superseded as a live handoff, still valid as the example).
 - **Never commit secrets.** Real keys live only in Vercel env vars and Jeff's
   local `.env` (gitignored). Ask for values through a handoff doc; never paste
   them into tracked files. Respect `.gitignore`; never `git add -f` a gitignored
@@ -54,10 +56,10 @@ Loaded on demand. Add a one-line pointer here whenever you add a docs page.
 - `docs/README.md` — index of everything in `docs/`.
 - `docs/style-guide.md` — the design system (tokens, fonts, components) + writing
   conventions. Read before building any UI.
-- `docs/keynote-companions.md` — the keynote companion + live-quiz feature: what
-  it is, routes (`/keynote`, `/keynote-wN-dN`), the data model, and the schedule
-  wiring.
-- `docs/keynote-port-for-jeff.md` — executable handoff for Jeff's Claude to stand
-  up the keynote backend (env vars, database, migrations), with sensitive-op
-  gating. Start here for the port.
+- `docs/keynote-companions.md`: the keynote companion pages (now a static
+  archive): routes (`/keynotes`, `/keynote-<slug>`), the content model, and the
+  static quiz/survey results file.
+- `docs/archive/`: retired features, kept for the record (the live keynote
+  quiz and its backend handoff).
+- `docs/trust-tournament.md`: the `/trust-tournament` results page (19 Sep 2026 game): files, data, what survived.
 - `ENGINEERING_GUIDELINES.md` (repo root) — git and force-operation rules.
