@@ -109,6 +109,7 @@ function ringHtml(d) {
         <p class="tt-kicker">The room at the end</p>
         <h2 class="tt-h" id="tt-ring-h">Every player, placed by final score</h2>
         <p class="tt-note">The further from the centre, the more points. The green ring is where a player lands if the whole room cooperates every round; the inner ring is where they land if everyone defects. Players sit in the same order they had around the projector's circle.</p>
+        <p class="tt-note tt-note--key">Read the outer players with care. In every round, defecting pays you more than cooperating would have, so a higher score usually means more defection: points taken from people who cooperated. (Groups were sometimes one larger when the headcount did not divide evenly, so a score is a strong hint, not proof.) This is what the game's two mechanisms were for: once plays went on screen the room could see who was scoring by defecting, and from round 5 it could vote them out.</p>
       </div>
       <figure class="tt-ring">
         <svg viewBox="-70 -20 ${RING.size + 140} ${RING.size + 40}" role="img" aria-label="Radial chart of the 13 final scores, between 19 and 27 points, clustered around the everyone-cooperates ring at 24">
@@ -354,9 +355,15 @@ function infoHtml(d) {
   return `<div class="tt-info">
       ${sections
         .map(
-          ([h, body], i) => `<section class="tt-info__sec tt-info__sec--${i}">
-            <h2 class="tt-info__h"><span class="tt-info__n">${String(i + 1).padStart(2, '0')}</span>${h}</h2>
-            <div class="tt-info__body">${body}</div>
+          ([h, body], i) => `<section class="tt-info__sec" style="--i:${i}">
+            <button type="button" class="tt-info__h" aria-expanded="false" aria-controls="tt-info-${i}">
+              <span class="tt-info__n">${String(i + 1).padStart(2, '0')}</span>
+              <span class="tt-info__t">${h}</span>
+              <span class="tt-info__chev" aria-hidden="true"></span>
+            </button>
+            <div class="tt-fold" id="tt-info-${i}">
+              <div class="tt-fold__inner"><div class="tt-info__body">${body}</div></div>
+            </div>
           </section>`
         )
         .join('')}
@@ -368,15 +375,28 @@ function sourceHtml(d) {
     <a class="cta" href="/keynotes">All the talks</a>`;
 }
 
-// The one primary button under the title: opens and closes the background.
+// The one primary button under the title opens the list of section titles; each
+// title then opens its own content (one at a time).
 function wireWhatIsThis() {
   const btn = app.querySelector('.tt-what');
   const drawer = app.querySelector('.tt-drawer');
+  const heads = [...app.querySelectorAll('.tt-info__h')];
+  const setOpen = (head, open) => {
+    head.setAttribute('aria-expanded', String(open));
+    head.closest('.tt-info__sec').classList.toggle('is-open', open);
+  };
   btn.addEventListener('click', () => {
     const open = btn.getAttribute('aria-expanded') !== 'true';
     btn.setAttribute('aria-expanded', String(open));
     drawer.classList.toggle('is-open', open);
+    if (!open) heads.forEach((h) => setOpen(h, false));
   });
+  heads.forEach((head) =>
+    head.addEventListener('click', () => {
+      const open = head.getAttribute('aria-expanded') !== 'true';
+      heads.forEach((h) => setOpen(h, h === head && open));
+    })
+  );
 }
 
 /* ----- Boot ----- */
