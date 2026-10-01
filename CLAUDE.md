@@ -4,7 +4,9 @@ The public site for Valley of the Commons: landing page, membership + sponsorshi
 applications (Mollie payments), an AI "game terminal", an admin area, and
 per-talk **keynote companion** pages (a static archive since the live quiz was
 retired 2026-09-25). Plain vanilla JS + Express, static HTML/CSS/JS, raw
-Postgres (`pg`), deployed on Vercel.
+Postgres (`pg`). Production deploys from the private deploy repo
+`Jeff-Emmett/valley-commons`: a push to its `main` builds the Docker image and
+deploys it to the production VPS.
 
 This file is deliberately lean. It holds only what should fire on **every** task
 in this repo. Everything deeper lives in `docs/`, loaded when you need it (see the
@@ -61,5 +63,7 @@ Loaded on demand. Add a one-line pointer here whenever you add a docs page.
   static quiz/survey results file.
 - `docs/archive/`: retired features, kept for the record (the live keynote
   quiz and its backend handoff).
+- `docs/survey.md`: the post-residency survey (`/survey`, `/survey/results`):
+  static pages here, backend on Deca's Pi, the microphone exemption.
 - `docs/trust-tournament.md`: the `/trust-tournament` results page (19 Sep 2026 game): files, data, what survived.
 - `ENGINEERING_GUIDELINES.md` (repo root) — git and force-operation rules.

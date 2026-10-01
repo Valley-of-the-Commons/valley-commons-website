@@ -12,6 +12,9 @@ task needs them. Keep each page focused, factual, and DRY (one home per fact).
 - **keynote-companions.md**: the keynote companion pages (a static archive
   since the live quiz was retired 2026-09-25): the routes (`/keynotes`,
   `/keynote-<slug>`), the content model, and the static quiz/survey results file.
+- **survey.md**: the post-residency survey (`/survey`, `/survey/results`):
+  which files are here, where the backend and the interviewer live, local
+  development.
 - **archive/**: retired features, kept for the record. `archive/keynote-live-quiz.md`
   documents the retired live multi-phone quiz; `archive/keynote-port-for-jeff.md`
   and `archive/keynote-live-quiz-schema.sql` are its superseded backend handoff
