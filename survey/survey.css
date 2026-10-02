@@ -1,6 +1,9 @@
 /* Post-residency survey (/survey, /survey/results). Uses the site tokens from
    home.css (docs/style-guide.md): cream ground, Urbanist and Inter, one orange
    accent. The one new element is the breathing orb for voice. */
+/* Author display rules (inline-flex buttons) must not defeat the hidden attribute. */
+.sv [hidden] { display: none !important; }
+
 body.sv {
   min-height: 100vh;
   background:
@@ -139,6 +142,10 @@ body.sv::before {
 .sv-ghost:hover { border-color: var(--orange); color: var(--orange); }
 .sv-ghost.is-on { background: var(--ink); color: #fff; border-color: var(--ink); }
 .sv-ghost--small { padding: 8px 12px; }
+.sv-ghost--finish { background: var(--orange); border-color: var(--orange); color: #fff; }
+.sv-ghost--finish:hover { background: #a9521f; border-color: #a9521f; color: #fff; }
+.sv-saved { font: 400 13px/1.4 var(--sans); color: var(--muted-2); margin-top: 16px; }
+.sv-link { font: inherit; color: var(--orange); text-decoration: underline; background: none; border: none; padding: 0; cursor: pointer; }
 .sv-ghost svg { flex: none; }
 
 /* ---------- Text chat ---------- */

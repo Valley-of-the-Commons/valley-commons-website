@@ -20,6 +20,7 @@ const state = {
   voiceTimeUp: false,
   switchingToText: false,
   leaving: false,
+  finishing: false,
   progress: { filled_p1: 0, total_p1: 1, complete: false },
 };
 
@@ -153,7 +154,9 @@ function conversationView(mode, { keepTranscript } = {}) {
           <button class="sv-ghost" type="button" data-mute>${ICONS.mic}<span>Mute</span></button>
           <button class="sv-ghost" type="button" data-to-text>${ICONS.pen}<span>Switch to text</span></button>
           <button class="sv-ghost" type="button" data-leave>${ICONS.pause}<span>Stop for now</span></button>
+          <button class="sv-ghost sv-ghost--finish" type="button" data-finish hidden>${ICONS.check}<span>Finish</span></button>
         </div>
+        <p class="sv-saved">Your answers are saved as you talk.</p>
       </section>`)
     : el(`
       <section class="sv-chat sv-rise">
@@ -166,7 +169,7 @@ function conversationView(mode, { keepTranscript } = {}) {
           <button class="sv-ghost sv-ghost--small" type="button" data-leave>${ICONS.pause}<span>Stop for now</span></button>
         </header>
         <ol class="sv-log" aria-live="polite"></ol>
-        <p class="sv-done" hidden>That covers everything. You can keep writing, or <a href="/survey/results">see the results</a>.</p>
+        <p class="sv-done" hidden>That covers everything, and it is all saved. Keep writing if you like, or <button class="sv-link" type="button" data-finish>finish here</button>.</p>
         <form class="sv-compose">
           <textarea name="message" rows="1" placeholder="Write your answer" aria-label="Your message" required></textarea>
           <button class="btn btn-orange" type="submit" aria-label="Send">${ICONS.send}</button>
@@ -181,6 +184,7 @@ async function startSession(mode, { handoff = false, continuation = false } = {}
   state.voiceTimeUp = false;
   state.switchingToText = false;
   state.leaving = false;
+  state.finishing = false;
   const view = conversationView(mode, { keepTranscript: continuation || handoff });
   if (handoff) appendNote(view, 'Voice has ended. The conversation continues here.');
   setProgress(state.progress, false);
@@ -260,6 +264,7 @@ async function onDisconnect(details) {
   state.conversation = null;
   if (state.session) request(`/sessions/${state.session.session_id}/end`, { method: 'POST' }).catch(() => {});
   if (state.leaving) return showPaused();
+  if (state.finishing) return showEnd();
 
   // Deliver anything still queued, then read the real progress before deciding.
   const screen = mount.firstElementChild;
@@ -300,6 +305,7 @@ function wireVoiceControls(view) {
   });
   $('[data-to-text]', view).addEventListener('click', switchToText);
   $('[data-leave]', view).addEventListener('click', leave);
+  $('[data-finish]', view).addEventListener('click', finish);
   animateOrb(view);
 }
 
@@ -324,7 +330,14 @@ function wireCompose(view) {
     setTyping(view, true);
   });
   $('[data-leave]', view).addEventListener('click', leave);
+  $('[data-finish]', view).addEventListener('click', finish);
   box.focus();
+}
+
+function finish() {
+  state.finishing = true;
+  if (state.conversation) state.conversation.endSession();
+  else showEnd();
 }
 
 function leave() {
@@ -394,6 +407,8 @@ function setProgress(p, animate = true) {
   }
   const done = $('.sv-done');
   if (done) done.hidden = !state.progress.complete;
+  const finishVoice = $('.sv-voice [data-finish]');
+  if (finishVoice) finishVoice.hidden = !state.progress.complete;
 }
 
 const ICONS = {
@@ -401,6 +416,7 @@ const ICONS = {
   pen: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16v4zM13.5 6.5l4 4"/></svg>',
   pause: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M9 6v12M15 6v12"/></svg>',
   send: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>',
+  check: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg>',
   leaf: '<svg viewBox="0 0 48 48" width="44" height="44" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 38C10 20 22 10 40 8c-2 18-12 30-30 30z"/><path d="M10 38 28 20"/></svg>',
 };
 
