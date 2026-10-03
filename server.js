@@ -469,6 +469,16 @@ app.get('/trust-tournament', (req, res) => {
   res.sendFile(path.join(__dirname, 'trust', 'index.html'));
 });
 
+// Post-residency survey: static pages whose backend runs on Deca's Pi (see
+// docs/survey.md). /survey is the only route allowed to use the microphone,
+// for voice mode; every other route keeps microphone=().
+const surveyPage = (file, { microphone = false } = {}) => (req, res) => {
+  if (microphone) res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(self), camera=()');
+  res.sendFile(path.join(__dirname, 'survey', file));
+};
+app.get(['/survey', '/survey/'], surveyPage('index.html', { microphone: true }));
+app.get('/survey/results', surveyPage('results.html'));
+
 // Static files
 app.use(express.static(path.join(__dirname), {
   extensions: ['html'],

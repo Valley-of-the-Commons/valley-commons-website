@@ -1,43 +1,42 @@
-# PROGRESS — keynote companions + live quiz port
+# PROGRESS: VotC Website v1, post-residency survey
 
-Branch: `feat/keynote-port` (off `main`). Deploy: Vercel on merge. Do not push to main.
+Plan (vault): `Companies/Commons Hub/VotC Website/WhatWeBuilt/VotC Website v1 Specifications.md` (AC-1 to AC-21) and `... v1 Implementation Strategy.md` (sequence and Coordination Log).
+Repos: this one (static pages, branch `feat/survey`) and `deca12x/pi-data` (`services/votc-survey/`: API, catalogue, agent config, synthesis), deployed on pi1 at `https://pi1.tail0a8aa5.ts.net/votc-survey`.
+Previous content of this file (keynote port, retired) is in git history.
 
-Smoke: `node --check server.js` green; `node server.js` boots; `/keynote`, `/keynote-<slug>` serve 200 with correct per-page titles; bad slug -> 404. Local run on :3055.
+Smoke: `npm test` here (24 pass); in pi-data `services/votc-survey`: `TEST_ADMIN_URL=<throwaway AGE superuser URL> npm test` (27 pass); `curl https://pi1.tail0a8aa5.ts.net/votc-survey/health` is 200.
 
-## Feature list (machine state in features.json)
+## Feature list
 
-Foundation
-- [done] `db/keynote-schema.sql` — quiz_state/players/answers/sessions, Realtime + RLS, seed rows. (Deca runs it on the Supabase project; state stays not_started until then.)
-- [passing] Content port — `keynote/content.mjs` (client-safe, no answers) + `api/keynote/answers.js` (server-only keys). 12 rooms; Week 1 companion-only.
+| AC | Behaviour | Verification | State |
+|---|---|---|---|
+| AC-1 | Password gate and rate limit | integration tests; live curl via Funnel: 10x 401 then 429, spoofed X-Forwarded-For ignored | passing |
+| AC-2 | Results gated | integration tests; live `/results` without or with forged token is 401 | passing |
+| AC-3 | Voice works on Pixel 7 and Mac Chrome; `/survey` header `microphone=(self)` | Deca on devices; `curl -sI` | active: Mac Chrome worked (Deca, 2026-10-02); end_call fix to re-test; Pixel needs an HTTPS address; production proxy sends `microphone=(*)` everywhere (Jeff) |
+| AC-4 | Text works, no mic prompt | browser run against live Pi and agent | passing (Mac WKWebView; phone not yet) |
+| AC-5 | Datapoints recorded live | browser run: overall_experience, highlights, collaborators, project card filled with evidence | passing (text); voice untested |
+| AC-6 | Confidence rule, 8 of 10 cases | `node scripts/simulate.js` | passing: opus 9/10, sonnet 9/10, gemini 8/10 |
+| AC-7 | Server threshold | integration test | passing |
+| AC-8 | Two project cards | integration test | passing |
+| AC-9 | Voice timing and hand-off | `/survey?timescale=0.05` in voice | blocked: needs a microphone (Deca) |
+| AC-10 | Text wrap-up at 15 min | `/survey?timescale=0.02` in text | passing |
+| AC-11 | Resume in the same browser | browser: stop, reload, welcome back, no re-ask | passing |
+| AC-12 | Pi outage queue | browser: API stopped, items queued, delivered once after restart | passing |
+| AC-13 | Webhook HMAC, transcript, reconciliation | integration tests; live: webhook created and attached to the agent only, 6 transcripts stored via backfill, reconciliation ran on 5 | passing (first live webhook delivery still to observe on the next real conversation) |
+| AC-14 | Consent respected | integration tests (forbidden-string grep, consent mismatch) | passing |
+| AC-15 | Synthesis within 10 min | integration test; live synthesis version 3 with written summaries ($0.14 for 5 reconciliations + 1 synthesis) | passing (live trigger on session end and webhook) |
+| AC-16 | Graph edges | integration test (Cypher) | passing in tests; live after AC-15 |
+| AC-17 | No secrets in repos | gitleaks both repos | passing (one false positive: catalogue key name) |
+| AC-18 | Design review | screenshots at phone and laptop width | not started: Deca |
+| AC-19 | No em dashes | grep U+2014 in new files | passing |
+| AC-20 | Real interviews (Deca, Andrew) on production | production | not started |
+| AC-21 | Privacy notice | notice values match the pushed agent config | passing (re-check after any agent change) |
 
-Companion / static layer — DONE, verified via live server + screenshots
-- [passing] `keynote/keynote.css` — re-skinned to VotC light editorial tokens.
-- [passing] `keynote/keynote.html` — single template for index + companion.
-- [passing] `keynote/keynote.js` — renders `/keynote` (index) and `/keynote-<slug>` (companion) from content.mjs.
-- [passing] `server.js` route — `/keynote` + `/keynote-<slug>` serve the template with per-page meta injected via dynamic import of content.mjs.
-- [passing] `#schedule` wiring — index.html schedule section links to `/keynote`.
-
-Live quiz layer — CODE-COMPLETE, blocked on Supabase env for E2E verification
-- [done] `package.json` — `@supabase/supabase-js` added.
-- [done] `api/keynote/quiz.js` — shared helpers: service client, timing, item access (dynamic-imports content.mjs), correctIndexFor, scoreQuiz, isHost (KEYNOTE_HOST_SECRET, timing-safe). Load-tested: scoreQuiz(true,0)=1000, (true,30000)=500, (false)=0; serviceClient()=null without env.
-- [done] `api/keynote/config.js` — browser config (url + anon key; configured:false offline).
-- [done] `api/keynote/join.js` — create player (self-contained per-IP limiter, no cross-branch dep).
-- [done] `api/keynote/host.js` — open/next/reveal/finish/leaderboard/close/reset; upsert quiz_state; KEYNOTE_HOST_SECRET gate; archives to quiz_sessions on open/reset/finish.
-- [done] `api/keynote/submit.js` — answer + scoring; correct key server-only; rejects pre-roll/late/duplicate.
-- [done] `keynote/session.mjs` — realtime client (supabase-js via esm.sh): join, lobby, question (timer), reveal, leaderboard, poll aggregates, ended; host easter-egg (5 taps on the title) + host bar driving the timers. Loads only for talks with items; early-returns when config is offline.
-- [done] `server.js` — routes `/api/keynote/{config,join,submit,host/:action}`.
-- Verified locally: server boots; config -> configured:false; host -> 503 not_configured; companion still renders with the session dormant (display:none), 7 beats, NO console errors.
-- BLOCKED: the realtime join/host/question/reveal/leaderboard loop can only be verified once Deca's Supabase project + env exist. Timing constants in session.mjs must stay in sync with api/keynote/quiz.js (pre-roll 5s, question 30s, reveal 3s).
-
-## Owner (Deca) steps
-- Create a separate Supabase project in the Deca org; run `db/keynote-schema.sql`.
-- Set env: SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, SUPABASE_SECRET_KEY, KEYNOTE_HOST_SECRET.
+Evaluator rounds: 3 (independent subagent). Round 1 found 2 hard failures and 10 defects; round 2 found 5 regressions; round 3 passed.
 
 ## Next steps
-1. Evaluator pass on the companion/static layer (independent subagent, live server).
-2. Build the live-quiz layer; then an evaluator drives a full session (needs Supabase env, so parts verify only once Deca provisions).
-3. Open the PR (feat/keynote-port) when the static layer + quiz code are in; note the Supabase steps for Deca.
-
-## Notes / blockers
-- The quiz cannot be verified end-to-end locally until Deca's Supabase env exists; the companion/static layer is fully verified without it.
-- content.mjs is `.mjs` so the Express route can dynamic-import it for meta; the browser imports it as a module too.
+1. Deca: re-test voice on Mac Chrome (hang-up after goodbye, Finish button) and the scaled timing run (`?timescale=0.05`).
+2. Pixel 7 test: needs an HTTPS address (tailscale serve on the Mac, or production).
+3. Purge test data (pi1 tables, test conversations in ElevenLabs) before launch.
+4. AC-18: Deca reviews screenshots at phone and laptop width.
+5. Phase 6: PR, deploy path through `Jeff-Emmett/valley-commons`, production headers (Jeff), then AC-20 with Deca and Andrew.
