@@ -179,6 +179,17 @@ body.sv::before {
 .sv-compose .btn { padding: 12px 14px; border-radius: 12px; }
 
 /* ---------- End ---------- */
+.sv-feed { display: flex; flex-direction: column; gap: 10px; margin-top: 26px; width: 100%; max-width: 34em; }
+.sv-feed:empty { display: none; }
+.sv-feed__line { display: flex; gap: 12px; align-items: flex-start; font: 400 14px/1.45 var(--sans); color: var(--muted-3); animation: sv-rise .45s cubic-bezier(.22, 1, .36, 1) both; }
+.sv-feed__icon { flex: none; width: 18px; height: 18px; margin-top: 1px; border-radius: 50%; display: grid; place-items: center; }
+.sv-feed__line--done .sv-feed__icon { background: var(--green-dark); }
+.sv-feed__line--done .sv-feed__icon::after { content: ""; width: 7px; height: 4px; border: solid #fff; border-width: 0 0 2px 2px; transform: translateY(-1px) rotate(-45deg); }
+.sv-feed__line--wait { color: var(--ink); }
+.sv-feed__line--wait .sv-feed__icon { border: 2px solid color-mix(in srgb, var(--orange) 30%, transparent); border-top-color: var(--orange); animation: sv-spin .9s linear infinite; }
+.sv-feed__line--warn .sv-feed__icon { background: var(--amber); }
+.sv-feed__line--warn .sv-feed__icon::after { content: "!"; color: #fff; font: 700 12px/1 var(--sans); }
+@keyframes sv-spin { to { transform: rotate(360deg); } }
 .sv-end { display: flex; flex-direction: column; align-items: flex-start; }
 .sv-end__mark { color: var(--green-soft); }
 

@@ -45,3 +45,20 @@ Run the site (`npm start`, port 3000) and the backend locally, then open
 `http://localhost:3000/survey?api=http://localhost:<port>`. The `api` parameter
 works only on `localhost`, so a crafted link cannot send the password elsewhere.
 `?timescale=0.05` shrinks the timing thresholds for testing (it can only shorten).
+
+## Known issue: Tailscale on + a Chromium browser = "server cannot be reached"
+
+On a device connected to Deca's tailnet, `pi1.tail0a8aa5.ts.net` resolves to a
+private `100.x` address instead of the public Funnel address. Chromium browsers
+(Chrome, Brave, Edge) treat that as the local network and block calls to it from a
+public page (Local Network Access). The console shows: "Permission was denied for
+this request to access the `local` address space". The gate then says "The survey
+server cannot be reached right now".
+
+- **Attendees are not affected:** they are not on the tailnet, so they get the
+  public address.
+- **To test production from a tailnet device:** switch Tailscale off (or allow
+  "Local network access" for the site in the browser's site settings).
+- `localhost` pages are not affected (they count as local themselves), so local
+  development works with Tailscale on.
+- SSH to pi1 needs Tailscale on. Turn it back on after testing.
