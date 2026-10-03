@@ -139,3 +139,36 @@ test('queue: with storage full, an item is sent once, not in a loop', async () =
   assert.equal(sends, 1);
   assert.equal(q.size(), 0);
 });
+
+import { pipelineLines } from '../survey/pipeline.js';
+
+test('pipeline feed: each real step adds a line, ready only when the results include this conversation', () => {
+  const t0 = Date.parse('2026-10-03T12:00:00Z');
+  const iso = (s) => new Date(t0 + s * 1000).toISOString();
+  const idle = { pending: false, next_run_at: null, running: false, latest: { version: 3, generated_at: iso(-600), paused: false } };
+  let r = pipelineLines({ answers_saved: 9, transcript: null, synthesis: idle }, t0 + 5000, t0);
+  assert.equal(r.ready, false);
+  assert.match(r.lines.at(-1).text, /Waiting for ElevenLabs/);
+
+  const received = { received_at: iso(20), reconciled_at: null, reconcile_note: null, reconciling: true };
+  r = pipelineLines({ answers_saved: 9, transcript: received, synthesis: idle }, t0 + 25000, t0);
+  assert.match(r.lines.at(-1).text, /re-reading/);
+
+  const reread = { ...received, reconciled_at: iso(40), reconcile_filled: 2, reconcile_note: 'done', reconciling: false };
+  r = pipelineLines({ answers_saved: 11, transcript: reread, synthesis: { ...idle, pending: true, next_run_at: iso(100) } }, t0 + 40000, t0);
+  assert.match(r.lines.map((l) => l.text).join('|'), /2 more answers found.*queued: starts in 1 min 0 s/);
+  assert.equal(r.ready, false);
+
+  r = pipelineLines({ answers_saved: 11, transcript: reread, synthesis: { ...idle, latest: { version: 4, generated_at: iso(130), paused: false } } }, t0 + 131000, t0);
+  assert.equal(r.ready, true);
+  assert.match(r.lines.at(-1).text, /version 4/);
+});
+
+test('pipeline feed: a missing transcript warns after 3 minutes and still finishes on the rebuild', () => {
+  const t0 = Date.parse('2026-10-03T12:00:00Z');
+  const latest = { version: 5, generated_at: new Date(t0 + 60000).toISOString(), paused: true };
+  const r = pipelineLines({ answers_saved: 4, transcript: null, synthesis: { pending: false, running: false, next_run_at: null, latest } }, t0 + 200000, t0);
+  assert.equal(r.lines[1].state, 'warn');
+  assert.equal(r.ready, true);
+  assert.match(r.lines.at(-1).text, /summaries paused/);
+});

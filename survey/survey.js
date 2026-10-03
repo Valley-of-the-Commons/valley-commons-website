@@ -3,6 +3,7 @@
 // offline queue to the Pi API. Timing signals and the voice-to-text hand-off are
 // driven from here (Spec: Timing).
 import { getToken, request, storage } from './api.js';
+import { pipelineLines } from './pipeline.js';
 import { createQueue } from './queue.js';
 import { createClock, timeScale, TIMING_MESSAGES } from './timing.js';
 import { $, el, esc, gate, noticeHtml, wirePrivacyLinks } from './ui.js';
@@ -88,19 +89,48 @@ async function showModes(note = '') {
   mount.replaceChildren(view);
 }
 
+// The thank-you screen. With a just-finished session it follows that
+// conversation through the pipeline (Pi status, polled) until the results
+// include it, then points there with the primary button.
 function showEnd() {
+  const sessionId = state.session?.session_id;
+  const endedAt = Date.now();
   const view = el(`
     <section class="sv-end sv-rise">
       <div class="sv-end__mark" aria-hidden="true">${ICONS.leaf}</div>
-      <h1 class="sv-title">Thank you.</h1>
-      <p class="sv-lede">Everything you shared is saved. You can come back from this browser any time to add a project or something you remembered later.</p>
+      <h1 class="sv-title" data-title>Thank you.</h1>
+      <p class="sv-lede" data-lede>${sessionId
+        ? 'Everything you shared is saved. Keep this page open for about 3 minutes to see the results updated with your answers.'
+        : 'Everything you shared is saved. You can come back from this browser any time to add something.'}</p>
+      <ol class="sv-feed" aria-live="polite"></ol>
       <div class="sv-actions">
-        <a class="btn btn-orange" href="/survey/results">See the results</a>
+        <a class="btn btn-orange" href="/survey/results" data-results ${sessionId ? 'hidden' : ''}>See the results →</a>
         <button class="btn btn-dark" type="button" data-again>Add something</button>
       </div>
     </section>`);
-  $('[data-again]', view).addEventListener('click', () => showModes());
+  let poll = null;
+  $('[data-again]', view).addEventListener('click', () => { clearInterval(poll); showModes(); });
   mount.replaceChildren(view);
+  if (!sessionId) return;
+
+  const feed = $('.sv-feed', view);
+  const tick = async () => {
+    if (!view.isConnected) return clearInterval(poll);
+    let res;
+    try { res = await request(`/sessions/${sessionId}/status`); } catch { return; } // offline: try again next tick
+    if (!res.ok) return;
+    const { lines, ready } = pipelineLines(res.data, Date.now(), endedAt);
+    feed.replaceChildren(...lines.map((l) => el(`<li class="sv-feed__line sv-feed__line--${l.state}"><span class="sv-feed__icon" aria-hidden="true"></span><span>${esc(l.text)}</span></li>`)));
+    if (ready) {
+      clearInterval(poll);
+      $('[data-title]', view).textContent = 'Your answers are in the results.';
+      $('[data-lede]', view).textContent = 'Thank you for taking part. You can come back from this browser any time to add something.';
+      $('[data-results]', view).hidden = false;
+    }
+  };
+  tick();
+  poll = setInterval(tick, 3000);
+  setTimeout(() => clearInterval(poll), 15 * 60 * 1000);
 }
 
 function showPaused() {
