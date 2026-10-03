@@ -30,9 +30,9 @@ export function pipelineLines(status, now = Date.now(), endedAt = now) {
     else if (t.reconcile_note === 'paused' && !t.reconciled_at) reread = { state: 'warn', text: 'Re-read by Claude paused (spend cap or no key); it will run later' };
     else if (t.reconciled_at) {
       const n = t.reconcile_filled || 0;
-      reread = { state: 'done', text: n ? `Re-read by Claude Opus 5.5: ${n} more answer${n > 1 ? 's' : ''} found` : 'Re-read by Claude Opus 5.5: nothing missed' };
+      reread = { state: 'done', text: n ? `Re-read by Claude Sonnet 5.5: ${n} more answer${n > 1 ? 's' : ''} found` : 'Re-read by Claude Sonnet 5.5: nothing missed' };
     } else {
-      lines.push({ state: 'wait', text: 'Claude Opus 5.5 is re-reading the transcript for anything missed…' });
+      lines.push({ state: 'wait', text: 'Claude Sonnet 5.5 is re-reading the transcript for anything missed…' });
       return { lines, ready: false };
     }
     lines.push(reread);
@@ -44,10 +44,10 @@ export function pipelineLines(status, now = Date.now(), endedAt = now) {
   if (latest && after(latest.generated_at, typeof since === 'number' ? new Date(since).toISOString() : since)) {
     lines.push({ state: latest.paused ? 'warn' : 'done', text: latest.paused
       ? `Results rebuilt (version ${latest.version}): counts and board updated; written summaries paused`
-      : `Results rebuilt (version ${latest.version}): graph in Apache AGE, summaries by Claude Opus 5.5` });
+      : `Results rebuilt (version ${latest.version}): graph in Apache AGE, summaries by Claude Sonnet 5.5` });
     return { lines, ready: true };
   }
-  if (syn.running) lines.push({ state: 'wait', text: 'Rebuilding the graph (Apache AGE) and writing summaries with Claude Opus 5.5…' });
+  if (syn.running) lines.push({ state: 'wait', text: 'Rebuilding the graph (Apache AGE) and writing summaries with Claude Sonnet 5.5…' });
   else if (syn.pending && syn.next_run_at) lines.push({ state: 'wait', text: `Results rebuild queued: starts in ${inSeconds(syn.next_run_at, now)}` });
   else lines.push({ state: 'wait', text: 'Results rebuild about to be queued…' });
   return { lines, ready: false };

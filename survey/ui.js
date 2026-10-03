@@ -11,9 +11,9 @@ export const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&a
 
 // The facts the notice states. Each must match the live configuration
 // (ElevenLabs agent privacy settings, the interviewer LLM, the synthesis model).
-// Checked 2026-10-01: agent privacy.retention_days 7, record_voice false, llm
-// claude-opus-5-5 (pi-data services/votc-survey/agent/settings.json); synthesis
-// model claude-opus-5-5 (src/llm.js). Safeguards: ElevenLabs' own DPF policy
+// Checked 2026-10-03: agent privacy.retention_days 7, record_voice false, llm
+// claude-sonnet-5-5 (pi-data services/votc-survey/agent/settings.json); synthesis
+// model claude-sonnet-5-5 (src/llm.js). Safeguards: ElevenLabs' own DPF policy
 // page; Anthropic's Data Processing Addendum (SCCs, Modules 2 and 3).
 export const NOTICE_FACTS = {
   elevenlabsRetentionDays: '7',
