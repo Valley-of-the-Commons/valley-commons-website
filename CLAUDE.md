@@ -4,9 +4,10 @@ The public site for Valley of the Commons: landing page, membership + sponsorshi
 applications (Mollie payments), an AI "game terminal", an admin area, and
 per-talk **keynote companion** pages (a static archive since the live quiz was
 retired 2026-09-25). Plain vanilla JS + Express, static HTML/CSS/JS, raw
-Postgres (`pg`). Production deploys from the private deploy repo
-`Jeff-Emmett/valley-commons`: a push to its `main` builds the Docker image and
-deploys it to the production VPS.
+Postgres (`pg`). Production builds from this repo's `main`: Jeff's Gitea mirrors it
+every 15 minutes and the private harness repo `Jeff-Emmett/valley-commons` builds
+and deploys it (with a smoke test and rollback), so a merge to `main` is live in
+about 15 to 30 minutes.
 
 This file is deliberately lean. It holds only what should fire on **every** task
 in this repo. Everything deeper lives in `docs/`, loaded when you need it (see the
