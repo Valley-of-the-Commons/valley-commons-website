@@ -191,3 +191,60 @@ test('client error report: posts stage, error and user agent; omits session id w
     globalThis.fetch = realFetch;
   }
 });
+
+import { resultsOpen } from '../survey/pipeline.js';
+import { lockedView, pollUntil, POLL_MAX_MS, POLL_MS } from '../survey/locked.js';
+import { hasRecap, recapHtml, recapUpdated } from '../survey/recapView.js';
+
+test('results button: needs the pipeline done and the server flag', () => {
+  assert.equal(resultsOpen({ ready: true, lines: [] }, true), true);
+  assert.equal(resultsOpen({ ready: true, lines: [] }, false), false);
+  assert.equal(resultsOpen({ ready: true, lines: [] }, undefined), false);
+  assert.equal(resultsOpen({ ready: false, lines: [] }, true), false);
+});
+
+test('locked results: one view per reason; only "being added" polls, every 15 s for up to 15 min', () => {
+  const submitted = lockedView('not_submitted');
+  assert.equal(submitted.title, 'Results open once you have finished the survey.');
+  assert.deepEqual(submitted.action, { label: 'Go to the survey', href: '/survey' });
+  assert.equal(submitted.poll, false);
+  const included = lockedView('not_included');
+  assert.equal(included.title, 'Your answers are being added to the results. This takes a few minutes.');
+  assert.equal(included.poll, true);
+  assert.equal(lockedView(undefined).poll, false);
+  assert.equal(POLL_MS, 15000);
+  assert.equal(POLL_MAX_MS, 900000);
+});
+
+test('pollUntil: stops when the check passes, or times out after the maximum', async () => {
+  let clock = 0;
+  const sleep = async (ms) => { clock += ms; };
+  const now = () => clock;
+  let calls = 0;
+  assert.equal(await pollUntil(async () => ++calls === 3, { intervalMs: 15000, maxMs: 900000, sleep, now }), 'done');
+  assert.equal(calls, 3);
+  assert.equal(clock, 45000);
+  clock = 0; calls = 0;
+  assert.equal(await pollUntil(async () => { calls++; return false; }, { intervalMs: 15000, maxMs: 900000, sleep, now }), 'timeout');
+  assert.equal(calls, 60);
+});
+
+test('recap: renders weeks, skips null or empty sections, escapes text, allows only http(s) links', () => {
+  const weeks = [{ label: 'Week 1', dates: '24 to 30 August', theme: 'Return <b>', paragraphs: ['One & two'] }];
+  assert.equal(hasRecap({ message: null, weeks: [], fundraise: null }), false);
+  assert.equal(recapHtml({ message: null, weeks: [], fundraise: null, updated: '2026-10-05' }), '');
+  assert.equal(recapHtml(null), '');
+  const html = recapHtml({ message: null, weeks, fundraise: null });
+  assert.match(html, /Week 1/);
+  assert.match(html, /Return &lt;b&gt;/);
+  assert.match(html, /One &amp; two/);
+  assert.ok(!html.includes('rc-note'));
+  const full = recapHtml({ message: { title: 'News', paragraphs: ['Hello'] }, weeks: [], fundraise: { title: 'Help', paragraphs: ['Give'], cta_label: 'Give now', cta_url: 'https://example.org/x' } });
+  assert.match(full, /rc-note--message/);
+  assert.match(full, /href="https:\/\/example.org\/x"/);
+  assert.ok(!full.includes('rc-weeks'));
+  const unsafe = recapHtml({ message: null, weeks: [], fundraise: { title: 'Help', paragraphs: [], cta_label: 'Go', cta_url: 'javascript:alert(1)' } });
+  assert.ok(!unsafe.includes('<a '));
+  assert.equal(recapUpdated({ updated: '2026-10-05' }), '5 October 2026');
+  assert.equal(recapUpdated({ updated: 'soon' }), '');
+});

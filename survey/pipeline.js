@@ -52,3 +52,7 @@ export function pipelineLines(status, now = Date.now(), endedAt = now) {
   else lines.push({ state: 'wait', text: 'Results rebuild about to be queued…' });
   return { lines, ready: false };
 }
+
+// The results button opens only when this conversation is through the pipeline
+// AND the server (results_unlocked) says this person may read the results.
+export const resultsOpen = (feed, unlocked) => feed.ready === true && unlocked === true;
