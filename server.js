@@ -478,6 +478,7 @@ const surveyPage = (file, { microphone = false } = {}) => (req, res) => {
 };
 app.get(['/survey', '/survey/'], surveyPage('index.html', { microphone: true }));
 app.get('/survey/results', surveyPage('results.html'));
+app.get('/survey/recap', surveyPage('recap.html'));
 
 // Static files
 app.use(express.static(path.join(__dirname), {

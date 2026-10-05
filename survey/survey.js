@@ -3,8 +3,9 @@
 // offline queue to the Pi API. Timing signals and the voice-to-text hand-off are
 // driven from here (Spec: Timing).
 import { getToken, reportClientError, request, storage } from './api.js';
-import { pipelineLines } from './pipeline.js';
+import { pipelineLines, resultsOpen } from './pipeline.js';
 import { createQueue } from './queue.js';
+import { recapHtml } from './recapView.js';
 import { createClock, timeScale, TIMING_MESSAGES } from './timing.js';
 import { $, el, esc, gate, noticeHtml, wirePrivacyLinks } from './ui.js';
 
@@ -89,48 +90,73 @@ async function showModes(note = '') {
   mount.replaceChildren(view);
 }
 
-// The thank-you screen. With a just-finished session it follows that
-// conversation through the pipeline (Pi status, polled) until the results
-// include it, then points there with the primary button.
+// The thank-you screen: the recap and news as the main body, with (after a
+// just-finished session) a compact status panel that follows that conversation
+// through the pipeline (Pi status, polled). When the server says the results
+// include this person's answers (results_unlocked), the panel offers the button.
 function showEnd() {
   const sessionId = state.session?.session_id;
   const endedAt = Date.now();
   const view = el(`
     <section class="sv-end sv-rise">
-      <div class="sv-end__mark" aria-hidden="true">${ICONS.leaf}</div>
-      <h1 class="sv-title" data-title>Thank you.</h1>
-      <p class="sv-lede" data-lede>${sessionId
-        ? 'Everything you shared is saved. Keep this page open for about 3 minutes to see the results updated with your answers.'
-        : 'Everything you shared is saved. You can come back from this browser any time to add something.'}</p>
-      <ol class="sv-feed" aria-live="polite"></ol>
+      <h1 class="sv-title sv-title--sm">Thank you. Everything you shared is saved.</h1>
+      ${sessionId ? `
+      <aside class="sv-pipe" aria-live="polite">
+        <p class="sv-pipe__title" data-title>Adding your answers to the results. About 3 minutes.</p>
+        <ol class="sv-feed"></ol>
+        <a class="btn btn-orange" href="/survey/results" data-results hidden>See the results with your answers →</a>
+      </aside>` : ''}
+      <div class="sv-end__recap" data-recap hidden></div>
       <div class="sv-actions">
-        <a class="btn btn-orange" href="/survey/results" data-results ${sessionId ? 'hidden' : ''}>See the results →</a>
+        ${sessionId ? '' : '<a class="btn btn-orange" href="/survey/results" data-results hidden>See the results →</a>'}
         <button class="btn btn-dark" type="button" data-again>Add something</button>
       </div>
     </section>`);
   let poll = null;
   $('[data-again]', view).addEventListener('click', () => { clearInterval(poll); showModes(); });
   mount.replaceChildren(view);
-  if (!sessionId) return;
+  showRecapIn($('[data-recap]', view), view);
+  if (!sessionId) return showResultsIfUnlocked($('[data-results]', view), view);
 
   const feed = $('.sv-feed', view);
+  const panel = $('.sv-pipe', view);
   const tick = async () => {
     if (!view.isConnected) return clearInterval(poll);
     let res;
     try { res = await request(`/sessions/${sessionId}/status`); } catch { return; } // offline: try again next tick
     if (!res.ok) return;
-    const { lines, ready } = pipelineLines(res.data, Date.now(), endedAt);
-    feed.replaceChildren(...lines.map((l) => el(`<li class="sv-feed__line sv-feed__line--${l.state}"><span class="sv-feed__icon" aria-hidden="true"></span><span>${esc(l.text)}</span></li>`)));
-    if (ready) {
+    const pipeline = pipelineLines(res.data, Date.now(), endedAt);
+    feed.replaceChildren(...pipeline.lines.map((l) => el(`<li class="sv-feed__line sv-feed__line--${l.state}"><span class="sv-feed__icon" aria-hidden="true"></span><span>${esc(l.text)}</span></li>`)));
+    if (resultsOpen(pipeline, res.data.results_unlocked)) {
       clearInterval(poll);
+      panel.classList.add('is-open');
       $('[data-title]', view).textContent = 'Your answers are in the results.';
-      $('[data-lede]', view).textContent = 'Thank you for taking part. You can come back from this browser any time to add something.';
       $('[data-results]', view).hidden = false;
     }
   };
   tick();
   poll = setInterval(tick, 3000);
-  setTimeout(() => clearInterval(poll), 15 * 60 * 1000);
+  setTimeout(() => {
+    clearInterval(poll);
+    if ($('[data-results]', view).hidden && view.isConnected) $('[data-title]', view).textContent = 'Results open once you have finished the survey.';
+  }, 15 * 60 * 1000);
+}
+
+// Fills the recap block from the API; stays hidden if it cannot be loaded or is empty.
+async function showRecapIn(block, view) {
+  let res;
+  try { res = await request('/recap'); } catch { return; }
+  const html = res.ok ? recapHtml(res.data) : '';
+  if (!html || !view.isConnected) return;
+  block.replaceChildren(el('<h2 class="rs-h2">Recap &amp; news</h2>'), el(html));
+  block.hidden = false;
+}
+
+// The results link appears only when /me says this person may read the results.
+async function showResultsIfUnlocked(link, view) {
+  let res;
+  try { res = await request('/me'); } catch { return; }
+  if (res.ok && res.data?.results_unlocked && view.isConnected) link.hidden = false;
 }
 
 function showPaused() {
@@ -140,11 +166,13 @@ function showPaused() {
       <p class="sv-lede">What you said so far is kept. Come back from this browser and the interviewer picks up where you stopped.</p>
       <div class="sv-actions">
         <button class="btn btn-orange" type="button" data-resume>Continue now</button>
-        <a class="btn btn-dark" href="/survey/results">See the results</a>
+        <a class="btn btn-dark" href="/survey/results" data-results hidden>See the results</a>
+        <a class="btn btn-dark" href="/survey/recap">Recap &amp; news</a>
       </div>
     </section>`);
   $('[data-resume]', view).addEventListener('click', () => showModes());
   mount.replaceChildren(view);
+  showResultsIfUnlocked($('[data-results]', view), view);
 }
 
 // `failedMode` decides the greeting if the person switches to text: after a

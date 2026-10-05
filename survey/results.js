@@ -1,6 +1,7 @@
 // /survey/results: the latest synthesis, the projects board and the forward
 // look. Everything here was already filtered for consent by the Pi API.
 import { getToken, request } from './api.js';
+import { lockedView, pollUntil } from './locked.js';
 import { $, el, esc, gate, wirePrivacyLinks } from './ui.js';
 
 const mount = $('#app');
@@ -34,8 +35,35 @@ async function main() {
     return mount.replaceChildren(el('<p class="sv-lede">The results cannot be loaded right now. Try again in a minute.</p>'));
   }
   if (res.status === 401) return main();
+  if (res.status === 403) return showLocked(res.data?.locked);
   if (!res.ok || res.data?.empty) return render(null);
   render(res.data);
+}
+
+// The API refuses the results until this person has finished the survey and
+// their answers are in the latest summary. While the answers are being added,
+// the page checks again by itself.
+async function showLocked(code) {
+  const view = lockedView(code);
+  const page = el(`
+    <section class="rs-empty sv-rise">
+      <p class="eyebrow">Valley of the Commons 2026</p>
+      <h1 class="sv-title sv-title--sm">${esc(view.title)}</h1>
+      ${view.action ? `<div class="sv-actions"><a class="btn btn-orange" href="${esc(view.action.href)}">${esc(view.action.label)}</a></div>` : ''}
+      ${view.poll ? '<p class="sv-feed__line sv-feed__line--wait" data-wait><span class="sv-feed__icon" aria-hidden="true"></span><span>Checking again every 15 seconds.</span></p>' : ''}
+    </section>`);
+  mount.replaceChildren(page);
+  if (!view.poll) return;
+  const outcome = await pollUntil(async () => {
+    let res;
+    try { res = await request('/results'); } catch { return false; } // offline: try again
+    if (res.status === 403 && res.data?.locked === 'not_included') return false;
+    main(); // opened, or a different state (signed out, not submitted): render it
+    return true;
+  });
+  if (outcome === 'timeout' && page.isConnected) {
+    $('[data-wait]', page).replaceChildren(el('<span>This is taking longer than expected. Reload this page to check again.</span>'));
+  }
 }
 
 function render(r) {
@@ -77,6 +105,14 @@ function render(r) {
             .map(([t, a]) => `<div class="rs-card"><h3 class="rs-h3">${t}</h3>${area(a)}</div>`).join('')}
         </div>
       </section>
+
+      ${s.open_space || s.food ? `<section class="rs-section">
+        <h2 class="rs-h2">Open space and food</h2>
+        <div class="rs-grid rs-grid--two">
+          ${[['Open space', s.open_space], ['Food', s.food]].filter(([, a]) => a)
+            .map(([t, a]) => `<div class="rs-card"><h3 class="rs-h3">${t}</h3>${area(a)}</div>`).join('')}
+        </div>
+      </section>` : ''}
 
       <section class="rs-section">
         <h2 class="rs-h2">Never again</h2>
