@@ -2,7 +2,7 @@
 // with the ElevenLabs interviewer. Datapoints the agent records go through the
 // offline queue to the Pi API. Timing signals and the voice-to-text hand-off are
 // driven from here (Spec: Timing).
-import { getToken, request, storage } from './api.js';
+import { getToken, reportClientError, request, storage } from './api.js';
 import { pipelineLines } from './pipeline.js';
 import { createQueue } from './queue.js';
 import { createClock, timeScale, TIMING_MESSAGES } from './timing.js';
@@ -219,18 +219,25 @@ async function startSession(mode, { handoff = false, continuation = false } = {}
   if (handoff) appendNote(view, 'Voice has ended. The conversation continues here.');
   setProgress(state.progress, false);
 
-  let session, Conversation;
+  const retry = () => startSession(mode, { handoff, continuation });
+  // Load the SDK before asking for a session: a session that cannot connect still
+  // counts toward the limits, so never create one the page cannot use.
+  let Conversation;
   try {
-    [session, { Conversation }] = await Promise.all([
-      request('/sessions', { method: 'POST', body: { mode, handoff, continuation } }),
-      import(SDK_URL),
-    ]);
+    ({ Conversation } = await import(SDK_URL));
+  } catch (err) {
+    reportClientError('sdk_load', err);
+    return showProblem('The conversation tool could not load. A browser extension or network filter may be blocking cdn.jsdelivr.net or elevenlabs.io.', retry, mode);
+  }
+  let session;
+  try {
+    session = await request('/sessions', { method: 'POST', body: { mode, handoff, continuation } });
   } catch {
-    return showProblem('The survey server cannot be reached right now.', () => startSession(mode, { handoff, continuation }), mode);
+    return showProblem('The survey server cannot be reached right now.', retry, mode);
   }
   if (session.status === 401) return main();
   if (session.status === 429) return showProblem(session.data?.error || 'The survey is busy right now. Please come back later.', () => showModes(), 'none');
-  if (!session.ok) return showProblem('The conversation could not start.', () => startSession(mode, { handoff, continuation }), mode);
+  if (!session.ok) return showProblem('The conversation could not start.', retry, mode);
   state.session = session.data;
   setProgress(session.data.progress, false);
 
@@ -252,10 +259,11 @@ async function startSession(mode, { handoff = false, continuation = false } = {}
       onError: () => {},
     });
   } catch (err) {
+    reportClientError('connect', err, state.session.session_id);
     const blocked = mode === 'voice' && /permission|notallowed|denied/i.test(String(err?.name) + String(err?.message));
     return showProblem(
       blocked ? 'Microphone access was blocked. Allow it in your browser settings, or continue in text.' : 'The conversation could not connect.',
-      () => startSession(mode, { handoff, continuation }), mode);
+      retry, mode);
   }
 
   state.clock = createClock({ mode, scale, offsetMs: textOnly ? state.textMsSoFar : 0, onThreshold });
@@ -288,6 +296,7 @@ function onThreshold(id) {
 
 async function onDisconnect(details) {
   const { mode } = state;
+  if (details.reason === 'error') reportClientError('disconnect', { name: 'disconnect', message: details.message }, state.session?.session_id);
   state.clock?.stop();
   const sessionMs = (state.clock?.elapsed() ?? 0) - (mode === 'text' ? state.textMsSoFar : 0);
   if (mode === 'text') state.textMsSoFar = state.clock?.elapsed() ?? state.textMsSoFar;

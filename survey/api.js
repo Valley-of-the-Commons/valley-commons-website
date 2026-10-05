@@ -25,6 +25,17 @@ export async function request(path, { method = 'GET', body, auth = true } = {}) 
   return { ok: res.ok, status: res.status, data };
 }
 
+/**
+ * Tells the server why this browser could not load the SDK or connect, which it
+ * cannot see otherwise. Best effort: never throws, never blocks the screen.
+ * sessionId is omitted when no session exists yet (an SDK load failure).
+ */
+export function reportClientError(stage, err, sessionId) {
+  const body = { stage, name: String(err?.name ?? ''), message: String(err?.message ?? ''), user_agent: globalThis.navigator?.userAgent ?? '' };
+  if (sessionId) body.session_id = sessionId;
+  return request('/client-error', { method: 'POST', body }).catch(() => {});
+}
+
 export async function signIn(password) {
   const res = await request('/auth', { method: 'POST', body: { password }, auth: false });
   if (res.ok) setToken(res.data.token);

@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
+import { reportClientError } from '../survey/api.js';
 import { createQueue } from '../survey/queue.js';
 import { createStorage } from '../survey/storage.js';
 import { createClock, timeScale } from '../survey/timing.js';
@@ -171,4 +172,22 @@ test('pipeline feed: a missing transcript warns after 3 minutes and still finish
   assert.equal(r.lines[1].state, 'warn');
   assert.equal(r.ready, true);
   assert.match(r.lines.at(-1).text, /summaries paused/);
+});
+
+test('client error report: posts stage, error and user agent; omits session id when none; never throws', async () => {
+  const sent = [];
+  const realFetch = globalThis.fetch;
+  globalThis.fetch = async (url, init) => { sent.push({ url, body: JSON.parse(init.body) }); return { ok: true, status: 200, json: async () => ({ ok: true }) }; };
+  try {
+    await reportClientError('sdk_load', new TypeError('Failed to fetch'));
+    await reportClientError('connect', { name: 'Error', message: 'boom' }, 'sess-1');
+    assert.match(sent[0].url, /\/client-error$/);
+    assert.deepEqual(Object.keys(sent[0].body).sort(), ['message', 'name', 'stage', 'user_agent']);
+    assert.equal(sent[0].body.name, 'TypeError');
+    assert.equal(sent[1].body.session_id, 'sess-1');
+    globalThis.fetch = async () => { throw new Error('offline'); };
+    assert.equal(await reportClientError('connect', null), undefined);
+  } finally {
+    globalThis.fetch = realFetch;
+  }
 });

@@ -18,7 +18,7 @@ data, secrets or database tables.
 | `survey/index.html`, `survey/survey.js` | Gate, privacy notice, mode choice, the conversation (ElevenLabs browser SDK from jsdelivr, pinned), timing signals, voice-to-text hand-off |
 | `survey/results.html`, `survey/results.js` | The results page |
 | `survey/ui.js` | Shared gate and the privacy notice (its one home) |
-| `survey/api.js`, `survey/storage.js` | Backend base URL, saved sign-in, safe `localStorage` |
+| `survey/api.js`, `survey/storage.js` | Backend base URL, saved sign-in, safe `localStorage`, best-effort client error reports (`POST /client-error` on the Pi API) |
 | `survey/queue.js` | Offline queue for `record_datapoint` calls (retries with an idempotency key) |
 | `survey/timing.js` | Voice and text thresholds and the contextual updates sent at each |
 | `survey/survey.css` | Styles, on top of `home.css` tokens |
