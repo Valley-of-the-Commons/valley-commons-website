@@ -153,12 +153,10 @@ function forward(f, respondents) {
     <div class="rs-stats">
       <div class="rs-stat"><b>${ri.yes}</b><span>plan to come back</span></div>
       <div class="rs-stat"><b>${ri.maybe}</b><span>might come back</span></div>
-      <div class="rs-stat"><b>${f.hosting_open.yes + f.hosting_open.maybe}</b><span>open to hosting a week of VotC 2027${f.hosting_open.maybe ? ` (${f.hosting_open.maybe} maybe)` : ''}</span></div>
     </div>
     <h3 class="rs-h3">Interest in upcoming events</h3>
     <div class="rs-chart">${legend(INTEREST)}<ul class="rs-events">${events}</ul></div>
     <p class="rs-sub rs-sub--after">Bar length is the share of the ${respondents} people who took part. Upcoming events are plans, not promises.</p>
-    ${f.themes.length ? `<h3 class="rs-h3">Proposed themes for VotC 2027 weeks</h3><ul class="rs-list">${list(f.themes)}</ul>` : ''}
     ${f.new_formats.length ? `<h3 class="rs-h3">New formats people would propose</h3><ul class="rs-list">${list(f.new_formats)}</ul>` : ''}`;
 }
 
