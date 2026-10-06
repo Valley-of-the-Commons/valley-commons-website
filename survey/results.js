@@ -1,6 +1,7 @@
 // /survey/results: the latest synthesis, the projects board and the forward
 // look. Everything here was already filtered for consent by the Pi API.
 import { getToken, request } from './api.js';
+import { INCLUDED_LINE, youLine } from './eta.js';
 import { lockedView, pollUntil } from './locked.js';
 import { $, el, esc, gate, wirePrivacyLinks } from './ui.js';
 
@@ -35,41 +36,61 @@ async function main() {
     return mount.replaceChildren(el('<p class="sv-lede">The results cannot be loaded right now. Try again in a minute.</p>'));
   }
   if (res.status === 401) return main();
-  if (res.status === 403) return showLocked(res.data?.locked);
-  if (!res.ok || res.data?.empty) return render(null);
-  render(res.data);
+  if (res.status === 403) return showLocked();
+  if (!res.ok) return render(null);
+  shown = null;
+  show(res.data);
+  if (res.data.you && !res.data.you.included) waitForInclusion();
 }
 
-// The API refuses the results until this person has finished the survey and
-// their answers are in the latest summary. While the answers are being added,
-// the page checks again by itself.
-async function showLocked(code) {
-  const view = lockedView(code);
-  const page = el(`
+// The API refuses the results until this person has submitted.
+function showLocked() {
+  const view = lockedView();
+  mount.replaceChildren(el(`
     <section class="rs-empty sv-rise">
       <p class="eyebrow">Valley of the Commons 2026</p>
       <h1 class="sv-title sv-title--sm">${esc(view.title)}</h1>
-      ${view.action ? `<div class="sv-actions"><a class="btn btn-orange" href="${esc(view.action.href)}">${esc(view.action.label)}</a></div>` : ''}
-      ${view.poll ? '<p class="sv-feed__line sv-feed__line--wait" data-wait><span class="sv-feed__icon" aria-hidden="true"></span><span>Checking again every 15 seconds.</span></p>' : ''}
-    </section>`);
-  mount.replaceChildren(page);
-  if (!view.poll) return;
+      <div class="sv-actions"><a class="btn btn-orange" href="${esc(view.action.href)}">${esc(view.action.label)}</a></div>
+    </section>`));
+}
+
+// What the page currently shows, so a refresh re-renders only when the data
+// changed or the person's own answers just joined it.
+let shown = null;
+
+// `you` ({ included, eta_seconds }) comes with the results: until the person's own
+// answers are in, a banner says when. `justIncluded` swaps it for the confirmation.
+function show(data, justIncluded = false) {
+  const { you, ...results } = data;
+  const banner = you && !you.included ? youLine(you) : justIncluded ? INCLUDED_LINE : null;
+  const version = results.generated_at ?? 'empty';
+  if (version === shown && !justIncluded) return setBanner(banner);
+  shown = version;
+  render(results.empty ? null : results, banner);
+}
+
+const setBanner = (text) => { const b = $('[data-banner]'); if (b && text) b.textContent = text; };
+
+// Checks again every 15 s for up to 15 min, refreshing the data, until the answers are in.
+async function waitForInclusion() {
   const outcome = await pollUntil(async () => {
     let res;
     try { res = await request('/results'); } catch { return false; } // offline: try again
-    if (res.status === 403 && res.data?.locked === 'not_included') return false;
-    main(); // opened, or a different state (signed out, not submitted): render it
-    return true;
+    if (res.status === 401 || res.status === 403) { main(); return true; } // signed out or locked: render that state
+    if (!res.ok) return false;
+    show(res.data, res.data.you?.included === true);
+    return res.data.you?.included !== false;
   });
-  if (outcome === 'timeout' && page.isConnected) {
-    $('[data-wait]', page).replaceChildren(el('<span>This is taking longer than expected. Reload this page to check again.</span>'));
-  }
+  if (outcome === 'timeout') setBanner('This is taking longer than expected. Reload this page to check again.');
 }
 
-function render(r) {
+const banner = (text) => (text ? `<p class="sv-note rs-banner" data-banner role="status">${esc(text)}</p>` : '');
+
+function render(r, bannerText) {
   if (!r) {
     return mount.replaceChildren(el(`
       <section class="rs-empty sv-rise">
+        ${banner(bannerText)}
         <p class="eyebrow">Valley of the Commons 2026</p>
         <h1 class="sv-title">Nothing to show yet.</h1>
         <p class="sv-lede">Results appear here once the first conversations are in. <a href="/survey">Take part</a>.</p>
@@ -80,6 +101,7 @@ function render(r) {
   mount.classList.add('rs-main');
   mount.replaceChildren(el(`
     <article class="rs sv-rise">
+      ${banner(bannerText)}
       <header class="rs-head">
         <p class="eyebrow">Valley of the Commons 2026</p>
         <h1 class="sv-title">What we heard.</h1>

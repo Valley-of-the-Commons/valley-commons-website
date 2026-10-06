@@ -15,16 +15,18 @@ data, secrets or database tables.
 
 | File | Role |
 | --- | --- |
-| `survey/index.html`, `survey/survey.js` | Gate, privacy notice, mode choice, the conversation (ElevenLabs browser SDK from jsdelivr, pinned), timing signals, voice-to-text hand-off |
+| `survey/index.html`, `survey/survey.js` | Gate, privacy notice and recap (landing), mode choice, the conversation (ElevenLabs browser SDK from jsdelivr, pinned), timing signals, voice-to-text hand-off, the closing name box; a submitted person finishes on `/survey/results`, anyone else on a saved-anonymously screen |
 | `survey/results.html`, `survey/results.js` | The results page |
-| `survey/recap.html`, `survey/recap.js`, `survey/recapView.js` | The "Recap & news" page (`/survey/recap`) and the renderer shared with the thank-you screen; content comes from the Pi API (`GET /recap`) |
-| `survey/locked.js` | The results page's locked states (`not_submitted`, `not_included`) and the 15 s / 15 min poll |
+| `survey/recap.html`, `survey/recap.js`, `survey/recapView.js` | The "Recap & news" page (`/survey/recap`) and the renderer shared with the landing screen; content comes from the Pi API (`GET /recap`) |
+| `survey/locked.js` | The results page's locked state (`not_submitted`) and the 15 s / 15 min poll |
+| `survey/attribution.js` | The closing name box (agent tool `ask_attribution`): the value the page records for `attribution_consent` and the `[attribution]` update sent to the agent |
+| `survey/eta.js` | The "your own answers will be added in about N minutes" line, shown as the banner on the results page |
 | `survey/ui.js` | Shared gate and the privacy notice (its one home) |
 | `survey/api.js`, `survey/storage.js` | Backend base URL, saved sign-in, safe `localStorage`, best-effort client error reports (`POST /client-error` on the Pi API) |
 | `survey/queue.js` | Offline queue for `record_datapoint` calls (retries with an idempotency key) |
-| `survey/timing.js` | Voice and text thresholds and the contextual updates sent at each |
+| `survey/timing.js` | Voice (11, 14 and 15 min) and text (15 min) thresholds and the contextual updates sent at each |
 | `survey/survey.css` | Styles, on top of `home.css` tokens |
-| `tests/survey.test.mjs` | Unit tests for storage, queue, timing, the pipeline feed, recap rendering and the locked states |
+| `tests/survey.test.mjs` | Unit tests for storage, queue, timing, the ETA wording, the name box, recap rendering and the locked state |
 
 `server.js` serves `/survey`, `/survey/results` and `/survey/recap`. `/survey` is the one route
 that sends `Permissions-Policy: microphone=(self)` (voice mode); every other route
@@ -43,7 +45,11 @@ keeps `microphone=()`.
 
 ## Who can read what
 
-The Pi API enforces this, not the page. `GET /results` answers 403 `{ locked: 'not_submitted' }` until the person has finished the survey (attribution consent recorded), and 403 `{ locked: 'not_included' }` until the latest synthesis was built from data that contains them. `/me` and `/sessions/:id/status` carry `results_unlocked` for the same rule. `GET /recap` (the "Recap & news" package, `content/recap.json` in the Pi repo) needs only the sign-in.
+The Pi API enforces this, not the page. A person is **submitted** when their attribution consent is recorded, or when every core question group has at least one answer (so someone who stops early after the core questions counts). `GET /results` answers 403 `{ locked: 'not_submitted' }` until then. Once submitted, it answers 200 with the latest results plus a top-level `you: { included, eta_seconds }`: `included` says whether their own answers are in that version, and `eta_seconds` is the Pi's estimate until they are (null once included). `/me` and `/sessions/:id/status` carry `results_unlocked` (the submitted rule); the status also carries `you`. `GET /recap` (the "Recap & news" package, `content/recap.json` in the Pi repo) needs only the sign-in.
+
+Anyone who leaves early is recorded as anonymous and is included in the results however little they answered (a name is shown only if the person typed one into the closing name box); reading the results still needs the submitted rule above.
+
+The question groups, their importance order and the per-session shuffle live in the Pi repo's `catalogue.json` (`groups`). Voice timing: wrap-up at 11 minutes, goodbye (the conversation continues in text) at 14, hard stop at 15. Text: a gentle wrap-up nudge at 15 minutes, no hard end.
 
 ## Local development
 

@@ -2,17 +2,17 @@
 // fires each threshold once. `scale` shrinks every threshold for testing.
 export const THRESHOLDS = {
   voice: [
-    { id: 'wrap_up', minutes: 10 },
-    { id: 'goodbye', minutes: 12 },
-    { id: 'hard_stop', minutes: 13 },
+    { id: 'wrap_up', minutes: 11 },
+    { id: 'goodbye', minutes: 14 },
+    { id: 'hard_stop', minutes: 15 },
   ],
   text: [{ id: 'wrap_up', minutes: 15 }],
 };
 
 export const TIMING_MESSAGES = {
   voice: {
-    wrap_up: '[timing] 10 minutes have passed. Wrap up fast now: cover any missing P1 datapoints in one or two short questions, then do the closing.',
-    goodbye: '[timing] 12 minutes. Say goodbye now: explain that the voice part has reached its time limit because of usage costs, and that the conversation continues in text right away. Then end the call.',
+    wrap_up: '[timing] 11 minutes have passed. Wrap up now: cover any missing core groups in one or two short questions, then do the closing.',
+    goodbye: '[timing] 14 minutes. Say goodbye now: explain that the voice part has reached its time limit because of usage costs, and that the conversation continues in text right away. Then end the call.',
   },
   text: {
     wrap_up: '[timing] 15 minutes have passed in text. Begin a gentle wrap-up, with no pressure and no rush.',

@@ -1,14 +1,13 @@
-// The results page when the API answers 403 { locked }: what to show, and the
-// polling used while the person's answers are being added. Pure, so it is unit-tested.
+// The results page's locked state (API answers 403 { locked }) and the polling
+// used while a submitted person's answers are being added. Pure, so it is unit-tested.
 
 export const POLL_MS = 15 * 1000;
 export const POLL_MAX_MS = 15 * 60 * 1000;
 
-const NOT_SUBMITTED = { title: 'Results open once you have finished the survey.', action: { label: 'Go to the survey', href: '/survey' }, poll: false };
-const NOT_INCLUDED = { title: 'Your answers are being added to the results. This takes a few minutes.', action: null, poll: true };
+const NOT_SUBMITTED = { title: 'Results open once you have finished the survey.', action: { label: 'Go to the survey', href: '/survey' } };
 
-/** { title, action: { label, href } | null, poll } for a `locked` code. Unknown codes read as not submitted. */
-export const lockedView = (code) => (code === 'not_included' ? NOT_INCLUDED : NOT_SUBMITTED);
+/** { title, action: { label, href } } for a `locked` code. The API now sends only `not_submitted`; any code reads as that. */
+export const lockedView = () => NOT_SUBMITTED;
 
 /**
  * Calls `check` every `intervalMs` until it returns true or `maxMs` has passed.

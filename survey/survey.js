@@ -3,7 +3,7 @@
 // offline queue to the Pi API. Timing signals and the voice-to-text hand-off are
 // driven from here (Spec: Timing).
 import { getToken, reportClientError, request, storage } from './api.js';
-import { pipelineLines, resultsOpen } from './pipeline.js';
+import { attributionPanelHtml, attributionUpdate, attributionValue } from './attribution.js';
 import { createQueue } from './queue.js';
 import { recapHtml } from './recapView.js';
 import { createClock, timeScale, TIMING_MESSAGES } from './timing.js';
@@ -12,6 +12,7 @@ import { $, el, esc, gate, noticeHtml, wirePrivacyLinks } from './ui.js';
 const SDK_URL = 'https://cdn.jsdelivr.net/npm/@elevenlabs/client@1.26.0/+esm';
 const mount = $('#app');
 const scale = timeScale();
+const RESULTS_PROMISE = "You will see everyone's results at the end, once you have answered the core questions.";
 
 const state = {
   conversation: null,
@@ -23,7 +24,7 @@ const state = {
   switchingToText: false,
   leaving: false,
   finishing: false,
-  progress: { filled_p1: 0, total_p1: 1, complete: false },
+  progress: { filled_p1: 0, total_p1: 1, complete: false, submitted: false },
 };
 
 const queue = createQueue({
@@ -50,11 +51,15 @@ async function main() {
 function showNotice() {
   const view = el(`
     <section class="sv-panel sv-rise">
+      <p class="sv-lede">${esc(RESULTS_PROMISE)}</p>
+      <button class="btn btn-orange" type="button" data-start>Start</button>
+      <p class="sv-small">How your answers are handled is explained below. Starting means you have read it.</p>
       <div class="sv-notice">${noticeHtml()}</div>
-      <button class="btn btn-orange" type="button">Start</button>
+      <div class="sv-end__recap" data-recap hidden></div>
     </section>`);
-  $('button', view).addEventListener('click', () => showModes());
+  $('[data-start]', view).addEventListener('click', () => showModes());
   mount.replaceChildren(view);
+  showRecapIn($('[data-recap]', view), view);
 }
 
 async function showModes(note = '') {
@@ -76,7 +81,7 @@ async function showModes(note = '') {
         <button class="sv-option" data-mode="voice" type="button">
           <span class="sv-option__icon" aria-hidden="true">${ICONS.mic}</span>
           <span class="sv-option__name">Talk</span>
-          <span class="sv-option__hint">A spoken conversation of about 10 minutes. Uses your microphone. It carries on in text if there is more to say.</span>
+          <span class="sv-option__hint">A spoken conversation of about 8 minutes, 15 at most. Uses your microphone. It carries on in text if there is more to say.</span>
         </button>
         <button class="sv-option" data-mode="text" type="button">
           <span class="sv-option__icon" aria-hidden="true">${ICONS.pen}</span>
@@ -84,62 +89,38 @@ async function showModes(note = '') {
           <span class="sv-option__hint">A written chat at your own pace. Stop and come back any time from this browser.</span>
         </button>
       </div>
+      <p class="sv-small">${esc(RESULTS_PROMISE)}</p>
       <p class="sv-small">${storage.persistent ? 'This browser remembers your progress.' : 'This browser cannot store your progress (private window?), so finish in one go or use a normal window.'}</p>
     </section>`);
   for (const b of view.querySelectorAll('[data-mode]')) b.addEventListener('click', () => startSession(b.dataset.mode));
   mount.replaceChildren(view);
 }
 
-// The thank-you screen: the recap and news as the main body, with (after a
-// just-finished session) a compact status panel that follows that conversation
-// through the pipeline (Pi status, polled). When the server says the results
-// include this person's answers (results_unlocked), the panel offers the button.
-function showEnd() {
-  const sessionId = state.session?.session_id;
-  const endedAt = Date.now();
+// A submitted person goes straight to the results page, which says when their
+// own answers join it. Anyone else sees a short saved-anonymously screen.
+const goToResults = () => window.location.assign('/survey/results');
+
+async function endFlow() {
+  await queue.flush();
+  try {
+    const me = await request('/me');
+    if (me.ok) setProgress(me.data.progress, false);
+  } catch { /* offline: decide on what we know */ }
+  return state.progress.submitted ? goToResults() : showSaved();
+}
+
+function showSaved() {
   const view = el(`
     <section class="sv-end sv-rise">
-      <h1 class="sv-title sv-title--sm">Thank you. Everything you shared is saved.</h1>
-      ${sessionId ? `
-      <aside class="sv-pipe" aria-live="polite">
-        <p class="sv-pipe__title" data-title>Adding your answers to the results. About 3 minutes.</p>
-        <ol class="sv-feed"></ol>
-        <a class="btn btn-orange" href="/survey/results" data-results hidden>See the results with your answers →</a>
-      </aside>` : ''}
-      <div class="sv-end__recap" data-recap hidden></div>
+      <h1 class="sv-title sv-title--sm">Thank you. Your answers are saved anonymously.</h1>
+      <p class="sv-lede">${esc(RESULTS_PROMISE)}</p>
       <div class="sv-actions">
-        ${sessionId ? '' : '<a class="btn btn-orange" href="/survey/results" data-results hidden>See the results →</a>'}
-        <button class="btn btn-dark" type="button" data-again>Add something</button>
+        <button class="btn btn-orange" type="button" data-resume>Continue</button>
+        <a class="btn btn-dark" href="/survey/recap">Recap &amp; news</a>
       </div>
     </section>`);
-  let poll = null;
-  $('[data-again]', view).addEventListener('click', () => { clearInterval(poll); showModes(); });
+  $('[data-resume]', view).addEventListener('click', () => showModes());
   mount.replaceChildren(view);
-  showRecapIn($('[data-recap]', view), view);
-  if (!sessionId) return showResultsIfUnlocked($('[data-results]', view), view);
-
-  const feed = $('.sv-feed', view);
-  const panel = $('.sv-pipe', view);
-  const tick = async () => {
-    if (!view.isConnected) return clearInterval(poll);
-    let res;
-    try { res = await request(`/sessions/${sessionId}/status`); } catch { return; } // offline: try again next tick
-    if (!res.ok) return;
-    const pipeline = pipelineLines(res.data, Date.now(), endedAt);
-    feed.replaceChildren(...pipeline.lines.map((l) => el(`<li class="sv-feed__line sv-feed__line--${l.state}"><span class="sv-feed__icon" aria-hidden="true"></span><span>${esc(l.text)}</span></li>`)));
-    if (resultsOpen(pipeline, res.data.results_unlocked)) {
-      clearInterval(poll);
-      panel.classList.add('is-open');
-      $('[data-title]', view).textContent = 'Your answers are in the results.';
-      $('[data-results]', view).hidden = false;
-    }
-  };
-  tick();
-  poll = setInterval(tick, 3000);
-  setTimeout(() => {
-    clearInterval(poll);
-    if ($('[data-results]', view).hidden && view.isConnected) $('[data-title]', view).textContent = 'Results open once you have finished the survey.';
-  }, 15 * 60 * 1000);
 }
 
 // Fills the recap block from the API; stays hidden if it cannot be loaded or is empty.
@@ -276,7 +257,7 @@ async function startSession(mode, { handoff = false, continuation = false } = {}
       textOnly,
       overrides: { conversation: { textOnly } },
       dynamicVariables: session.data.dynamic_variables,
-      clientTools: { record_datapoint: recordDatapoint },
+      clientTools: { record_datapoint: recordDatapoint, ask_attribution: () => showAttributionPanel() },
       onConnect: ({ conversationId }) => {
         request(`/sessions/${state.session.session_id}/conversation`, { method: 'POST', body: { conversation_id: conversationId } }).catch(() => {});
       },
@@ -311,6 +292,25 @@ function recordDatapoint(params) {
   });
 }
 
+// The closing name box (agent tool ask_attribution), in the voice or text view.
+// The page records the consent itself, then tells the agent so it carries on.
+function showAttributionPanel() {
+  const host = $('.sv-voice, .sv-chat');
+  if (!host || $('[data-attrib]', host)) return;
+  const panel = el(attributionPanelHtml());
+  const submit = (name) => {
+    const value = attributionValue(name);
+    queue.enqueue({ session_id: state.session?.session_id, key: 'attribution_consent', value, confidence: 100, evidence: 'name box', idempotency_key: crypto.randomUUID() });
+    state.conversation?.sendContextualUpdate(attributionUpdate(value));
+    panel.replaceChildren(el(`<p class="sv-attrib__done">${esc(JSON.parse(value).choice === 'named' ? `Shown as ${JSON.parse(value).display_name}.` : 'Shown anonymously.')}</p>`));
+  };
+  panel.addEventListener('submit', (e) => { e.preventDefault(); submit(panel.name.value); });
+  $('[data-anon]', panel).addEventListener('click', () => submit(''));
+  const anchor = $('.sv-compose, .sv-controls', host);
+  if (anchor) anchor.before(panel); else host.append(panel);
+  panel.name.focus();
+}
+
 function onThreshold(id) {
   const c = state.conversation;
   if (!c) return;
@@ -331,7 +331,7 @@ async function onDisconnect(details) {
   state.conversation = null;
   if (state.session) request(`/sessions/${state.session.session_id}/end`, { method: 'POST' }).catch(() => {});
   if (state.leaving) return showPaused();
-  if (state.finishing) return showEnd();
+  if (state.finishing) return endFlow();
 
   // Deliver anything still queued, then read the real progress before deciding.
   const screen = mount.firstElementChild;
@@ -346,15 +346,15 @@ async function onDisconnect(details) {
   if (mode === 'voice') {
     if (state.voiceTimeUp || state.switchingToText) return startSession('text', { handoff: true });
     if (details.reason === 'error') return showProblem('The voice connection dropped.', () => startSession('voice'));
-    return state.progress.complete ? showEnd() : showModes('The voice conversation ended. You can carry on whenever you like.');
+    return state.progress.submitted ? goToResults() : showSaved();
   }
   // Text: the platform ends a session at the agent's maximum duration. Only that
   // case continues invisibly; an agent hang-up before the closing does not.
   const limitMs = (state.session?.max_duration_seconds || 0) * 1000;
   const hitLimit = details.reason === 'agent' && limitMs > 0 && sessionMs >= limitMs - 30000;
-  if (hitLimit && !state.progress.complete) return startSession('text', { continuation: true });
+  if (hitLimit && !state.progress.submitted) return startSession('text', { continuation: true });
   if (details.reason === 'error') return showProblem('The connection dropped.', () => startSession('text', { continuation: true }), 'text');
-  return state.progress.complete ? showEnd() : showModes('The conversation ended. You can carry on whenever you like.');
+  return state.progress.submitted ? goToResults() : showSaved();
 }
 
 function switchToText() {
@@ -404,7 +404,7 @@ function wireCompose(view) {
 function finish() {
   state.finishing = true;
   if (state.conversation) state.conversation.endSession();
-  else showEnd();
+  else endFlow();
 }
 
 function leave() {

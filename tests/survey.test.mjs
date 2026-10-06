@@ -3,7 +3,9 @@ import { test } from 'node:test';
 import { reportClientError } from '../survey/api.js';
 import { createQueue } from '../survey/queue.js';
 import { createStorage } from '../survey/storage.js';
-import { createClock, timeScale } from '../survey/timing.js';
+import { createClock, THRESHOLDS, TIMING_MESSAGES, timeScale } from '../survey/timing.js';
+import { attributionPanelHtml, attributionUpdate, attributionValue, NAME_MAX } from '../survey/attribution.js';
+import { etaLine, INCLUDED_LINE, youLine } from '../survey/eta.js';
 
 const fakeStore = () => { const m = new Map(); return { getItem: (k) => m.get(k) ?? null, setItem: (k, v) => m.set(k, String(v)), removeItem: (k) => m.delete(k), m }; };
 
@@ -58,15 +60,23 @@ test('queue: drops a call the server rejects (4xx) but retries 5xx and 429', asy
   assert.deepEqual(results, [422]);
 });
 
+test('timing thresholds: voice wraps up at 11 min, says goodbye at 14, stops at 15; text nudges at 15', () => {
+  assert.deepEqual(THRESHOLDS.voice, [{ id: 'wrap_up', minutes: 11 }, { id: 'goodbye', minutes: 14 }, { id: 'hard_stop', minutes: 15 }]);
+  assert.deepEqual(THRESHOLDS.text, [{ id: 'wrap_up', minutes: 15 }]);
+  assert.match(TIMING_MESSAGES.voice.wrap_up, /^\[timing\] 11 minutes.*core groups/);
+  assert.match(TIMING_MESSAGES.voice.goodbye, /^\[timing\] 14 minutes.*continues in text/);
+  assert.match(TIMING_MESSAGES.text.wrap_up, /^\[timing\] 15 minutes/);
+});
+
 test('clock: fires each voice threshold once, in order, scaled', () => {
   let t = 0;
   const fired = [];
   const c = createClock({ mode: 'voice', scale: 0.01, onThreshold: (id) => fired.push(id), now: () => t, every: () => 0, stopEvery: () => {} });
-  t = 5999; c.check();
+  t = 6599; c.check();
   assert.deepEqual(fired, []);
-  t = 6000; c.check();
+  t = 6600; c.check();
   assert.deepEqual(fired, ['wrap_up']);
-  t = 7800; c.check(); c.check();
+  t = 9000; c.check(); c.check();
   assert.deepEqual(fired, ['wrap_up', 'goodbye', 'hard_stop']);
 });
 
@@ -141,39 +151,6 @@ test('queue: with storage full, an item is sent once, not in a loop', async () =
   assert.equal(q.size(), 0);
 });
 
-import { pipelineLines } from '../survey/pipeline.js';
-
-test('pipeline feed: each real step adds a line, ready only when the results include this conversation', () => {
-  const t0 = Date.parse('2026-10-03T12:00:00Z');
-  const iso = (s) => new Date(t0 + s * 1000).toISOString();
-  const idle = { pending: false, next_run_at: null, running: false, latest: { version: 3, generated_at: iso(-600), paused: false } };
-  let r = pipelineLines({ answers_saved: 9, transcript: null, synthesis: idle }, t0 + 5000, t0);
-  assert.equal(r.ready, false);
-  assert.match(r.lines.at(-1).text, /Waiting for ElevenLabs/);
-
-  const received = { received_at: iso(20), reconciled_at: null, reconcile_note: null, reconciling: true };
-  r = pipelineLines({ answers_saved: 9, transcript: received, synthesis: idle }, t0 + 25000, t0);
-  assert.match(r.lines.at(-1).text, /re-reading/);
-
-  const reread = { ...received, reconciled_at: iso(40), reconcile_filled: 2, reconcile_note: 'done', reconciling: false };
-  r = pipelineLines({ answers_saved: 11, transcript: reread, synthesis: { ...idle, pending: true, next_run_at: iso(100) } }, t0 + 40000, t0);
-  assert.match(r.lines.map((l) => l.text).join('|'), /2 more answers found.*queued: starts in 1 min 0 s/);
-  assert.equal(r.ready, false);
-
-  r = pipelineLines({ answers_saved: 11, transcript: reread, synthesis: { ...idle, latest: { version: 4, generated_at: iso(130), paused: false } } }, t0 + 131000, t0);
-  assert.equal(r.ready, true);
-  assert.match(r.lines.at(-1).text, /version 4/);
-});
-
-test('pipeline feed: a missing transcript warns after 3 minutes and still finishes on the rebuild', () => {
-  const t0 = Date.parse('2026-10-03T12:00:00Z');
-  const latest = { version: 5, generated_at: new Date(t0 + 60000).toISOString(), paused: true };
-  const r = pipelineLines({ answers_saved: 4, transcript: null, synthesis: { pending: false, running: false, next_run_at: null, latest } }, t0 + 200000, t0);
-  assert.equal(r.lines[1].state, 'warn');
-  assert.equal(r.ready, true);
-  assert.match(r.lines.at(-1).text, /summaries paused/);
-});
-
 test('client error report: posts stage, error and user agent; omits session id when none; never throws', async () => {
   const sent = [];
   const realFetch = globalThis.fetch;
@@ -192,26 +169,45 @@ test('client error report: posts stage, error and user agent; omits session id w
   }
 });
 
-import { resultsOpen } from '../survey/pipeline.js';
 import { lockedView, pollUntil, POLL_MAX_MS, POLL_MS } from '../survey/locked.js';
 import { hasRecap, recapHtml, recapUpdated } from '../survey/recapView.js';
 
-test('results button: needs the pipeline done and the server flag', () => {
-  assert.equal(resultsOpen({ ready: true, lines: [] }, true), true);
-  assert.equal(resultsOpen({ ready: true, lines: [] }, false), false);
-  assert.equal(resultsOpen({ ready: true, lines: [] }, undefined), false);
-  assert.equal(resultsOpen({ ready: false, lines: [] }, true), false);
+test('eta line: minutes rounded up (min 1), "in a moment" under 30 s, 3 minutes while unknown', () => {
+  const about = (n) => `Your own answers will be added to the results in about ${n}.`;
+  assert.equal(etaLine(0), 'Your own answers will be added to the results in a moment.');
+  assert.equal(etaLine(29), 'Your own answers will be added to the results in a moment.');
+  assert.equal(etaLine(30), about('1 minute'));
+  assert.equal(etaLine(60), about('1 minute'));
+  assert.equal(etaLine(61), about('2 minutes'));
+  assert.equal(etaLine(165), about('3 minutes'));
+  assert.equal(etaLine(null), about('3 minutes'));
+  assert.equal(etaLine(undefined), about('3 minutes'));
+  assert.equal(INCLUDED_LINE, 'Your answers are now in the results.');
+  assert.equal(youLine({ included: true, eta_seconds: null }), INCLUDED_LINE);
+  assert.equal(youLine({ included: false, eta_seconds: 100 }), about('2 minutes'));
+  assert.equal(youLine(null), about('3 minutes'));
 });
 
-test('locked results: one view per reason; only "being added" polls, every 15 s for up to 15 min', () => {
-  const submitted = lockedView('not_submitted');
-  assert.equal(submitted.title, 'Results open once you have finished the survey.');
-  assert.deepEqual(submitted.action, { label: 'Go to the survey', href: '/survey' });
-  assert.equal(submitted.poll, false);
-  const included = lockedView('not_included');
-  assert.equal(included.title, 'Your answers are being added to the results. This takes a few minutes.');
-  assert.equal(included.poll, true);
-  assert.equal(lockedView(undefined).poll, false);
+test('attribution box: a typed name is named, empty or blank is anonymous, and the agent is told', () => {
+  assert.deepEqual(JSON.parse(attributionValue('  Ana Rossi ')), { choice: 'named', display_name: 'Ana Rossi' });
+  assert.deepEqual(JSON.parse(attributionValue('')), { choice: 'anonymous' });
+  assert.deepEqual(JSON.parse(attributionValue('   ')), { choice: 'anonymous' });
+  assert.deepEqual(JSON.parse(attributionValue(undefined)), { choice: 'anonymous' });
+  assert.equal(JSON.parse(attributionValue('x'.repeat(200))).display_name.length, NAME_MAX);
+  assert.equal(attributionUpdate(attributionValue('Ana')), '[attribution] recorded: named as Ana');
+  assert.equal(attributionUpdate(attributionValue('')), '[attribution] recorded: anonymous');
+  const html = attributionPanelHtml();
+  assert.match(html, /placeholder="Leave empty to stay anonymous"/);
+  assert.match(html, /aria-label="Name to show"/);
+  assert.match(html, />Show my name</);
+  assert.match(html, />Stay anonymous</);
+});
+
+test('locked results: one view, whatever the code; polling is every 15 s for up to 15 min', () => {
+  const view = lockedView('not_submitted');
+  assert.equal(view.title, 'Results open once you have finished the survey.');
+  assert.deepEqual(view.action, { label: 'Go to the survey', href: '/survey' });
+  assert.deepEqual(lockedView(undefined), view);
   assert.equal(POLL_MS, 15000);
   assert.equal(POLL_MAX_MS, 900000);
 });
