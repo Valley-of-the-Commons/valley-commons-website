@@ -244,3 +244,16 @@ test('recap: renders weeks, skips null or empty sections, escapes text, allows o
   assert.equal(recapUpdated({ updated: '2026-10-05' }), '5 October 2026');
   assert.equal(recapUpdated({ updated: 'soon' }), '');
 });
+
+test('survey pages: every survey asset carries the deploy version', async () => {
+  const { createRequire } = await import('node:module');
+  const { versionSurveyHtml } = createRequire(import.meta.url)('../lib/survey-assets.js');
+  const { readFileSync } = await import('node:fs');
+  const html = readFileSync(new URL('../survey/index.html', import.meta.url), 'utf8');
+  const out = versionSurveyHtml(html, ['survey.js', 'api.js'], 'abc');
+  assert.match(out, /href="\/survey\/survey\.css\?v=abc"/);
+  assert.match(out, /href="\/home\.css\?v=abc"/);
+  assert.match(out, /<script type="importmap">\{"imports":\{"\/survey\/survey\.js":"\/survey\/survey\.js\?v=abc","\/survey\/api\.js":"\/survey\/api\.js\?v=abc"\}\}<\/script>/);
+  assert.match(out, /<script type="module" src="\/survey\/survey\.js\?v=abc"><\/script>/);
+  assert.ok(out.indexOf('importmap') < out.indexOf('type="module"'), 'the import map must come before the module script');
+});

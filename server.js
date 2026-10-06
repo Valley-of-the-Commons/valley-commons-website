@@ -9,6 +9,7 @@ try {
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
+const { versionSurveyHtml } = require('./lib/survey-assets');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -472,9 +473,18 @@ app.get('/trust-tournament', (req, res) => {
 // Post-residency survey: static pages whose backend runs on Deca's Pi (see
 // docs/survey.md). /survey is the only route allowed to use the microphone,
 // for voice mode; every other route keeps microphone=().
+// Pages are rewritten once per process (one per deploy) so their assets carry
+// this deploy's version (lib/survey-assets.js).
+const SURVEY_VERSION = Date.now().toString(36);
+const surveyModules = fs.readdirSync(path.join(__dirname, 'survey')).filter((f) => f.endsWith('.js'));
+const surveyHtml = new Map();
 const surveyPage = (file, { microphone = false } = {}) => (req, res) => {
   if (microphone) res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(self), camera=()');
-  res.sendFile(path.join(__dirname, 'survey', file));
+  if (!surveyHtml.has(file)) {
+    surveyHtml.set(file, versionSurveyHtml(fs.readFileSync(path.join(__dirname, 'survey', file), 'utf8'), surveyModules, SURVEY_VERSION));
+  }
+  res.setHeader('Cache-Control', 'no-cache');
+  res.type('html').send(surveyHtml.get(file));
 };
 app.get(['/survey', '/survey/'], surveyPage('index.html', { microphone: true }));
 app.get('/survey/results', surveyPage('results.html'));
