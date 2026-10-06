@@ -1,5 +1,5 @@
 // "Recap & news": renders the package served by the Pi API (GET /recap) as HTML.
-// Shared by the recap page and the thank-you screen. Pure, so it is unit-tested.
+// Shared by the recap page and the landing screen. Pure, so it is unit-tested.
 // Sections that are null or empty do not render.
 import { esc } from './ui.js';
 

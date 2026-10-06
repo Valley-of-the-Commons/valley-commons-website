@@ -285,3 +285,13 @@ body.sv::before {
 .sv-end .rc { width: 100%; }
 .sv-end__recap { width: 100%; margin-top: 34px; }
 .sv-end__recap .rs-h2 { font-size: clamp(1.4rem, 3.4vw, 1.8rem); }
+
+/* ---------- Name box at the closing (ask_attribution) ---------- */
+.sv-attrib { width: 100%; max-width: 520px; margin: 22px auto 0; background: #fffdf9; border: 1px solid #e7dfd2; border-left: 3px solid var(--orange); border-radius: 12px; padding: 16px 18px 18px; text-align: left; box-shadow: 0 24px 48px -36px rgba(60, 40, 10, .45); }
+.sv-attrib__label { display: block; font: 600 15px/1.4 var(--sans); color: var(--ink); margin-bottom: 10px; }
+.sv-attrib__input { width: 100%; font: 400 16px/1.5 var(--sans); color: var(--ink); background: #fff; border: 1px solid #e7dfd2; border-radius: 10px; padding: 10px 12px; }
+.sv-attrib__input:focus { outline: none; border-color: var(--orange); }
+.sv-attrib__actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+.sv-attrib__done { font: 500 15px/1.5 var(--sans); color: var(--green-dark); }
+.sv-chat .sv-attrib { max-width: none; margin: 12px 0; }
+.rs-banner { margin: 0 0 24px; }
