@@ -67,7 +67,7 @@ export function gate(mount, { title, lede }) {
         </label>
         <p class="sv-error" role="alert" hidden></p>
         <button class="btn btn-orange" type="submit">Enter</button>
-        <p class="sv-small">The password was shared in the attendees' Telegram group and by email.</p>
+        <p class="sv-small">The password was shared in the attendees' Telegram group.</p>
       </form>`);
     mount.replaceChildren(form);
     form.password.focus();
