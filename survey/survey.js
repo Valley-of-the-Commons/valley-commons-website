@@ -301,7 +301,10 @@ function showAttributionPanel() {
   const submit = (name) => {
     const value = attributionValue(name);
     queue.enqueue({ session_id: state.session?.session_id, key: 'attribution_consent', value, confidence: 100, evidence: 'name box', idempotency_key: crypto.randomUUID() });
-    state.conversation?.sendContextualUpdate(attributionUpdate(value));
+    // A user message, not a contextual update: contextual updates never prompt the
+    // agent to take a turn, so the closing would stall here (seen live 2026-10-06).
+    state.conversation?.sendUserMessage(attributionUpdate(value));
+    if (state.mode === 'text') setTyping(host, true);
     panel.replaceChildren(el(`<p class="sv-attrib__done">${esc(JSON.parse(value).choice === 'named' ? `Shown as ${JSON.parse(value).display_name}.` : 'Shown anonymously.')}</p>`));
   };
   panel.addEventListener('submit', (e) => { e.preventDefault(); submit(panel.name.value); });
