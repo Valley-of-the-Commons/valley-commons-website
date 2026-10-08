@@ -5,7 +5,7 @@
 import { getToken, reportClientError, request, storage } from './api.js';
 import { attributionPanelHtml, attributionUpdate, attributionValue } from './attribution.js';
 import { createQueue } from './queue.js';
-import { recapHtml } from './recapView.js';
+import { RelayConversation } from './relay.js';
 import { createClock, timeScale, TIMING_MESSAGES } from './timing.js';
 import { $, el, esc, gate, noticeHtml, wirePrivacyLinks } from './ui.js';
 
@@ -55,11 +55,9 @@ function showNotice() {
       <button class="btn btn-orange" type="button" data-start>Start</button>
       <p class="sv-small">How your answers are handled is explained below. Starting means you have read it.</p>
       <div class="sv-notice">${noticeHtml()}</div>
-      <div class="sv-end__recap" data-recap hidden></div>
     </section>`);
   $('[data-start]', view).addEventListener('click', () => showModes());
   mount.replaceChildren(view);
-  showRecapIn($('[data-recap]', view), view);
 }
 
 async function showModes(note = '') {
@@ -116,21 +114,10 @@ function showSaved() {
       <p class="sv-lede">${esc(RESULTS_PROMISE)}</p>
       <div class="sv-actions">
         <button class="btn btn-orange" type="button" data-resume>Continue</button>
-        <a class="btn btn-dark" href="/survey/recap">Recap &amp; news</a>
       </div>
     </section>`);
   $('[data-resume]', view).addEventListener('click', () => showModes());
   mount.replaceChildren(view);
-}
-
-// Fills the recap block from the API; stays hidden if it cannot be loaded or is empty.
-async function showRecapIn(block, view) {
-  let res;
-  try { res = await request('/recap'); } catch { return; }
-  const html = res.ok ? recapHtml(res.data) : '';
-  if (!html || !view.isConnected) return;
-  block.replaceChildren(el('<h2 class="rs-h2">Recap &amp; news</h2>'), el(html));
-  block.hidden = false;
 }
 
 // The results link appears only when /me says this person may read the results.
@@ -148,7 +135,6 @@ function showPaused() {
       <div class="sv-actions">
         <button class="btn btn-orange" type="button" data-resume>Continue now</button>
         <a class="btn btn-dark" href="/survey/results" data-results hidden>See the results</a>
-        <a class="btn btn-dark" href="/survey/recap">Recap &amp; news</a>
       </div>
     </section>`);
   $('[data-resume]', view).addEventListener('click', () => showModes());
@@ -229,14 +215,18 @@ async function startSession(mode, { handoff = false, continuation = false } = {}
   setProgress(state.progress, false);
 
   const retry = () => startSession(mode, { handoff, continuation });
-  // Load the SDK before asking for a session: a session that cannot connect still
-  // counts toward the limits, so never create one the page cannot use.
+  const textOnly = mode === 'text';
+  // Voice loads the SDK before asking for a session: a session that cannot connect
+  // still counts toward the limits, so never create one the page cannot use.
+  // Text does not need it: the Pi holds that connection (survey/relay.js).
   let Conversation;
-  try {
-    ({ Conversation } = await import(SDK_URL));
-  } catch (err) {
-    reportClientError('sdk_load', err);
-    return showProblem('The conversation tool could not load. A browser extension or network filter may be blocking cdn.jsdelivr.net or elevenlabs.io.', retry, mode);
+  if (!textOnly) {
+    try {
+      ({ Conversation } = await import(SDK_URL));
+    } catch (err) {
+      reportClientError('sdk_load', err);
+      return showProblem('The conversation tool could not load. A browser extension or network filter may be blocking cdn.jsdelivr.net or elevenlabs.io.', retry, mode);
+    }
   }
   let session;
   try {
@@ -250,34 +240,65 @@ async function startSession(mode, { handoff = false, continuation = false } = {}
   state.session = session.data;
   setProgress(session.data.progress, false);
 
-  const textOnly = mode === 'text';
+  const callbacks = {
+    clientTools: { record_datapoint: recordDatapoint, ask_attribution: () => showAttributionPanel() },
+    onConnect: ({ conversationId }) => {
+      request(`/sessions/${state.session.session_id}/conversation`, { method: 'POST', body: { conversation_id: conversationId } }).catch(() => {});
+    },
+    onMessage: (m) => onMessage(view, m),
+    onStatusChange: ({ status }) => status === 'connected' && setOrbState(view, 'listening'),
+    onDisconnect: (details) => onDisconnect(details),
+  };
+  const startedAt = Date.now();
+  let waitingNoted = false;
+  // Stop and Finish work during the busy wait: they abort the relay's retries.
+  state.abort = textOnly ? new AbortController() : null;
+  if (textOnly) wireCompose(view);
   try {
-    state.conversation = await Conversation.startSession({
-      signedUrl: session.data.signed_url,
-      textOnly,
-      overrides: { conversation: { textOnly } },
-      dynamicVariables: session.data.dynamic_variables,
-      clientTools: { record_datapoint: recordDatapoint, ask_attribution: () => showAttributionPanel() },
-      onConnect: ({ conversationId }) => {
-        request(`/sessions/${state.session.session_id}/conversation`, { method: 'POST', body: { conversation_id: conversationId } }).catch(() => {});
-      },
-      onMessage: (m) => onMessage(view, m),
-      onModeChange: ({ mode: m }) => setOrbState(view, m),
-      onStatusChange: ({ status }) => status === 'connected' && setOrbState(view, 'listening'),
-      onDisconnect: (details) => onDisconnect(details),
-      onError: () => {},
-    });
+    state.conversation = textOnly
+      ? await RelayConversation.startSession({
+        sessionId: session.data.session_id,
+        signal: state.abort.signal,
+        ...callbacks,
+        onWaiting: () => {
+          if (waitingNoted) return;
+          waitingNoted = true;
+          appendNote(view, 'Busy for a moment, connecting\u2026 (it retries on its own)');
+        },
+      })
+      : await Conversation.startSession({
+        signedUrl: session.data.signed_url,
+        textOnly,
+        overrides: { conversation: { textOnly } },
+        dynamicVariables: session.data.dynamic_variables,
+        ...callbacks,
+        onModeChange: ({ mode: m }) => setOrbState(view, m),
+        onError: () => {},
+      });
   } catch (err) {
-    reportClientError('connect', err, state.session.session_id);
-    const blocked = mode === 'voice' && /permission|notallowed|denied/i.test(String(err?.name) + String(err?.message));
+    if (err?.name === 'RelayAborted') return; // Stop or Finish already moved on (abandonSession)
+    reportClientError('connect', err, state.session.session_id, Date.now() - startedAt);
+    if (err?.name === 'RelayBusy') return showProblem('Lots of people are answering right now. Please try again in a few minutes.', retry, mode);
+    const blocked = !textOnly && /permission|notallowed|denied/i.test(String(err?.name) + String(err?.message));
     return showProblem(
-      blocked ? 'Microphone access was blocked. Allow it in your browser settings, or continue in text.' : 'The conversation could not connect.',
+      blocked
+        ? 'Microphone access was blocked. Allow it in your browser settings, or continue in text.'
+        : textOnly
+          ? 'The conversation could not connect.'
+          : 'The voice conversation could not connect. Some security software, VPNs or networks block it. You can continue in text, which works everywhere, or try another device or network.',
       retry, mode);
   }
 
+  state.abort = null;
   state.clock = createClock({ mode, scale, offsetMs: textOnly ? state.textMsSoFar : 0, onThreshold });
-  if (textOnly) wireCompose(view);
-  else wireVoiceControls(view);
+  if (!textOnly) wireVoiceControls(view);
+}
+
+// Stop or Finish was pressed while the relay was still connecting.
+function abandonSession() {
+  state.abort = null;
+  request(`/sessions/${state.session.session_id}/end`, { method: 'POST' }).catch(() => {});
+  return state.finishing ? endFlow() : showPaused();
 }
 
 function recordDatapoint(params) {
@@ -407,12 +428,14 @@ function wireCompose(view) {
 function finish() {
   state.finishing = true;
   if (state.conversation) state.conversation.endSession();
+  else if (state.abort) { state.abort.abort(); abandonSession(); }
   else endFlow();
 }
 
 function leave() {
   state.leaving = true;
   if (state.conversation) state.conversation.endSession();
+  else if (state.abort) { state.abort.abort(); abandonSession(); }
   else showPaused();
 }
 

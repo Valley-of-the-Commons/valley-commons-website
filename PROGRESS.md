@@ -4,7 +4,7 @@ Plan (vault): `Companies/Commons Hub/VotC Website/WhatWeBuilt/VotC Website v1 Sp
 Repos: this one (static pages, branch `feat/survey`) and `deca12x/pi-data` (`services/votc-survey/`: API, catalogue, agent config, synthesis), deployed on pi1 at `https://pi1.tail0a8aa5.ts.net/votc-survey`.
 Previous content of this file (keynote port, retired) is in git history.
 
-Smoke: `npm test` here (26 pass); in pi-data `services/votc-survey`: `TEST_ADMIN_URL=<throwaway AGE superuser URL> npm test` (28 pass); `curl https://pi1.tail0a8aa5.ts.net/votc-survey/health` is 200.
+Smoke: `npm test` here (42 pass); in pi-data `services/votc-survey`: `TEST_ADMIN_URL=<throwaway AGE superuser URL> npm test` (80 pass; 48 without the database); `curl https://pi1.tail0a8aa5.ts.net/votc-survey/health` is 200.
 
 ## Feature list
 
@@ -36,6 +36,14 @@ Evaluator rounds: 3 (independent subagent). Round 1 found 2 hard failures and 10
 
 ## State (2026-10-03)
 Live in production since 2026-10-03 15:46 (PRs #10, #13, #14). All model calls on Claude Sonnet 5.5. All test data deleted; ready to share (password `valley2026survey`).
+
+## v1.4 pre-send hardening (in progress, branch `feat/survey-v1-4`)
+Site half, not committed or deployed:
+- Text conversations go through an HTTPS relay on the Pi (`survey/relay.js`), so attendees whose network blocks the browser's WebSocket to ElevenLabs can still write. Voice unchanged; its connect-failure copy now names security software, VPNs and networks.
+- Client `connect` error reports carry `elapsed_ms`.
+- "Recap & news" removed (page, renderer, nav buttons, route, styles, tests).
+- Privacy notice: retention now "as long as the team uses it to plan future Valley events", plus the line on publishable words.
+- Tests: 42 pass. Pairs with the API half in pi-data (relay endpoints, `elapsed_ms`, catalogue changes); not verified end to end yet.
 
 ## Next steps
 1. Deca: share the link and password in the Telegram group and by email.

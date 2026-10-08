@@ -269,23 +269,6 @@ body.sv::before {
 .rs-list li { position: relative; padding-left: 20px; font-size: 1.05rem; }
 .rs-list li::before { content: ""; position: absolute; left: 0; top: .75em; width: 9px; height: 2px; background: var(--orange); }
 
-/* ---------- Recap & news ---------- */
-.rc { display: flex; flex-direction: column; gap: 22px; margin-top: 8px; }
-.rc-note { background: #fffdf9; border: 1px solid #e7dfd2; border-left: 3px solid var(--orange); border-radius: 12px; padding: clamp(18px, 4vw, 28px); display: flex; flex-direction: column; gap: 10px; align-items: flex-start; }
-.rc-note--fund { border-left-color: var(--green-dark); }
-.rc-note__title { font-family: var(--serif); font-weight: 800; font-size: clamp(1.3rem, 3.4vw, 1.7rem); line-height: 1.15; }
-.rc-note p, .rc-week p { font-size: 1.04rem; line-height: 1.55; color: #2e2b26; max-width: 40em; }
-.rc-weeks { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
-.rc-week { background: #fffdf9; border: 1px solid #e7dfd2; border-top: 3px solid var(--orange); border-radius: 12px; padding: 18px 20px 20px; display: flex; flex-direction: column; gap: 8px; }
-.rc-week__label { font: 600 11px/1.3 var(--sans); letter-spacing: 1.6px; text-transform: uppercase; color: var(--orange); }
-.rc-week__label span { color: var(--muted-2); margin-left: 8px; letter-spacing: .6px; }
-.rc-week__theme { font-family: var(--serif); font-weight: 800; font-size: 1.3rem; line-height: 1.15; }
-.rc-week p { font-size: .98rem; }
-@media (max-width: 760px) { .rc-weeks { grid-template-columns: 1fr; } }
-.sv-end .rc { width: 100%; }
-.sv-end__recap { width: 100%; margin-top: 34px; }
-.sv-end__recap .rs-h2 { font-size: clamp(1.4rem, 3.4vw, 1.8rem); }
-
 /* ---------- Name box at the closing (ask_attribution) ---------- */
 .sv-attrib { width: 100%; max-width: 520px; margin: 22px auto 0; background: #fffdf9; border: 1px solid #e7dfd2; border-left: 3px solid var(--orange); border-radius: 12px; padding: 16px 18px 18px; text-align: left; box-shadow: 0 24px 48px -36px rgba(60, 40, 10, .45); }
 .sv-attrib__label { display: block; font: 600 15px/1.4 var(--sans); color: var(--ink); margin-bottom: 10px; }

@@ -15,9 +15,9 @@ data, secrets or database tables.
 
 | File | Role |
 | --- | --- |
-| `survey/index.html`, `survey/survey.js` | Gate, privacy notice and recap (landing), mode choice, the conversation (ElevenLabs browser SDK from jsdelivr, pinned), timing signals, voice-to-text hand-off, the closing name box; a submitted person finishes on `/survey/results`, anyone else on a saved-anonymously screen |
+| `survey/index.html`, `survey/survey.js` | Gate, privacy notice (landing), mode choice, the conversation (voice: ElevenLabs browser SDK from jsdelivr, pinned; text: the HTTPS relay below), timing signals, voice-to-text hand-off, the closing name box; a submitted person finishes on `/survey/results`, anyone else on a saved-anonymously screen |
 | `survey/results.html`, `survey/results.js` | The results page |
-| `survey/recap.html`, `survey/recap.js`, `survey/recapView.js` | The "Recap & news" page (`/survey/recap`) and the renderer shared with the landing screen; content comes from the Pi API (`GET /recap`) |
+| `survey/relay.js` | `RelayConversation`: text conversations over plain HTTPS through the Pi API (see "Text relay" below) |
 | `survey/locked.js` | The results page's locked state (`not_submitted`) and the 15 s / 15 min poll |
 | `survey/attribution.js` | The closing name box (agent tool `ask_attribution`): the value the page records for `attribution_consent` and the `[attribution]` update sent to the agent |
 | `survey/eta.js` | The "your own answers will be added in about N minutes" line, shown as the banner on the results page |
@@ -26,9 +26,9 @@ data, secrets or database tables.
 | `survey/queue.js` | Offline queue for `record_datapoint` calls (retries with an idempotency key) |
 | `survey/timing.js` | Voice (11, 14 and 15 min) and text (15 min) thresholds and the contextual updates sent at each |
 | `survey/survey.css` | Styles, on top of `home.css` tokens |
-| `tests/survey.test.mjs` | Unit tests for storage, queue, timing, the ETA wording, the name box, recap rendering and the locked state |
+| `tests/survey.test.mjs` | Unit tests for storage, queue, timing, the ETA wording, the name box, the text relay and the locked state |
 
-`server.js` serves `/survey`, `/survey/results` and `/survey/recap`. `/survey` is the one route
+`server.js` serves `/survey` and `/survey/results`. `/survey` is the one route
 that sends `Permissions-Policy: microphone=(self)` (voice mode); every other route
 keeps `microphone=()`.
 
@@ -45,11 +45,33 @@ keeps `microphone=()`.
 
 ## Who can read what
 
-The Pi API enforces this, not the page. A person is **submitted** when their attribution consent is recorded, or when every core question group has at least one answer (so someone who stops early after the core questions counts). `GET /results` answers 403 `{ locked: 'not_submitted' }` until then. Once submitted, it answers 200 with the latest results plus a top-level `you: { included, eta_seconds }`: `included` says whether their own answers are in that version, and `eta_seconds` is the Pi's estimate until they are (null once included). `/me` and `/sessions/:id/status` carry `results_unlocked` (the submitted rule); the status also carries `you`. `GET /recap` (the "Recap & news" package, `content/recap.json` in the Pi repo) needs only the sign-in.
+The Pi API enforces this, not the page. A person is **submitted** when their attribution consent is recorded, or when every core question group has at least one answer (so someone who stops early after the core questions counts). `GET /results` answers 403 `{ locked: 'not_submitted' }` until then. Once submitted, it answers 200 with the latest results plus a top-level `you: { included, eta_seconds }`: `included` says whether their own answers are in that version, and `eta_seconds` is the Pi's estimate until they are (null once included). `/me` and `/sessions/:id/status` carry `results_unlocked` (the submitted rule); the status also carries `you`.
 
 Anyone who leaves early is recorded as anonymous and is included in the results however little they answered (a name is shown only if the person typed one into the closing name box); reading the results still needs the submitted rule above.
 
 The question groups, their importance order and the per-session shuffle live in the Pi repo's `catalogue.json` (`groups`). Voice timing: wrap-up at 11 minutes, goodbye (the conversation continues in text) at 14, hard stop at 15. Text: a gentle wrap-up nudge at 15 minutes, no hard end.
+
+Catalogue changes in v1.4: a new `testimonial` datapoint (a few words the person agrees may be published, organisers-only, never in the synthesis input, offered once just before the name box); `gap_ideas` now captures an event idea, venue needs and sponsor or external-event leads, sits in the `future` group and is organisers-only in the results; `follow_up_contact` is also asked of people likely or committed to the co-living pilot, to hear when applications open.
+
+Limits: the API allows 300 sessions per day (`SESSIONS_PER_DAY`), the ElevenLabs agent has a `daily_limit` of 300, and its concurrency limit is set from `call_limits` in the Pi repo's `settings.json`. Over the concurrency limit, text visitors see the busy retry above.
+
+While the relay is connecting, Stop and Finish stay available: they cancel the retries (`AbortSignal` passed to `RelayConversation.startSession`, which then throws `RelayAborted`) and go to the saved or end screen as usual.
+
+## Text relay
+
+Some networks and security software stop a browser opening a WebSocket to
+`api.elevenlabs.io` (it closes with code 1006 before the session starts) while the
+same browser reaches pi1 fine. So text conversations never connect from the
+browser to ElevenLabs: pi1 holds that WebSocket and the page uses plain HTTPS.
+Voice is unchanged (browser SDK, direct).
+
+1. `POST /sessions` with `mode: "text"` returns no `signed_url`; the server keeps the session's dynamic variables.
+2. `survey/relay.js` calls `POST /sessions/:id/relay/open`. A `503 { retryable: true }` means ElevenLabs is at its concurrency limit: the page shows one note in the chat ("Busy for a moment, connecting...") and retries every 5 s, up to 24 attempts (2 minutes), then shows "Lots of people are answering right now" with a retry. A `409` (server restarted, session not registered) counts as a failed start.
+3. Once open, the page long-polls `GET /sessions/:id/relay/events?after=<seq>` (up to 25 s per poll). Events: `message` (agent text), `tool_call` (the page runs `record_datapoint` or `ask_attribution` and posts the result), `end` (reason `agent`, `user` or `error`). A failed poll retries after 2 s; 10 in a row ends the conversation as `relay lost`.
+4. `POST relay/send` carries user messages, contextual updates (timing, hand-off) and tool results; `POST relay/close` ends it, and the `end` event then arrives through the poll.
+
+The relay is the contract in the Pi repo's `src/relay.js`; this repo only holds the client.
+If the voice connection fails, the page says some security software, VPNs or networks block it and offers text, which works for anyone who can reach pi1. Client error reports for `connect` carry `elapsed_ms` (time from start to failure).
 
 ## Local development
 

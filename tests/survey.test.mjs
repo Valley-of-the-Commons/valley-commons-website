@@ -162,6 +162,9 @@ test('client error report: posts stage, error and user agent; omits session id w
     assert.deepEqual(Object.keys(sent[0].body).sort(), ['message', 'name', 'stage', 'user_agent']);
     assert.equal(sent[0].body.name, 'TypeError');
     assert.equal(sent[1].body.session_id, 'sess-1');
+    await reportClientError('connect', { name: 'Error', message: 'slow' }, 'sess-1', 1234.4);
+    assert.equal(sent[2].body.elapsed_ms, 1234);
+    assert.ok(!('elapsed_ms' in sent[1].body));
     globalThis.fetch = async () => { throw new Error('offline'); };
     assert.equal(await reportClientError('connect', null), undefined);
   } finally {
@@ -170,7 +173,7 @@ test('client error report: posts stage, error and user agent; omits session id w
 });
 
 import { lockedView, pollUntil, POLL_MAX_MS, POLL_MS } from '../survey/locked.js';
-import { hasRecap, recapHtml, recapUpdated } from '../survey/recapView.js';
+import { OPEN_ATTEMPTS, POLL_FAILURES_MAX, RelayConversation } from '../survey/relay.js';
 
 test('eta line: minutes rounded up (min 1), "in a moment" under 30 s, 3 minutes while unknown', () => {
   const about = (n) => `Your own answers will be added to the results in about ${n}.`;
@@ -225,26 +228,6 @@ test('pollUntil: stops when the check passes, or times out after the maximum', a
   assert.equal(calls, 60);
 });
 
-test('recap: renders weeks, skips null or empty sections, escapes text, allows only http(s) links', () => {
-  const weeks = [{ label: 'Week 1', dates: '24 to 30 August', theme: 'Return <b>', paragraphs: ['One & two'] }];
-  assert.equal(hasRecap({ message: null, weeks: [], fundraise: null }), false);
-  assert.equal(recapHtml({ message: null, weeks: [], fundraise: null, updated: '2026-10-05' }), '');
-  assert.equal(recapHtml(null), '');
-  const html = recapHtml({ message: null, weeks, fundraise: null });
-  assert.match(html, /Week 1/);
-  assert.match(html, /Return &lt;b&gt;/);
-  assert.match(html, /One &amp; two/);
-  assert.ok(!html.includes('rc-note'));
-  const full = recapHtml({ message: { title: 'News', paragraphs: ['Hello'] }, weeks: [], fundraise: { title: 'Help', paragraphs: ['Give'], cta_label: 'Give now', cta_url: 'https://example.org/x' } });
-  assert.match(full, /rc-note--message/);
-  assert.match(full, /href="https:\/\/example.org\/x"/);
-  assert.ok(!full.includes('rc-weeks'));
-  const unsafe = recapHtml({ message: null, weeks: [], fundraise: { title: 'Help', paragraphs: [], cta_label: 'Go', cta_url: 'javascript:alert(1)' } });
-  assert.ok(!unsafe.includes('<a '));
-  assert.equal(recapUpdated({ updated: '2026-10-05' }), '5 October 2026');
-  assert.equal(recapUpdated({ updated: 'soon' }), '');
-});
-
 test('survey pages: every survey asset carries the deploy version', async () => {
   const { createRequire } = await import('node:module');
   const { versionSurveyHtml } = createRequire(import.meta.url)('../lib/survey-assets.js');
@@ -256,4 +239,223 @@ test('survey pages: every survey asset carries the deploy version', async () => 
   assert.match(out, /<script type="importmap">\{"imports":\{"\/survey\/survey\.js":"\/survey\/survey\.js\?v=abc","\/survey\/api\.js":"\/survey\/api\.js\?v=abc"\}\}<\/script>/);
   assert.match(out, /<script type="module" src="\/survey\/survey\.js\?v=abc"><\/script>/);
   assert.ok(out.indexOf('importmap') < out.indexOf('type="module"'), 'the import map must come before the module script');
+});
+
+// ---- relay: text conversations over HTTPS (Pi holds the ElevenLabs socket)
+
+// A fake `request` that answers by route from a script of queued replies.
+const fakeRelay = ({ open = [], events = [], send = [] } = {}) => {
+  const calls = [];
+  const queues = { open: [...open], events: [...events], send: [...send] };
+  const reply = (name) => {
+    const next = queues[name].shift();
+    if (next instanceof Error) throw next;
+    return next ?? { ok: true, status: 200, data: name === 'events' ? { events: [], closed: true } : { ok: true } };
+  };
+  const request = async (path, opts = {}) => {
+    calls.push({ path, method: opts.method ?? 'GET', body: opts.body });
+    if (path.endsWith('/relay/open')) return reply('open');
+    if (path.includes('/relay/events')) return reply('events');
+    if (path.endsWith('/relay/send')) return reply('send');
+    return { ok: true, status: 200, data: { ok: true } };
+  };
+  return { request, calls };
+};
+const ok = (data) => ({ ok: true, status: 200, data });
+const busy = { ok: false, status: 503, data: { error: 'busy', retryable: true } };
+const relayDeps = (fake, extra = {}) => ({ request: fake.request, sleep: async (ms) => { (extra.sleeps ??= []).push(ms); }, reportError: (...a) => (extra.reports ??= []).push(a), ...extra });
+
+test('relay open: success reports the conversation id and connected status', async () => {
+  const fake = fakeRelay({ open: [ok({ conversation_id: 'conv-1' })], events: [ok({ events: [{ seq: 1, type: 'end', reason: 'user', message: '' }], closed: true })] });
+  const seen = [];
+  const convo = await RelayConversation.startSession({
+    sessionId: 's1',
+    onConnect: (d) => seen.push(['connect', d]),
+    onStatusChange: (d) => seen.push(['status', d]),
+    onDisconnect: (d) => seen.push(['end', d]),
+  }, relayDeps(fake));
+  await convo.finished;
+  assert.equal(convo.getId(), 'conv-1');
+  assert.deepEqual(seen, [['connect', { conversationId: 'conv-1' }], ['status', { status: 'connected' }], ['end', { reason: 'user', message: '' }]]);
+  assert.equal(fake.calls[0].path, '/sessions/s1/relay/open');
+  assert.equal(fake.calls[0].method, 'POST');
+});
+
+test('relay open: 503 busy retries every 5 s, tells the page it is waiting, then connects', async () => {
+  const fake = fakeRelay({ open: [busy, busy, ok({ conversation_id: 'c' })] });
+  const extra = {};
+  const waiting = [];
+  const convo = await RelayConversation.startSession({ sessionId: 's1', onWaiting: (n) => waiting.push(n) }, relayDeps(fake, extra));
+  await convo.finished;
+  assert.deepEqual(waiting, [1, 2]);
+  assert.deepEqual(extra.sleeps, [5000, 5000]);
+  assert.equal(fake.calls.filter((c) => c.path.endsWith('/relay/open')).length, 3);
+});
+
+test('relay open: still busy after the attempts throws RelayBusy; other failures throw RelayOpenFailed; offline throws', async () => {
+  const always = fakeRelay({ open: Array(OPEN_ATTEMPTS + 5).fill(busy) });
+  const waiting = [];
+  await assert.rejects(RelayConversation.startSession({ sessionId: 's', onWaiting: (n) => waiting.push(n) }, relayDeps(always)), { name: 'RelayBusy' });
+  assert.equal(always.calls.length, OPEN_ATTEMPTS);
+  assert.equal(waiting.length, OPEN_ATTEMPTS - 1);
+
+  const gone = fakeRelay({ open: [{ ok: false, status: 409, data: { error: 'relay not registered' } }] });
+  await assert.rejects(RelayConversation.startSession({ sessionId: 's' }, relayDeps(gone)), { name: 'RelayOpenFailed' });
+  const notRetryable = fakeRelay({ open: [{ ok: false, status: 503, data: { error: 'down' } }] });
+  await assert.rejects(RelayConversation.startSession({ sessionId: 's' }, relayDeps(notRetryable)), { name: 'RelayOpenFailed' });
+  const offline = fakeRelay({ open: [new TypeError('Failed to fetch')] });
+  await assert.rejects(RelayConversation.startSession({ sessionId: 's' }, relayDeps(offline)), { name: 'TypeError' });
+});
+
+test('relay events: agent messages arrive in the SDK shape and polling continues after the last seq', async () => {
+  const fake = fakeRelay({
+    open: [ok({ conversation_id: 'c' })],
+    events: [
+      ok({ events: [{ seq: 1, type: 'message', role: 'agent', text: 'Hello' }, { seq: 2, type: 'message', role: 'agent', text: 'How was it?' }], closed: false }),
+      ok({ events: [{ seq: 3, type: 'end', reason: 'agent', message: 'done' }], closed: true }),
+    ],
+  });
+  const messages = [];
+  const ends = [];
+  const convo = await RelayConversation.startSession({ sessionId: 's', onMessage: (m) => messages.push(m), onDisconnect: (d) => ends.push(d) }, relayDeps(fake));
+  await convo.finished;
+  assert.deepEqual(messages, [{ source: 'ai', role: 'agent', message: 'Hello' }, { source: 'ai', role: 'agent', message: 'How was it?' }]);
+  assert.deepEqual(ends, [{ reason: 'agent', message: 'done' }]);
+  const polls = fake.calls.filter((c) => c.path.includes('/relay/events')).map((c) => c.path);
+  assert.deepEqual(polls, ['/sessions/s/relay/events?after=0', '/sessions/s/relay/events?after=2']);
+});
+
+test('relay tool calls: known tools run and their result is posted; objects are stringified; unknown tools and throws are errors', async () => {
+  const fake = fakeRelay({
+    open: [ok({ conversation_id: 'c' })],
+    events: [ok({ events: [
+      { seq: 1, type: 'tool_call', tool_call_id: 't1', tool_name: 'record_datapoint', parameters: { key: 'k' } },
+      { seq: 2, type: 'tool_call', tool_call_id: 't2', tool_name: 'echo', parameters: { a: 1 } },
+      { seq: 3, type: 'tool_call', tool_call_id: 't3', tool_name: 'nope', parameters: {} },
+      { seq: 4, type: 'tool_call', tool_call_id: 't4', tool_name: 'boom', parameters: {} },
+      { seq: 5, type: 'end', reason: 'user', message: '' },
+    ], closed: true })],
+  });
+  const recorded = [];
+  const clientTools = {
+    record_datapoint: (p) => { recorded.push(p); },
+    echo: (p) => ({ got: p }),
+    boom: () => { throw new Error('bad'); },
+  };
+  const convo = await RelayConversation.startSession({ sessionId: 's', clientTools }, relayDeps(fake));
+  await convo.finished;
+  assert.deepEqual(recorded, [{ key: 'k' }]);
+  const sent = fake.calls.filter((c) => c.path.endsWith('/relay/send')).map((c) => c.body);
+  assert.deepEqual(sent, [
+    { kind: 'tool_result', tool_call_id: 't1', result: '', is_error: false },
+    { kind: 'tool_result', tool_call_id: 't2', result: '{"got":{"a":1}}', is_error: false },
+    { kind: 'tool_result', tool_call_id: 't3', result: 'Unknown tool: nope', is_error: true },
+    { kind: 'tool_result', tool_call_id: 't4', result: 'bad', is_error: true },
+  ]);
+});
+
+test('relay end: onDisconnect fires once with the reason, and polling stops', async () => {
+  const fake = fakeRelay({
+    open: [ok({ conversation_id: 'c' })],
+    events: [ok({ events: [{ seq: 1, type: 'end', reason: 'error', message: 'socket died' }], closed: true }), ok({ events: [{ seq: 2, type: 'end', reason: 'user', message: '' }], closed: true })],
+  });
+  const ends = [];
+  const convo = await RelayConversation.startSession({ sessionId: 's', onDisconnect: (d) => ends.push(d) }, relayDeps(fake));
+  await convo.finished;
+  assert.deepEqual(ends, [{ reason: 'error', message: 'socket died' }]);
+  assert.equal(fake.calls.filter((c) => c.path.includes('/relay/events')).length, 1);
+});
+
+test('relay poll failures: retry after 2 s, recover on success, give up after 10 in a row', async () => {
+  const offline = new TypeError('Failed to fetch');
+  const recovering = fakeRelay({
+    open: [ok({ conversation_id: 'c' })],
+    events: [offline, { ok: false, status: 502, data: null }, ok({ events: [{ seq: 1, type: 'message', role: 'agent', text: 'Hi' }], closed: false }), ok({ events: [{ seq: 2, type: 'end', reason: 'agent', message: '' }], closed: true })],
+  });
+  const extra = {};
+  const messages = [];
+  const ends = [];
+  const convo = await RelayConversation.startSession({ sessionId: 's', onMessage: (m) => messages.push(m.message), onDisconnect: (d) => ends.push(d) }, relayDeps(recovering, extra));
+  await convo.finished;
+  assert.deepEqual(extra.sleeps, [2000, 2000]);
+  assert.deepEqual(messages, ['Hi']);
+  assert.deepEqual(ends, [{ reason: 'agent', message: '' }]);
+
+  const lost = fakeRelay({ open: [ok({ conversation_id: 'c' })], events: Array(POLL_FAILURES_MAX + 5).fill(offline) });
+  const lostEnds = [];
+  const lostConvo = await RelayConversation.startSession({ sessionId: 's', onDisconnect: (d) => lostEnds.push(d) }, relayDeps(lost));
+  await lostConvo.finished;
+  assert.deepEqual(lostEnds, [{ reason: 'error', message: 'relay lost' }]);
+  assert.equal(lost.calls.filter((c) => c.path.includes('/relay/events')).length, POLL_FAILURES_MAX);
+});
+
+test('relay methods: user messages, contextual updates and close hit the right routes; a send failure is reported once', async () => {
+  const fake = fakeRelay({
+    open: [ok({ conversation_id: 'c' })],
+    send: [ok({ ok: true }), { ok: false, status: 409, data: { error: 'relay not open' } }, new TypeError('Failed to fetch')],
+  });
+  const extra = {};
+  const convo = await RelayConversation.startSession({ sessionId: 's' }, relayDeps(fake, extra));
+  await convo.finished;
+  await convo.sendUserMessage('hi');
+  await convo.sendContextualUpdate('[timing] 15 minutes');
+  await convo.sendUserMessage('again');
+  await convo.endSession();
+  const sent = fake.calls.filter((c) => c.path.endsWith('/relay/send')).map((c) => c.body);
+  assert.deepEqual(sent, [{ kind: 'user_message', text: 'hi' }, { kind: 'contextual_update', text: '[timing] 15 minutes' }, { kind: 'user_message', text: 'again' }]);
+  assert.equal(extra.reports.length, 1, 'reported at most once');
+  assert.equal(extra.reports[0][0], 'disconnect');
+  assert.equal(extra.reports[0][2], 's');
+  const last = fake.calls.at(-1);
+  assert.deepEqual([last.path, last.method], ['/sessions/s/relay/close', 'POST']);
+});
+
+test('relay abort: cancelling during the busy wait stops the retries with RelayAborted', async () => {
+  const fake = fakeRelay({ open: Array(10).fill(busy) });
+  const controller = new AbortController();
+  const deps = { ...relayDeps(fake), sleep: async () => { controller.abort(); } };
+  await assert.rejects(RelayConversation.startSession({ sessionId: 's', signal: controller.signal }, deps), { name: 'RelayAborted' });
+  assert.equal(fake.calls.length, 1, 'no further open attempt after the abort');
+
+  const early = new AbortController();
+  early.abort();
+  const none = fakeRelay();
+  await assert.rejects(RelayConversation.startSession({ sessionId: 's', signal: early.signal }, relayDeps(none)), { name: 'RelayAborted' });
+  assert.equal(none.calls.length, 0);
+});
+
+test('relay abort: an open that succeeds just as the person pressed Stop is closed again', async () => {
+  const controller = new AbortController();
+  const fake = fakeRelay({ open: [ok({ conversation_id: 'c' })] });
+  const request = async (path, opts) => {
+    const res = await fake.request(path, opts);
+    if (path.endsWith('/relay/open')) controller.abort();
+    return res;
+  };
+  await assert.rejects(RelayConversation.startSession({ sessionId: 's', signal: controller.signal }, { ...relayDeps(fake), request }), { name: 'RelayAborted' });
+  assert.equal(fake.calls.at(-1).path, '/sessions/s/relay/close');
+});
+
+test('relay callbacks: a throwing onMessage or onDisconnect never stops the loop and is reported once', async () => {
+  const fake = fakeRelay({
+    open: [ok({ conversation_id: 'c' })],
+    events: [
+      ok({ events: [{ seq: 1, type: 'message', role: 'agent', text: 'one' }, { seq: 2, type: 'message', role: 'agent', text: 'two' }], closed: false }),
+      ok({ events: [{ seq: 3, type: 'tool_call', tool_call_id: 't', tool_name: 'boom', parameters: {} }, { seq: 4, type: 'end', reason: 'agent', message: '' }], closed: true }),
+    ],
+  });
+  const extra = {};
+  const seen = [];
+  const convo = await RelayConversation.startSession({
+    sessionId: 's',
+    clientTools: { boom: () => { throw new Error('tool broke'); } },
+    onMessage: (m) => { seen.push(m.message); throw new Error('render broke'); },
+    onDisconnect: () => { seen.push('end'); throw new Error('disconnect broke'); },
+  }, relayDeps(fake, extra));
+  await convo.finished;
+  assert.deepEqual(seen, ['one', 'two', 'end']);
+  assert.equal(extra.reports.length, 1, 'reported at most once');
+  assert.equal(extra.reports[0][0], 'disconnect');
+  const sent = fake.calls.filter((c) => c.path.endsWith('/relay/send')).map((c) => c.body);
+  assert.deepEqual(sent, [{ kind: 'tool_result', tool_call_id: 't', result: 'tool broke', is_error: true }]);
 });
