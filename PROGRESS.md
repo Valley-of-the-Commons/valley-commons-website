@@ -37,13 +37,16 @@ Evaluator rounds: 3 (independent subagent). Round 1 found 2 hard failures and 10
 ## State (2026-10-03)
 Live in production since 2026-10-03 15:46 (PRs #10, #13, #14). All model calls on Claude Sonnet 5.5. All test data deleted; ready to share (password `valley2026survey`).
 
-## v1.4 pre-send hardening (in progress, branch `feat/survey-v1-4`)
-Site half, not committed or deployed:
+## v1.4 pre-send hardening (shipped 2026-10-08, PR #23, pi-data f1ae26b)
 - Text conversations go through an HTTPS relay on the Pi (`survey/relay.js`), so attendees whose network blocks the browser's WebSocket to ElevenLabs can still write. Voice unchanged; its connect-failure copy now names security software, VPNs and networks.
 - Client `connect` error reports carry `elapsed_ms`.
 - "Recap & news" removed (page, renderer, nav buttons, route, styles, tests).
 - Privacy notice: retention now "as long as the team uses it to plan future Valley events", plus the line on publishable words.
-- Tests: 42 pass. Pairs with the API half in pi-data (relay endpoints, `elapsed_ms`, catalogue changes); not verified end to end yet.
+- Agent: 10 concurrent conversations (ElevenLabs Creator plan), 300 a day, bursting off; our cap 300 starts a day.
+- Tests: site 42 pass; pi-data 48 unit, 80 with the database; cross-repo contract test 28 of 28.
+- Production gate passed 2026-10-08: live relay conversation with the real agent (5 agent turns, 6 datapoints saved); headless Chromium reaching the Pi through the public Funnel with every elevenlabs.io host unresolvable completed a text interview; voice with a fake microphone connected and spoke; voice with ElevenLabs blocked showed the new copy with Continue in text; 11 and then 25 simultaneous text relays all opened (text chats did not count against the concurrency limit); a full text interview reached the testimonial offer, the name box, the closing and the results banner; gap_ideas and testimonial stored and absent from the public results. All 40 test respondents and the 5 syntheses built from them deleted afterwards.
+- Found and fixed during the gate: the Funnel hostname had dropped out of public DNS (Tailscale showed Funnel on); `tailscale funnel --https=443 off` then `tailscale funnel --bg --https=443 http://127.0.0.1:8080` republished it within 20 s. Check public DNS before any send: `curl -s 'https://dns.google/resolve?name=pi1.tail0a8aa5.ts.net&type=A'`.
+- Open: Felix's retest on Windows; Felix and Nena review before sending to attendees.
 
 ## Next steps
 1. Deca: share the link and password in the Telegram group and by email.
