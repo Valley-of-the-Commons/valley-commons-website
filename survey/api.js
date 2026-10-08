@@ -29,10 +29,12 @@ export async function request(path, { method = 'GET', body, auth = true } = {}) 
  * Tells the server why this browser could not load the SDK or connect, which it
  * cannot see otherwise. Best effort: never throws, never blocks the screen.
  * sessionId is omitted when no session exists yet (an SDK load failure).
+ * elapsedMs (optional) is the time from starting to connect to the failure.
  */
-export function reportClientError(stage, err, sessionId) {
+export function reportClientError(stage, err, sessionId, elapsedMs) {
   const body = { stage, name: String(err?.name ?? ''), message: String(err?.message ?? ''), user_agent: globalThis.navigator?.userAgent ?? '' };
   if (sessionId) body.session_id = sessionId;
+  if (Number.isFinite(elapsedMs)) body.elapsed_ms = Math.round(elapsedMs);
   return request('/client-error', { method: 'POST', body }).catch(() => {});
 }
 

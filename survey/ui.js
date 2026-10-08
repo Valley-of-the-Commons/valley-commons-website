@@ -30,9 +30,9 @@ export function noticeHtml(f = NOTICE_FACTS) {
       <li><strong>What's kept:</strong> a transcript of what you say or type, and notes drawn from it. Your name and contact details only if you give them. Your voice is not recorded.</li>
       <li><strong>Where:</strong> on a small server Deca runs at home, with an encrypted backup copy kept off-site. Deca shares your answers with the Valley of the Commons core team, including but not limited to Felix, Nena and Koss.</li>
       <li><strong>Who else handles it:</strong> ElevenLabs (US) runs the voice and chat and keeps a copy of the transcript for ${esc(f.elevenlabsRetentionDays)} days. ${esc(f.interviewerProvider)} generates the interviewer's replies. ${esc(f.synthesisProvider)} summarises the answers for the results page. ${esc(f.transferSafeguard)}</li>
-      <li><strong>What other attendees see:</strong> a summary of everyone's answers on the results page, behind the same password. Your name appears only if you say yes at the end. Your project cards appear on the board only if you agree.</li>
+      <li><strong>What other attendees see:</strong> a summary of everyone's answers on the results page, behind the same password. Your name appears only if you say yes at the end. Your project cards appear on the board only if you agree. If you offer a few words for publication and say yes, those words may appear publicly, for example on the Valley website or in posts, with the name you choose.</li>
       <li><strong>On your device:</strong> this browser remembers your progress so you can come back later. Nothing else is stored.</li>
-      <li><strong>How long:</strong> until after Valley of the Commons 2027. Everything, including the backup copies, is deleted by 30 September 2027.</li>
+      <li><strong>How long:</strong> kept for as long as the team uses it to plan future Valley events. You can ask for your answers to be deleted at any time.</li>
       <li><strong>Your choice:</strong> taking part is optional. You can ask Deca to see, correct or delete your answers at any time: <a href="mailto:g.decadilhac@gmail.com">g.decadilhac@gmail.com</a>. You can also complain to the data protection authority in your country.</li>
     </ul>`;
 }
