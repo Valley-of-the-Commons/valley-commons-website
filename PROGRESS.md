@@ -37,6 +37,13 @@ Evaluator rounds: 3 (independent subagent). Round 1 found 2 hard failures and 10
 ## State (2026-10-03)
 Live in production since 2026-10-03 15:46 (PRs #10, #13, #14). All model calls on Claude Sonnet 5.5. All test data deleted; ready to share (password `valley2026survey`).
 
+## v1.5 Felix's review (shipped 2026-10-10, pi-data d0436c1)
+- Felix's retest on Windows worked (2026-10-09). His review: too long (about 20 questions, keep it to about 15) and stress that the Hub is always looking for events.
+- About 15 questions: extras group removed, follow-ups capped at 3, the agent aims for about 15 including the closing.
+- New core group `hub_events` (gap_ideas, new_formats, contribution): the Hub's invitation, close to Felix's words. People are invited to suggest events or refer people; the team decides (no agreeing, booking, dates, rooms, prices or stays). The Valley-week hosting ban is unchanged.
+- Tests: pi-data 49 unit, 81 with the database; site 42. Sim cases against the live agent: 12 of 13, both new events cases pass; vague-return recorded "maybe" at 90 instead of asking a follow-up.
+- Agent pushed; pi1 deployed and checked (topic order in the container, Funnel on, public DNS resolves).
+
 ## v1.4 pre-send hardening (shipped 2026-10-08, PR #23, pi-data f1ae26b)
 - Text conversations go through an HTTPS relay on the Pi (`survey/relay.js`), so attendees whose network blocks the browser's WebSocket to ElevenLabs can still write. Voice unchanged; its connect-failure copy now names security software, VPNs and networks.
 - Client `connect` error reports carry `elapsed_ms`.
