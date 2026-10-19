@@ -26,11 +26,23 @@ data, secrets or database tables.
 | `survey/queue.js` | Offline queue for `record_datapoint` calls (retries with an idempotency key) |
 | `survey/timing.js` | Voice (11, 14 and 15 min) and text (15 min) thresholds and the contextual updates sent at each |
 | `survey/survey.css` | Styles, on top of `home.css` tokens |
-| `tests/survey.test.mjs` | Unit tests for storage, queue, timing, the ETA wording, the name box, the text relay and the locked state |
+| `tests/survey.test.mjs` | Unit tests for storage, queue, timing, the ETA wording, the name box, the text relay, the locked state and the https-only guard |
 
 `server.js` serves `/survey` and `/survey/results`. `/survey` is the one route
 that sends `Permissions-Policy: microphone=(self)` (voice mode); every other route
 keeps `microphone=()`.
+
+Both survey pages are https only. An inline script at the top of each `<head>`
+moves an `http` visit to `https` before any module runs, and `insecureCopy()` in
+`survey/api.js` stops the page from starting if it ever runs on `http`. The reason:
+on an `http` page browsers withhold the microphone and `crypto.randomUUID` (voice
+fails, answers are not saved), and the Pi API accepts only https origins, so sign-in
+fails with "cannot be reached". The site itself answers on `http` without
+redirecting (incident 2026-10-19). `localhost` stays on `http` for development.
+
+When the API cannot be reached, the page shows a details line (page address,
+error, UTC minute) for the person to screenshot; match it against the Pi API
+access log, which records each request's `origin` and browser.
 
 ## What lives elsewhere
 

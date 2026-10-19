@@ -3,10 +3,26 @@ import { createStorage } from './storage.js';
 
 // Local development may point at a local backend with ?api=...; only on
 // localhost, so a crafted link cannot send the password elsewhere.
-const LOCAL_API = ['localhost', '127.0.0.1'].includes(globalThis.location?.hostname)
+const LOCAL_HOSTS = ['localhost', '127.0.0.1'];
+const LOCAL_API = LOCAL_HOSTS.includes(globalThis.location?.hostname)
   && new URLSearchParams(globalThis.location.search).get('api');
 export const API_BASE = LOCAL_API || 'https://pi1.tail0a8aa5.ts.net/votc-survey';
 export const storage = createStorage();
+
+/**
+ * True on an http copy of a live page. Browsers withhold the microphone and
+ * crypto.randomUUID there and the API accepts only https origins, so the page
+ * must not start; the inline script in its <head> is already moving to https.
+ */
+export const insecureCopy = (loc = globalThis.location) => loc?.protocol === 'http:' && !LOCAL_HOSTS.includes(loc.hostname);
+
+export const UNREACHABLE = 'The survey server cannot be reached from this browser right now. Try again in a minute. If it keeps happening, send a screenshot of this message to the organisers.';
+
+/** One line a person can screenshot: the page address, what failed, and when (UTC). */
+export function failureDetails(err, loc = globalThis.location, now = new Date()) {
+  const what = err?.name ? `${err.name}: ${err.message}` : String(err);
+  return `${loc?.origin ?? 'unknown page'} · ${what} · ${now.toISOString().slice(0, 16).replace('T', ' ')} UTC`;
+}
 const TOKEN_KEY = 'votc.survey.token';
 
 export const getToken = () => storage.get(TOKEN_KEY);

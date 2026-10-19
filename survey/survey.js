@@ -2,12 +2,12 @@
 // with the ElevenLabs interviewer. Datapoints the agent records go through the
 // offline queue to the Pi API. Timing signals and the voice-to-text hand-off are
 // driven from here (Spec: Timing).
-import { getToken, reportClientError, request, storage } from './api.js';
+import { getToken, insecureCopy, reportClientError, request, storage, UNREACHABLE } from './api.js';
 import { attributionPanelHtml, attributionUpdate, attributionValue } from './attribution.js';
 import { createQueue } from './queue.js';
 import { RelayConversation } from './relay.js';
 import { createClock, timeScale, TIMING_MESSAGES } from './timing.js';
-import { $, el, esc, gate, noticeHtml, wirePrivacyLinks } from './ui.js';
+import { $, el, esc, failureLine, gate, noticeHtml, wirePrivacyLinks } from './ui.js';
 
 const SDK_URL = 'https://cdn.jsdelivr.net/npm/@elevenlabs/client@1.26.0/+esm';
 const mount = $('#app');
@@ -64,8 +64,8 @@ async function showModes(note = '') {
   let me;
   try {
     me = await request('/me');
-  } catch {
-    return showProblem('The survey server cannot be reached right now.', () => showModes(), 'none');
+  } catch (err) {
+    return showProblem(UNREACHABLE, () => showModes(), 'none', err);
   }
   if (me.status === 401) return main();
   if (me.ok) setProgress(me.data.progress, false);
@@ -144,11 +144,13 @@ function showPaused() {
 
 // `failedMode` decides the greeting if the person switches to text: after a
 // voice failure the text session is a hand-off, otherwise a normal start.
-function showProblem(message, retry, failedMode = 'voice') {
+// `err`, when given, adds the details line a person can screenshot.
+function showProblem(message, retry, failedMode = 'voice', err) {
   const view = el(`
     <section class="sv-end sv-rise">
       <h1 class="sv-title">Something got in the way.</h1>
       <p class="sv-lede">${esc(message)}</p>
+      ${err ? failureLine(err) : ''}
       <div class="sv-actions">
         <button class="btn btn-orange" type="button" data-retry>Try again</button>
         <button class="btn btn-dark" type="button" data-text>Continue in text</button>
@@ -231,8 +233,8 @@ async function startSession(mode, { handoff = false, continuation = false } = {}
   let session;
   try {
     session = await request('/sessions', { method: 'POST', body: { mode, handoff, continuation } });
-  } catch {
-    return showProblem('The survey server cannot be reached right now.', retry, mode);
+  } catch (err) {
+    return showProblem(UNREACHABLE, retry, mode, err);
   }
   if (session.status === 401) return main();
   if (session.status === 429) return showProblem(session.data?.error || 'The survey is busy right now. Please come back later.', () => showModes(), 'none');
@@ -513,4 +515,4 @@ const ICONS = {
   leaf: '<svg viewBox="0 0 48 48" width="44" height="44" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 38C10 20 22 10 40 8c-2 18-12 30-30 30z"/><path d="M10 38 28 20"/></svg>',
 };
 
-main();
+if (!insecureCopy()) main();

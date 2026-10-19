@@ -3,6 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <!-- https only: browsers withhold the microphone and crypto.randomUUID on http pages, and the survey API accepts only https origins. Same check as insecureCopy() in survey/api.js. -->
+  <script>if (location.protocol === 'http:' && !['localhost', '127.0.0.1'].includes(location.hostname)) location.replace('https:' + location.href.slice(5));</script>
   <title>What we heard · Valley of the Commons</title>
   <meta name="description" content="Results of the Valley of the Commons 2026 post-residency survey: a summary of the feedback and the projects that came out of it." />
   <meta name="robots" content="noindex" />
