@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
-import { reportClientError } from '../survey/api.js';
+import { failureDetails, insecureCopy, reportClientError } from '../survey/api.js';
 import { createQueue } from '../survey/queue.js';
 import { createStorage } from '../survey/storage.js';
 import { createClock, THRESHOLDS, TIMING_MESSAGES, timeScale } from '../survey/timing.js';
@@ -458,4 +459,28 @@ test('relay callbacks: a throwing onMessage or onDisconnect never stops the loop
   assert.equal(extra.reports[0][0], 'disconnect');
   const sent = fake.calls.filter((c) => c.path.endsWith('/relay/send')).map((c) => c.body);
   assert.deepEqual(sent, [{ kind: 'tool_result', tool_call_id: 't', result: 'tool broke', is_error: true }]);
+});
+
+test('https only: an http copy of a live page does not start; https and local http do', () => {
+  assert.equal(insecureCopy({ protocol: 'http:', hostname: 'www.valleyofthecommons.com' }), true);
+  assert.equal(insecureCopy({ protocol: 'http:', hostname: 'valleyofthecommons.com' }), true);
+  assert.equal(insecureCopy({ protocol: 'https:', hostname: 'www.valleyofthecommons.com' }), false);
+  assert.equal(insecureCopy({ protocol: 'http:', hostname: 'localhost' }), false);
+  assert.equal(insecureCopy({ protocol: 'http:', hostname: '127.0.0.1' }), false);
+});
+
+test('https only: both survey pages redirect http to https in <head>, before any module runs', () => {
+  for (const page of ['survey/index.html', 'survey/results.html']) {
+    const html = readFileSync(new URL(`../${page}`, import.meta.url), 'utf8');
+    const redirect = html.indexOf("location.replace('https:' + location.href.slice(5))");
+    assert.ok(redirect > 0 && redirect < html.indexOf('</head>'), `${page}: redirect in <head>`);
+    assert.ok(redirect < html.indexOf('type="module"'), `${page}: redirect before the module script`);
+    assert.match(html, /!\['localhost', '127.0.0.1'\]\.includes\(location\.hostname\)/, `${page}: local development stays on http`);
+  }
+});
+
+test('failure details: page address, error and UTC minute, for a screenshot', () => {
+  const line = failureDetails(new TypeError('Failed to fetch'), { origin: 'http://www.valleyofthecommons.com' }, new Date('2026-10-19T12:40:16Z'));
+  assert.equal(line, 'http://www.valleyofthecommons.com · TypeError: Failed to fetch · 2026-10-19 12:40 UTC');
+  assert.match(failureDetails('offline', undefined, new Date('2026-10-19T12:40:16Z')), /^unknown page · offline · /);
 });

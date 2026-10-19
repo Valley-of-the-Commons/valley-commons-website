@@ -1,9 +1,9 @@
 // /survey/results: the latest synthesis, the projects board and the forward
 // look. Everything here was already filtered for consent by the Pi API.
-import { getToken, request } from './api.js';
+import { getToken, insecureCopy, request } from './api.js';
 import { INCLUDED_LINE, youLine } from './eta.js';
 import { lockedView, pollUntil } from './locked.js';
-import { $, el, esc, gate, wirePrivacyLinks } from './ui.js';
+import { $, el, esc, failureLine, gate, wirePrivacyLinks } from './ui.js';
 
 const mount = $('#app');
 
@@ -32,8 +32,8 @@ async function main() {
   let res;
   try {
     res = await request('/results');
-  } catch {
-    return mount.replaceChildren(el('<p class="sv-lede">The results cannot be loaded right now. Try again in a minute.</p>'));
+  } catch (err) {
+    return mount.replaceChildren(el(`<p class="sv-lede">The results cannot be loaded from this browser right now. Try again in a minute.${failureLine(err)}</p>`));
   }
   if (res.status === 401) return main();
   if (res.status === 403) return showLocked();
@@ -218,4 +218,4 @@ function forward(f, respondents) {
     ${f.new_formats.length ? `<h3 class="rs-h3">New formats people would propose</h3><ul class="rs-list">${list(f.new_formats)}</ul>` : ''}`;
 }
 
-main();
+if (!insecureCopy()) main();

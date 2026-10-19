@@ -56,6 +56,7 @@ body.sv::before {
 .sv-small { font: 400 13px/1.5 var(--sans); color: var(--muted-2); margin-top: 16px; }
 .sv-note { font: 500 15px/1.5 var(--sans); color: var(--green-dark); background: color-mix(in srgb, var(--green-soft) 18%, #fff); border-radius: 10px; padding: 12px 16px; margin: 0 0 20px; }
 .sv-error { font: 500 14px/1.4 var(--sans); color: #a33a12; }
+.sv-details { display: block; font: 400 12px/1.5 var(--sans); color: var(--muted-2); margin-top: 8px; overflow-wrap: anywhere; }
 .sv-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
 .btn:disabled { opacity: .55; cursor: default; transform: none; }
 

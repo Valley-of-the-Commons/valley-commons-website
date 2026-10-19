@@ -1,5 +1,5 @@
 // Pieces both survey pages share: the password gate and the privacy notice.
-import { signIn } from './api.js';
+import { failureDetails, signIn, UNREACHABLE } from './api.js';
 
 export const $ = (sel, root = document) => root.querySelector(sel);
 export const el = (html) => {
@@ -8,6 +8,8 @@ export const el = (html) => {
   return t.content.firstElementChild;
 };
 export const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+/** The small details line under a connection error (see failureDetails). */
+export const failureLine = (err) => `<span class="sv-details">${esc(failureDetails(err))}</span>`;
 
 // The facts the notice states. Each must match the live configuration
 // (ElevenLabs agent privacy settings, the interviewer LLM, the synthesis model).
@@ -81,8 +83,8 @@ export function gate(mount, { title, lede }) {
         const res = await signIn(form.password.value);
         if (res.ok) return resolve();
         error.textContent = res.data?.error || 'Something went wrong. Try again.';
-      } catch {
-        error.textContent = 'The survey server cannot be reached right now. Try again in a minute.';
+      } catch (err) {
+        error.replaceChildren(UNREACHABLE, el(failureLine(err)));
       }
       error.hidden = false;
       button.disabled = false;
