@@ -2,7 +2,7 @@
 // with the ElevenLabs interviewer. Datapoints the agent records go through the
 // offline queue to the Pi API. Timing signals and the voice-to-text hand-off are
 // driven from here (Spec: Timing).
-import { getToken, insecureCopy, reportClientError, request, storage, UNREACHABLE } from './api.js';
+import { getToken, insecureCopy, isDailyLimit, reportClientError, request, storage, UNREACHABLE } from './api.js';
 import { attributionPanelHtml, attributionUpdate, attributionValue } from './attribution.js';
 import { createQueue } from './queue.js';
 import { RelayConversation } from './relay.js';
@@ -142,6 +142,21 @@ function showPaused() {
   showResultsIfUnlocked($('[data-results]', view), view);
 }
 
+// A daily limit: trying again today cannot work, so no retry buttons, only the
+// results when this person may read them (incident 2026-10-19: tapped 9 times).
+function showLimitReached(message) {
+  const view = el(`
+    <section class="sv-end sv-rise">
+      <h1 class="sv-title">Let's continue tomorrow.</h1>
+      <p class="sv-lede">${esc(message)}</p>
+      <div class="sv-actions">
+        <a class="btn btn-dark" href="/survey/results" data-results hidden>See the results</a>
+      </div>
+    </section>`);
+  mount.replaceChildren(view);
+  showResultsIfUnlocked($('[data-results]', view), view);
+}
+
 // `failedMode` decides the greeting if the person switches to text: after a
 // voice failure the text session is a hand-off, otherwise a normal start.
 // `err`, when given, adds the details line a person can screenshot.
@@ -237,6 +252,7 @@ async function startSession(mode, { handoff = false, continuation = false } = {}
     return showProblem(UNREACHABLE, retry, mode, err);
   }
   if (session.status === 401) return main();
+  if (isDailyLimit(session)) return showLimitReached(session.data.error);
   if (session.status === 429) return showProblem(session.data?.error || 'The survey is busy right now. Please come back later.', () => showModes(), 'none');
   if (!session.ok) return showProblem('The conversation could not start.', retry, mode);
   state.session = session.data;

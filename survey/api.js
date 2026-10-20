@@ -16,6 +16,9 @@ export const storage = createStorage();
  */
 export const insecureCopy = (loc = globalThis.location) => loc?.protocol === 'http:' && !LOCAL_HOSTS.includes(loc.hostname);
 
+/** A refusal that retrying today cannot fix: the person's or the survey's daily conversation limit (the API's 429 `limit`). */
+export const isDailyLimit = (res) => res?.status === 429 && ['respondent_daily', 'survey_daily'].includes(res.data?.limit);
+
 export const UNREACHABLE = 'The survey server cannot be reached from this browser right now. Try again in a minute. If it keeps happening, send a screenshot of this message to the organisers.';
 
 /** One line a person can screenshot: the page address, what failed, and when (UTC). */
