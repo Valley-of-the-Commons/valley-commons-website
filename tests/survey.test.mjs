@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
-import { failureDetails, insecureCopy, reportClientError } from '../survey/api.js';
+import { failureDetails, insecureCopy, isDailyLimit, reportClientError } from '../survey/api.js';
 import { createQueue } from '../survey/queue.js';
 import { createStorage } from '../survey/storage.js';
 import { createClock, THRESHOLDS, TIMING_MESSAGES, timeScale } from '../survey/timing.js';
@@ -483,4 +483,12 @@ test('failure details: page address, error and UTC minute, for a screenshot', ()
   const line = failureDetails(new TypeError('Failed to fetch'), { origin: 'http://www.valleyofthecommons.com' }, new Date('2026-10-19T12:40:16Z'));
   assert.equal(line, 'http://www.valleyofthecommons.com · TypeError: Failed to fetch · 2026-10-19 12:40 UTC');
   assert.match(failureDetails('offline', undefined, new Date('2026-10-19T12:40:16Z')), /^unknown page · offline · /);
+});
+
+test('daily limit: only the daily refusals end the day; the hourly one and other errors keep their retry', () => {
+  assert.equal(isDailyLimit({ status: 429, data: { limit: 'respondent_daily' } }), true);
+  assert.equal(isDailyLimit({ status: 429, data: { limit: 'survey_daily' } }), true);
+  assert.equal(isDailyLimit({ status: 429, data: { limit: 'starts_hourly' } }), false);
+  assert.equal(isDailyLimit({ status: 429, data: { error: 'older API, no limit field' } }), false);
+  assert.equal(isDailyLimit({ status: 500, data: { limit: 'respondent_daily' } }), false);
 });

@@ -44,6 +44,10 @@ When the API cannot be reached, the page shows a details line (page address,
 error, UTC minute) for the person to screenshot; match it against the Pi API
 access log, which records each request's `origin` and browser.
 
+A daily conversation limit (the API's 429 with `limit` `respondent_daily` or
+`survey_daily`) shows "Let's continue tomorrow" with the results link and no
+retry buttons, since retrying that day cannot work.
+
 ## What lives elsewhere
 
 - **Backend:** a small Node API on Deca's Raspberry Pi (repo `deca12x/pi-data`,
