@@ -64,7 +64,8 @@ Loaded on demand. Add a one-line pointer here whenever you add a docs page.
   static quiz/survey results file.
 - `docs/archive/`: retired features, kept for the record (the live keynote
   quiz and its backend handoff).
-- `docs/survey.md`: the post-residency survey (`/survey`, `/survey/results`):
-  static pages here, backend on Deca's Pi, the microphone exemption.
+- `docs/survey.md`: the closed post-residency survey: `/survey` redirects to
+  `/survey/results`, which opens an encrypted results file in the browser with
+  the shared password (no backend).
 - `docs/trust-tournament.md`: the `/trust-tournament` results page (19 Sep 2026 game): files, data, what survived.
 - `ENGINEERING_GUIDELINES.md` (repo root) — git and force-operation rules.

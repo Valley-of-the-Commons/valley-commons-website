@@ -331,7 +331,9 @@ const PRIVATE_PATTERNS = [/^\/test-[^/]*\.js$/];
 // Shipped on purpose: the game master's LLM context is fetched by the client.
 // The public data files are served by their own explicit route below (json is
 // deliberately not in SERVE_EXTENSIONS), so they need the same guard bypass.
-const PUBLIC_DATA_FILES = new Set(['keynote-results.json', 'trust-tournament-2026-09-19.json']);
+// The survey results file is encrypted with the shared password (see
+// docs/survey.md), so it is safe to serve from a public repo.
+const PUBLIC_DATA_FILES = new Set(['keynote-results.json', 'trust-tournament-2026-09-19.json', 'votc-survey-results.locked.json']);
 const PUBLIC_EXCEPTIONS = new Set([
   '/internal_thought.md',
   ...[...PUBLIC_DATA_FILES].map((f) => `/data/${f}`),
@@ -452,8 +454,8 @@ app.get(/^\/(?:keynotes|keynote-[a-z0-9-]+)$/, async (req, res) => {
 });
 
 // Static archives of past live-room results: the keynote quiz/survey results
-// (the live session was retired 2026-09-25; see docs/archive/keynote-live-quiz.md)
-// and the 19 Sep 2026 Trust Tournament. json is deliberately not in
+// (the live session was retired 2026-09-25; see docs/archive/keynote-live-quiz.md),
+// the 19 Sep 2026 Trust Tournament, and the encrypted survey results. json is deliberately not in
 // SERVE_EXTENSIONS (it would expose package.json etc. too), so only the files
 // named in PUBLIC_DATA_FILES are served, through this one route.
 app.get('/data/:file', (req, res, next) => {
@@ -470,23 +472,22 @@ app.get('/trust-tournament', (req, res) => {
   res.sendFile(path.join(__dirname, 'trust', 'index.html'));
 });
 
-// Post-residency survey: static pages whose backend runs on Deca's Pi (see
-// docs/survey.md). /survey is the only route allowed to use the microphone,
-// for voice mode; every other route keeps microphone=().
+// Post-residency survey (closed): only the results page remains, and it opens
+// the encrypted results file in the browser (see docs/survey.md). /survey
+// redirects to it.
 // Pages are rewritten once per process (one per deploy) so their assets carry
 // this deploy's version (lib/survey-assets.js).
 const SURVEY_VERSION = Date.now().toString(36);
 const surveyModules = fs.readdirSync(path.join(__dirname, 'survey')).filter((f) => f.endsWith('.js'));
 const surveyHtml = new Map();
-const surveyPage = (file, { microphone = false } = {}) => (req, res) => {
-  if (microphone) res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(self), camera=()');
+const surveyPage = (file) => (req, res) => {
   if (!surveyHtml.has(file)) {
     surveyHtml.set(file, versionSurveyHtml(fs.readFileSync(path.join(__dirname, 'survey', file), 'utf8'), surveyModules, SURVEY_VERSION));
   }
   res.setHeader('Cache-Control', 'no-cache');
   res.type('html').send(surveyHtml.get(file));
 };
-app.get(['/survey', '/survey/'], surveyPage('index.html', { microphone: true }));
+app.get(['/survey', '/survey/'], (req, res) => res.redirect(302, '/survey/results'));
 app.get('/survey/results', surveyPage('results.html'));
 
 // Static files

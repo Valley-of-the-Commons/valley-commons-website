@@ -1,5 +1,4 @@
-// Pieces both survey pages share: the password gate and the privacy notice.
-import { failureDetails, signIn, UNREACHABLE } from './api.js';
+// Pieces the results page uses: the password gate and the privacy notice.
 
 export const $ = (sel, root = document) => root.querySelector(sel);
 export const el = (html) => {
@@ -8,10 +7,8 @@ export const el = (html) => {
   return t.content.firstElementChild;
 };
 export const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
-/** The small details line under a connection error (see failureDetails). */
-export const failureLine = (err) => `<span class="sv-details">${esc(failureDetails(err))}</span>`;
 
-// The facts the notice states. Each must match the live configuration
+// The facts the notice states, as configured while the survey ran
 // (ElevenLabs agent privacy settings, the interviewer LLM, the synthesis model).
 // Checked 2026-10-03: agent privacy.retention_days 7, record_voice false, llm
 // claude-sonnet-5-5 (pi-data services/votc-survey/agent/settings.json); synthesis
@@ -26,16 +23,16 @@ export const NOTICE_FACTS = {
 
 export function noticeHtml(f = NOTICE_FACTS) {
   return `
-    <h2 class="sv-notice__title">Before you start</h2>
+    <h2 class="sv-notice__title">About this survey</h2>
     <ul class="sv-notice__list">
-      <li>You'll be talking with an AI interviewer, not a person.</li>
-      <li><strong>What's kept:</strong> a transcript of what you say or type, and notes drawn from it. Your name and contact details only if you give them. Your voice is not recorded.</li>
-      <li><strong>Where:</strong> on a small server Deca runs at home, with an encrypted backup copy kept off-site. Deca shares your answers with the Valley of the Commons core team, including but not limited to Felix, Nena and Koss.</li>
-      <li><strong>Who else handles it:</strong> ElevenLabs (US) runs the voice and chat and keeps a copy of the transcript for ${esc(f.elevenlabsRetentionDays)} days. ${esc(f.interviewerProvider)} generates the interviewer's replies. ${esc(f.synthesisProvider)} summarises the answers for the results page. ${esc(f.transferSafeguard)}</li>
-      <li><strong>What other attendees see:</strong> a summary of everyone's answers on the results page, behind the same password. Your name appears only if you say yes at the end. Your project cards appear on the board only if you agree. If you offer a few words for publication and say yes, those words may appear publicly, for example on the Valley website or in posts, with the name you choose.</li>
-      <li><strong>On your device:</strong> this browser remembers your progress so you can come back later. Nothing else is stored.</li>
-      <li><strong>How long:</strong> kept for as long as the team uses it to plan future Valley events. You can ask for your answers to be deleted at any time.</li>
-      <li><strong>Your choice:</strong> taking part is optional. You can ask Deca to see, correct or delete your answers at any time: <a href="mailto:g.decadilhac@gmail.com">g.decadilhac@gmail.com</a>. You can also complain to the data protection authority in your country.</li>
+      <li>The survey ran from 3 October 2026 and closed on 31 October 2026. Each person talked with an AI interviewer, not a person. Voices were not recorded.</li>
+      <li><strong>What's kept:</strong> a transcript of what each person said or typed, and notes drawn from it. Names and contact details only where people gave them.</li>
+      <li><strong>Where:</strong> in an encrypted archive that only Deca can open, stored in a private repository on GitHub. The home server that ran the survey no longer holds any of it. Deca shares the answers with the Valley of the Commons core team, including but not limited to Felix, Nena and Koss.</li>
+      <li><strong>Who else handled it:</strong> ElevenLabs (US) ran the voice and chat and kept a copy of each transcript for ${esc(f.elevenlabsRetentionDays)} days. ${esc(f.interviewerProvider)} generated the interviewer's replies. ${esc(f.synthesisProvider)} summarised the answers for this page. ${esc(f.transferSafeguard)}</li>
+      <li><strong>What this page shows:</strong> a summary of everyone's answers, stored encrypted; it opens only with the attendees' password. A name appears only where the person said yes at the end. Project cards appear on the board only with the person's agreement. Words a person offered for publication, with their yes, may appear publicly, for example on the Valley website or in posts, with the name they chose.</li>
+      <li><strong>On your device:</strong> this browser remembers that you entered the password, so the page opens directly next time. Nothing else is stored.</li>
+      <li><strong>How long:</strong> kept for as long as the team uses it to plan future Valley events.</li>
+      <li><strong>Your rights:</strong> you can ask Deca to see, correct or delete your answers at any time: <a href="mailto:g.decadilhac@gmail.com">g.decadilhac@gmail.com</a>. You can also complain to the data protection authority in your country.</li>
     </ul>`;
 }
 
@@ -55,8 +52,11 @@ export function wirePrivacyLinks(root = document) {
   }
 }
 
-/** Renders the password gate into `mount`; resolves once signed in. */
-export function gate(mount, { title, lede }) {
+/**
+ * Renders the password gate into `mount`; resolves once `unlock(password)` answers
+ * { ok: true }. On { ok: false, error } the error is shown and the form stays.
+ */
+export function gate(mount, { title, lede, unlock }) {
   return new Promise((resolve) => {
     const form = el(`
       <form class="sv-gate sv-rise" autocomplete="off">
@@ -79,13 +79,9 @@ export function gate(mount, { title, lede }) {
       const button = $('button', form);
       button.disabled = true;
       error.hidden = true;
-      try {
-        const res = await signIn(form.password.value);
-        if (res.ok) return resolve();
-        error.textContent = res.data?.error || 'Something went wrong. Try again.';
-      } catch (err) {
-        error.replaceChildren(UNREACHABLE, el(failureLine(err)));
-      }
+      const res = await unlock(form.password.value);
+      if (res.ok) return resolve();
+      error.textContent = res.error;
       error.hidden = false;
       button.disabled = false;
       form.password.select();
