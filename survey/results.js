@@ -1,11 +1,15 @@
-// /survey/results: the latest synthesis, the projects board and the forward
-// look. Everything here was already filtered for consent by the Pi API.
-import { getToken, insecureCopy, request } from './api.js';
-import { INCLUDED_LINE, youLine } from './eta.js';
-import { lockedView, pollUntil } from './locked.js';
-import { $, el, esc, failureLine, gate, wirePrivacyLinks } from './ui.js';
+// /survey/results: the final synthesis, the projects board and the forward look.
+// The data is an encrypted file (survey/locked-results.js) opened here with the
+// shared password; a saved key lets a returning visitor skip the form.
+import { createStorage } from './storage.js';
+import { deriveKey, unlockResults } from './locked-results.js';
+import { $, el, esc, gate, wirePrivacyLinks } from './ui.js';
 
 const mount = $('#app');
+const storage = createStorage();
+const KEY = 'votc.survey.resultsKey';
+const FILE_URL = '/data/votc-survey-results.locked.json';
+const LOAD_ERROR = 'The results cannot be loaded right now. Try again in a minute.';
 
 // Validated with the dataviz palette script: sentiment is a diverging scale
 // (green arm, neutral midpoint, orange); event interest is one orange ramp.
@@ -21,91 +25,57 @@ const INTEREST = [
   ['committed', '#83401a'],
 ];
 
+let lockedFile = null;
+const loadFile = async () => {
+  if (!lockedFile) {
+    const res = await fetch(FILE_URL);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    lockedFile = await res.json();
+  }
+  return lockedFile;
+};
+
+// Opens the results with a password, saving the derived key for next time.
+async function unlockWithPassword(password) {
+  try {
+    const file = await loadFile();
+    const data = await unlockResults(file, { password });
+    storage.set(KEY, await deriveKey(password, file));
+    render(data);
+    return { ok: true };
+  } catch (err) {
+    return { ok: false, error: err.name === 'WrongPassword' ? 'That password is not right.' : LOAD_ERROR };
+  }
+}
+
 async function main() {
   wirePrivacyLinks();
-  if (!getToken()) {
-    await gate(mount, {
-      title: 'What we heard',
-      lede: 'A summary of what attendees said about Valley of the Commons 2026, and the projects that came out of it.',
-    });
+  const key = storage.get(KEY);
+  if (key) {
+    try {
+      return render(await unlockResults(await loadFile(), { key }));
+    } catch (err) {
+      if (err.name !== 'WrongPassword') return mount.replaceChildren(el(`<p class="sv-lede">${LOAD_ERROR}</p>`));
+      storage.remove(KEY);
+    }
   }
-  let res;
-  try {
-    res = await request('/results');
-  } catch (err) {
-    return mount.replaceChildren(el(`<p class="sv-lede">The results cannot be loaded from this browser right now. Try again in a minute.${failureLine(err)}</p>`));
-  }
-  if (res.status === 401) return main();
-  if (res.status === 403) return showLocked();
-  if (!res.ok) return render(null);
-  shown = null;
-  show(res.data);
-  if (res.data.you && !res.data.you.included) waitForInclusion();
-}
-
-// The API refuses the results until this person has submitted.
-function showLocked() {
-  const view = lockedView();
-  mount.replaceChildren(el(`
-    <section class="rs-empty sv-rise">
-      <p class="eyebrow">Valley of the Commons 2026</p>
-      <h1 class="sv-title sv-title--sm">${esc(view.title)}</h1>
-      <div class="sv-actions"><a class="btn btn-orange" href="${esc(view.action.href)}">${esc(view.action.label)}</a></div>
-    </section>`));
-}
-
-// What the page currently shows, so a refresh re-renders only when the data
-// changed or the person's own answers just joined it.
-let shown = null;
-
-// `you` ({ included, eta_seconds }) comes with the results: until the person's own
-// answers are in, a banner says when. `justIncluded` swaps it for the confirmation.
-function show(data, justIncluded = false) {
-  const { you, ...results } = data;
-  const banner = you && !you.included ? youLine(you) : justIncluded ? INCLUDED_LINE : null;
-  const version = results.generated_at ?? 'empty';
-  if (version === shown && !justIncluded) return setBanner(banner);
-  shown = version;
-  render(results.empty ? null : results, banner);
-}
-
-const setBanner = (text) => { const b = $('[data-banner]'); if (b && text) b.textContent = text; };
-
-// Checks again every 15 s for up to 15 min, refreshing the data, until the answers are in.
-async function waitForInclusion() {
-  const outcome = await pollUntil(async () => {
-    let res;
-    try { res = await request('/results'); } catch { return false; } // offline: try again
-    if (res.status === 401 || res.status === 403) { main(); return true; } // signed out or locked: render that state
-    if (!res.ok) return false;
-    show(res.data, res.data.you?.included === true);
-    return res.data.you?.included !== false;
+  await gate(mount, {
+    title: 'What we heard',
+    lede: 'A summary of what attendees said about Valley of the Commons 2026, and the projects that came out of it.',
+    unlock: unlockWithPassword,
   });
-  if (outcome === 'timeout') setBanner('This is taking longer than expected. Reload this page to check again.');
 }
 
-const banner = (text) => (text ? `<p class="sv-note rs-banner" data-banner role="status">${esc(text)}</p>` : '');
-
-function render(r, bannerText) {
-  if (!r) {
-    return mount.replaceChildren(el(`
-      <section class="rs-empty sv-rise">
-        ${banner(bannerText)}
-        <p class="eyebrow">Valley of the Commons 2026</p>
-        <h1 class="sv-title">Nothing to show yet.</h1>
-        <p class="sv-lede">Results appear here once the first conversations are in. <a href="/survey">Take part</a>.</p>
-      </section>`));
-  }
+function render(r) {
   const s = r.synthesis;
   const updated = new Date(r.generated_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
   mount.classList.add('rs-main');
   mount.replaceChildren(el(`
     <article class="rs sv-rise">
-      ${banner(bannerText)}
       <header class="rs-head">
         <p class="eyebrow">Valley of the Commons 2026</p>
         <h1 class="sv-title">What we heard.</h1>
-        <p class="rs-meta">From ${r.respondents} ${r.respondents === 1 ? 'person' : 'people'} · updated ${esc(updated)} · written by an AI from everyone's answers</p>
+        <p class="rs-meta">From ${r.respondents} ${r.respondents === 1 ? 'person' : 'people'} · final results, ${esc(updated)} · written by an AI from everyone's answers</p>
       </header>
 
       <section class="rs-section">
@@ -144,7 +114,7 @@ function render(r, bannerText) {
       <section class="rs-section">
         <h2 class="rs-h2">What emerged</h2>
         <p class="rs-sub">Projects and initiatives people want to continue, shared with their permission.</p>
-        ${r.board.length ? `<div class="rs-board">${r.board.map(card).join('')}</div>` : '<p class="rs-sub">No projects shared on the board yet.</p>'}
+        ${r.board.length ? `<div class="rs-board">${r.board.map(card).join('')}</div>` : '<p class="rs-sub">No projects shared on the board.</p>'}
       </section>
 
       <section class="rs-section">
@@ -218,4 +188,4 @@ function forward(f, respondents) {
     ${f.new_formats.length ? `<h3 class="rs-h3">New formats people would propose</h3><ul class="rs-list">${list(f.new_formats)}</ul>` : ''}`;
 }
 
-if (!insecureCopy()) main();
+main();

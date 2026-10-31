@@ -1,116 +1,57 @@
-# Post-residency survey (`/survey`, `/survey/results`)
+# Post-residency survey (closed): `/survey/results`
 
-The VotC 2026 post-residency survey: an AI interviewer (ElevenLabs, voice or
-text) talks with each attendee and fills a catalogue of datapoints; a results
-page shows an AI synthesis, a projects board and a forward look. One shared
-password gates both pages. Owner: Deca.
+The VotC 2026 post-residency survey is closed. The results page stays up, behind
+the same shared password, with no backend. Owner: Deca.
 
-The plan (goal, datapoint catalogue, acceptance criteria) lives in Deca's vault:
-`Companies/Commons Hub/VotC Website/WhatWeBuilt/VotC Website v1 Specifications.md`.
+## Routes
 
-## What lives in this repo
+- `/survey` and `/survey/` redirect (302) to `/survey/results`.
+- `/survey/results` serves `survey/results.html` through the versioned
+  `surveyPage` helper in `server.js` (`lib/survey-assets.js` adds `?v=<deploy>` to
+  its assets and an import map for the modules).
+- `/data/votc-survey-results.locked.json` serves the encrypted results (listed in
+  `PUBLIC_DATA_FILES` in `server.js`).
 
-Only static files and three routes. The site's production host holds no survey
-data, secrets or database tables.
+## Locked results
+
+The repo is public and the site's production host holds no secrets, so the results
+are stored encrypted with the shared password and opened in the visitor's browser.
 
 | File | Role |
 | --- | --- |
-| `survey/index.html`, `survey/survey.js` | Gate, privacy notice (landing), mode choice, the conversation (voice: ElevenLabs browser SDK from jsdelivr, pinned; text: the HTTPS relay below), timing signals, voice-to-text hand-off, the closing name box; a submitted person finishes on `/survey/results`, anyone else on a saved-anonymously screen |
-| `survey/results.html`, `survey/results.js` | The results page |
-| `survey/relay.js` | `RelayConversation`: text conversations over plain HTTPS through the Pi API (see "Text relay" below) |
-| `survey/locked.js` | The results page's locked state (`not_submitted`) and the 15 s / 15 min poll |
-| `survey/attribution.js` | The closing name box (agent tool `ask_attribution`): the value the page records for `attribution_consent` and the `[attribution]` update sent to the agent |
-| `survey/eta.js` | The "your own answers will be added in about N minutes" line, shown as the banner on the results page |
-| `survey/ui.js` | Shared gate and the privacy notice (its one home) |
-| `survey/api.js`, `survey/storage.js` | Backend base URL, saved sign-in, safe `localStorage`, best-effort client error reports (`POST /client-error` on the Pi API) |
-| `survey/queue.js` | Offline queue for `record_datapoint` calls (retries with an idempotency key) |
-| `survey/timing.js` | Voice (11, 14 and 15 min) and text (15 min) thresholds and the contextual updates sent at each |
+| `survey/locked-results.js` | `lockResults`, `deriveKey`, `unlockResults`: PBKDF2-SHA256 (600,000 iterations) derives the key, AES-256-GCM encrypts. Runs in browsers and Node 20+ with no dependencies |
+| `scripts/lock-survey-results.mjs` | Makes `data/votc-survey-results.locked.json` from a plain results file |
+| `survey/results.html`, `survey/results.js` | The page: password gate, then the rendered results |
+| `survey/ui.js` | The gate and the privacy notice (its one home) |
+| `survey/storage.js` | Safe `localStorage` |
 | `survey/survey.css` | Styles, on top of `home.css` tokens |
-| `tests/survey.test.mjs` | Unit tests for storage, queue, timing, the ETA wording, the name box, the text relay, the locked state and the https-only guard |
+| `tests/survey.test.mjs` | Tests for storage, locking and unlocking, asset versioning and the https-only guard |
 
-`server.js` serves `/survey` and `/survey/results`. `/survey` is the one route
-that sends `Permissions-Policy: microphone=(self)` (voice mode); every other route
-keeps `microphone=()`.
+The locked file is `{ v, kdf, iterations, salt, iv, ciphertext }` (binary fields
+base64). To make or refresh it:
 
-Both survey pages are https only. An inline script at the top of each `<head>`
-moves an `http` visit to `https` before any module runs, and `insecureCopy()` in
-`survey/api.js` stops the page from starting if it ever runs on `http`. The reason:
-on an `http` page browsers withhold the microphone and `crypto.randomUUID` (voice
-fails, answers are not saved), and the Pi API accepts only https origins, so sign-in
-fails with "cannot be reached". The site itself answers on `http` without
-redirecting (incident 2026-10-19). `localhost` stays on `http` for development.
+```
+node scripts/lock-survey-results.mjs <results.json>
+```
 
-When the API cannot be reached, the page shows a details line (page address,
-error, UTC minute) for the person to screenshot; match it against the Pi API
-access log, which records each request's `origin` and browser.
+The script asks for the password twice without echoing it, checks it against the
+Pi API while that still runs (it can continue after a warning if the API is
+unreachable), writes the file, and re-opens it to confirm the round trip. The
+password is never printed or written.
 
-A daily conversation limit (the API's 429 with `limit` `respondent_daily` or
-`survey_daily`) shows "Let's continue tomorrow" with the results link and no
-retry buttons, since retrying that day cannot work.
+The page fetches the file once and decrypts it with the typed password. A wrong
+password shows "That password is not right." After a correct one, the derived key
+(not the password) is saved in `localStorage` under `votc.survey.resultsKey`, so a
+returning visitor skips the form. If the saved key no longer opens the file, it is
+cleared and the form returns.
 
-## What lives elsewhere
+The page is https only (an inline script in `<head>` moves `http` to `https`),
+because `crypto.subtle` is available only in a secure context. `localhost` stays on
+`http` for development.
 
-- **Backend:** a small Node API on Deca's Raspberry Pi (repo `deca12x/pi-data`,
-  `services/votc-survey/`), reached over HTTPS at
-  `https://pi1.tail0a8aa5.ts.net/votc-survey`. It checks the password, issues
-  tokens, stores datapoints, receives the ElevenLabs post-call webhook, runs
-  reconciliation and synthesis, and serves the results JSON. Its CORS allows only
-  `valleyofthecommons.com`, `www.valleyofthecommons.com` and `localhost:3000`.
-- **Interviewer:** one ElevenLabs agent, configured as files in the same backend
-  folder (`agent/`).
+## History
 
-## Who can read what
-
-The Pi API enforces this, not the page. A person is **submitted** when their attribution consent is recorded, or when every core question group has at least one answer (so someone who stops early after the core questions counts). `GET /results` answers 403 `{ locked: 'not_submitted' }` until then. Once submitted, it answers 200 with the latest results plus a top-level `you: { included, eta_seconds }`: `included` says whether their own answers are in that version, and `eta_seconds` is the Pi's estimate until they are (null once included). `/me` and `/sessions/:id/status` carry `results_unlocked` (the submitted rule); the status also carries `you`.
-
-Anyone who leaves early is recorded as anonymous and is included in the results however little they answered (a name is shown only if the person typed one into the closing name box); reading the results still needs the submitted rule above.
-
-The question groups, their importance order and the per-session shuffle live in the Pi repo's `catalogue.json` (`groups`). Voice timing: wrap-up at 11 minutes, goodbye (the conversation continues in text) at 14, hard stop at 15. Text: a gentle wrap-up nudge at 15 minutes, no hard end.
-
-Catalogue changes in v1.4: a new `testimonial` datapoint (a few words the person agrees may be published, organisers-only, never in the synthesis input, offered once just before the name box); `gap_ideas` now captures an event idea, venue needs and sponsor or external-event leads, sits in the `future` group and is organisers-only in the results; `follow_up_contact` is also asked of people likely or committed to the co-living pilot, to hear when applications open.
-
-Catalogue changes in v1.5 (Felix's review, 2026-10-09): the agent aims for about 15 questions including the closing, with at most 3 follow-ups per conversation. The extras group is gone: `intention` and `one_word_or_image` are recorded only if the person offers them (the results page hides the one-word section when it is empty), and `follow_up_contact` stays conditional. `gap_ideas`, `new_formats` and `contribution` form a new core group, `hub_events`, in which the agent gives the Hub's invitation to suggest events or refer people, close to Felix's words. People are invited to suggest; the team decides, so the agent never agrees, books or offers dates, rooms, prices or stays. Since `hub_events` is core, the submitted rule now also needs an answer there ("nothing for now" counts).
-
-Limits: the API allows 300 sessions per day (`SESSIONS_PER_DAY`), the ElevenLabs agent has a `daily_limit` of 300, and its concurrency limit is set from `call_limits` in the Pi repo's `settings.json`. Over the concurrency limit, text visitors see the busy retry above.
-
-While the relay is connecting, Stop and Finish stay available: they cancel the retries (`AbortSignal` passed to `RelayConversation.startSession`, which then throws `RelayAborted`) and go to the saved or end screen as usual.
-
-## Text relay
-
-Some networks and security software stop a browser opening a WebSocket to
-`api.elevenlabs.io` (it closes with code 1006 before the session starts) while the
-same browser reaches pi1 fine. So text conversations never connect from the
-browser to ElevenLabs: pi1 holds that WebSocket and the page uses plain HTTPS.
-Voice is unchanged (browser SDK, direct).
-
-1. `POST /sessions` with `mode: "text"` returns no `signed_url`; the server keeps the session's dynamic variables.
-2. `survey/relay.js` calls `POST /sessions/:id/relay/open`. A `503 { retryable: true }` means ElevenLabs is at its concurrency limit: the page shows one note in the chat ("Busy for a moment, connecting...") and retries every 5 s, up to 24 attempts (2 minutes), then shows "Lots of people are answering right now" with a retry. A `409` (server restarted, session not registered) counts as a failed start.
-3. Once open, the page long-polls `GET /sessions/:id/relay/events?after=<seq>` (up to 25 s per poll). Events: `message` (agent text), `tool_call` (the page runs `record_datapoint` or `ask_attribution` and posts the result), `end` (reason `agent`, `user` or `error`). A failed poll retries after 2 s; 10 in a row ends the conversation as `relay lost`.
-4. `POST relay/send` carries user messages, contextual updates (timing, hand-off) and tool results; `POST relay/close` ends it, and the `end` event then arrives through the poll.
-
-The relay is the contract in the Pi repo's `src/relay.js`; this repo only holds the client.
-If the voice connection fails, the page says some security software, VPNs or networks block it and offers text, which works for anyone who can reach pi1. Client error reports for `connect` carry `elapsed_ms` (time from start to failure).
-
-## Local development
-
-Run the site (`npm start`, port 3000) and the backend locally, then open
-`http://localhost:3000/survey?api=http://localhost:<port>`. The `api` parameter
-works only on `localhost`, so a crafted link cannot send the password elsewhere.
-`?timescale=0.05` shrinks the timing thresholds for testing (it can only shorten).
-
-## Known issue: Tailscale on + a Chromium browser = "server cannot be reached"
-
-On a device connected to Deca's tailnet, `pi1.tail0a8aa5.ts.net` resolves to a
-private `100.x` address instead of the public Funnel address. Chromium browsers
-(Chrome, Brave, Edge) treat that as the local network and block calls to it from a
-public page (Local Network Access). The console shows: "Permission was denied for
-this request to access the `local` address space". The gate then says "The survey
-server cannot be reached right now".
-
-- **Attendees are not affected:** they are not on the tailnet, so they get the
-  public address.
-- **To test production from a tailnet device:** switch Tailscale off (or allow
-  "Local network access" for the site in the browser's site settings).
-- `localhost` pages are not affected (they count as local themselves), so local
-  development works with Tailscale on.
-- SSH to pi1 needs Tailscale on. Turn it back on after testing.
+The live survey ran 3 to 29 Oct 2026. Its backend ran on Deca's Pi (repo
+`deca12x/pi-data`, `services/votc-survey`), and the browser code that took the
+survey (interview pages, text relay, queue, timing) is in this repo's git history
+before the change that closed it.
