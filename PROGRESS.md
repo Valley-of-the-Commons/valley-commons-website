@@ -35,7 +35,7 @@ Smoke: `npm test` here (42 pass); in pi-data `services/votc-survey`: `TEST_ADMIN
 Evaluator rounds: 3 (independent subagent). Round 1 found 2 hard failures and 10 defects; round 2 found 5 regressions; round 3 passed.
 
 ## State (2026-10-03)
-Live in production since 2026-10-03 15:46 (PRs #10, #13, #14). All model calls on Claude Sonnet 5.5. All test data deleted; ready to share (password `valley2026survey`).
+Live in production since 2026-10-03 15:46 (PRs #10, #13, #14). All model calls on Claude Sonnet 5.5. All test data deleted; ready to share.
 
 ## v1.5 Felix's review (shipped 2026-10-10, pi-data d0436c1)
 - Felix's retest on Windows worked (2026-10-09). His review: too long (about 20 questions, keep it to about 15) and stress that the Hub is always looking for events.
